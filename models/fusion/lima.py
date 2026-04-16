@@ -1,135 +1,175 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+from torch.utils.checkpoint import checkpoint
 
-# Giả định bạn đã import các module đã thiết kế trước đó:
 from models.sensing.neuromorphicfronted import NeuromorphicFrontend
 from models.spatial_extraction.dyspatialextr import DynamicSpatialExtraction
 from models.backbone.stmamba import DualModulatedSTMambaBlock
 from models.localization.microlocalization import MicroLocalization
 from models.memory.astropool import MemoryAndPostProcessing
+from models.detection.fpn import TrueFPN, YOLOHead # Đã đổi thành TrueFPN
 
 class LiMaVLM(nn.Module):
-    def __init__(self, in_channels=3, d_model=128, d_text=512, num_frames=8, img_size=112):
-        """
-        Kiến trúc hoàn chỉnh Li-Ma VLM tối ưu cho RTX 4060.
-        """
+    def __init__(self, in_channels=3, d_model=128, d_text=512, patch_size=4):
         super().__init__()
         self.d_model = d_model
-        self.num_frames = num_frames
-        
-        # Tính toán kích thước Patch (Giả sử patch_size = 4 ở lớp Spatial Extraction)
-        self.patch_size = 4
-        self.h_prime = img_size // self.patch_size
-        self.w_prime = img_size // self.patch_size
 
-        # ==========================================
-        # 1. TẦNG TIỀN XỬ LÝ & TRÍCH XUẤT (BACKBONE)
-        # ==========================================
-        self.frontend = NeuromorphicFrontend(in_channels=in_channels, h=img_size, w=img_size)
-        self.spatial_extractor = DynamicSpatialExtraction(in_channels=in_channels, embed_dim=d_model, patch_size=self.patch_size)
-        
-        # Module nhỏ dự đoán Hệ số góc nhìn (Viewpoint Scores) từ đặc trưng không gian
+        # 1. FRONTEND
+        self.frontend = NeuromorphicFrontend(in_channels)
+
+        # 2. SPATIAL BACKBONE
+        self.spatial_extractor = DynamicSpatialExtraction(
+            in_channels=in_channels,
+            embed_dim=d_model,
+            patch_size=patch_size
+        )
+
+        # 3. ST-MAMBA
         self.view_predictor = nn.Sequential(
             nn.Linear(d_model, d_model // 2),
             nn.ReLU(),
             nn.Linear(d_model // 2, 1),
             nn.Sigmoid()
         )
-
-        # ==========================================
-        # 2. LÕI XỬ LÝ KHÔNG - THỜI GIAN (CORE)
-        # ==========================================
-        # (Đã tích hợp thư viện mamba-ssm để chạy CUDA)
-        self.st_mamba = DualModulatedSTMambaBlock(d_model=d_model, d_state=16, d_text=d_text)
-
-        # ==========================================
-        # 3. TẦNG SOI CHI TIẾT & LOGIC (NECK & HEAD)
-        # ==========================================
-        # Soi chi tiết hạt mịn (Foveal Glimpse)
-        self.micro_loc = MicroLocalization(embed_dim=d_model, num_parts=5)
-        
-        # Ổn định quỹ đạo thời gian liên tục (LNN Astrocytic Pool)
-        self.memory_pool = MemoryAndPostProcessing(embed_dim=d_model, d_text=d_text)
-
-        # ==========================================
-        # 4. CÁC ĐẦU RA DỰ ĐOÁN (PREDICTION HEADS)
-        # ==========================================
-        # Đầu ra 1: Bounding Box [x_center, y_center, width, height]
-        self.bbox_head = nn.Sequential(
-            nn.Linear(d_model, 64),
-            nn.ReLU(),
-            nn.Linear(64, 4),
-            nn.Sigmoid() # Tọa độ chuẩn hóa [0, 1]
+        self.st_mamba = DualModulatedSTMambaBlock(
+            d_model=d_model,
+            d_state=16,
+            d_text=d_text
         )
-        
-        # Đầu ra 2: Đặc trưng Phân loại (Dùng cho H-SupCon Loss)
-        self.cls_head = nn.Linear(d_model * 2, d_model) # Kết hợp đặc trưng toàn cục và cục bộ
 
-    def forward(self, video_input, text_emb):
+        # 4. MICRO LOCALIZATION
+        self.micro_loc = MicroLocalization(embed_dim=d_model, num_parts=5)
+
+        # 5. MEMORY
+        self.memory = MemoryAndPostProcessing(
+            embed_dim=d_model,
+            d_text=d_text
+        )
+
+        # 6. HEADS (Global Tracking & Contrastive)
+        self.bbox_head = nn.Sequential(
+            nn.Linear(d_model, 128),
+            nn.ReLU(),
+            nn.Linear(128, 4),
+            nn.Sigmoid()  # Ép tọa độ [0, 1]
+        )
+
+        self.cls_head = nn.Sequential(
+            nn.Linear(d_model * 2, d_model),
+            nn.ReLU(),
+            nn.Linear(d_model, d_text) # Khớp với Text Embedding
+        )
+
+        # 7. DETECTION (Dense)
+        self.fpn = TrueFPN(d_model, out_channels=d_model) # Đồng bộ channel
+        self.det_head = YOLOHead(in_channels=d_model, num_classes=1)
+
+    def forward(self, video, text_emb, use_checkpointing=False, prev_states=None):
         """
-        Luồng xuôi toàn trình của hệ thống.
-        Args:
-            video_input: Tensor [B, C, T, H, W]
-            text_emb: Tensor [B, d_text]
-        Returns:
-            bbox_pred: [B, 4] (Tọa độ xe)
-            gate_activation: [B] (Mức độ mở cổng Text để tính Auxiliary Loss)
-            cls_features: [B, d_model] (Vector đặc trưng để đưa vào hàm H-SupCon)
+        video: [B, C, T, H, W]
+        text_emb: [B, d_text]
+        use_checkpointing: Bật True khi training để cứu VRAM
+        prev_states: (h_prev, G_prev) dùng cho việc train các video cực dài theo chunk
         """
-        B, C, T, H, W = video_input.shape
+        B, C, T, H, W = video.shape
 
-        # --- BƯỚC 1: LỌC NHIỄU SINH HỌC ---
-        # Lọc nền tĩnh, chống nhòe
-        clean_video = self.frontend(video_input)
+        # ========================
+        # 1. FRONTEND (Cập nhật nhận aux_loss)
+        # ========================
+        video, frontend_pred_loss = self.frontend(video)
 
-        # --- BƯỚC 2: TRÍCH XUẤT KHÔNG GIAN ---
-        # tokens: [B, SeqLen, d_model], trong đó SeqLen = T * H_prime * W_prime
-        tokens, decouple_mask = self.spatial_extractor(clean_video)
+        # ========================
+        # 2. SPATIAL EXTRACTION 
+        # ========================
+        if use_checkpointing and self.training:
+            def custom_spatial_forward(v):
+                return self.spatial_extractor(v)
+            
+            # Khắc phục lỗi reentrant của checkpoint trong PyTorch mới
+            tokens, mask, feature_map = checkpoint(
+                custom_spatial_forward, 
+                video, 
+                use_reentrant=False
+            )
+        else:
+            tokens, mask, feature_map = self.spatial_extractor(video)
+            
+        # tokens: [B, L, D] -> [B, T, N, D]
+        L = tokens.shape[1]
+        N = L // T
+        tokens_4d = tokens.view(B, T, N, self.d_model)
+
+        # ========================
+        # 3. GLOBAL & SPATIAL TOKEN 
+        # ========================
+        avg_tokens = tokens_4d.mean(dim=2)           # [B, T, D]
+        max_tokens = tokens_4d.max(dim=2)[0]         # [B, T, D]
         
-        # Dự đoán hệ số góc nhìn [B, SeqLen, 1]
-        view_scores = self.view_predictor(tokens)
+        temporal_input = avg_tokens + max_tokens     
+        global_tokens = avg_tokens                   
 
-        # --- BƯỚC 3: LÕI ST-MAMBA (VỚI CỔNG ĐIỀU BIẾN) ---
-        # mamba_out: [B, SeqLen, d_model]
-        # (Giả định bạn đã chỉnh sửa DualModulatedSTMambaBlock để trả về thêm gate_act)
-        mamba_out, gate_act = self.st_mamba(tokens, text_emb, view_scores)
+        # ========================
+        # 4. ST-MAMBA
+        # ========================
+        view_scores = self.view_predictor(temporal_input)
 
-        # --- BƯỚC 4: SOI CHI TIẾT HẠT MỊN (MICRO-LOCALIZATION) ---
-        # Để dùng RoIAlign, ta phải định dạng lại mamba_out về dạng hình ảnh 2D
-        # [B, T * H' * W', d_model] -> [B, T, H', W', d_model] -> [B*T, d_model, H', W']
-        # Lấy kích thước thực tế trực tiếp từ mamba_out
-        # mamba_out có dạng [B, L, D]
-        B_actual, L_actual, D_actual = mamba_out.shape
-        
-        # Dùng -1 để PyTorch tự động tính toán số khung hình T
-        # Dựa trên B, H', W' và D thực tế
-        feature_map_2d = mamba_out.view(B_actual, -1, self.h_prime, self.w_prime, D_actual)
-        feature_map_2d = feature_map_2d.permute(0, 1, 4, 2, 3).reshape(B * T, self.d_model, self.h_prime, self.w_prime)
-        
-        # global_tokens cho MicroLoc: lấy trung bình không gian của mỗi frame
-        global_tokens_per_frame = feature_map_2d.mean(dim=[2, 3]) # [B*T, d_model]
-        
-        # fine_features: Đặc trưng sắc nét của lốc máy, bánh xe... [B*T, d_model]
-        fine_features, _, _ = self.micro_loc(feature_map_2d, global_tokens_per_frame)
-        fine_features = fine_features.view(B, T, self.d_model) # Gom lại theo Batch và Time
+        if use_checkpointing and self.training:
+             temporal_out, gate_act = checkpoint(
+                 self.st_mamba, temporal_input, text_emb, view_scores,
+                 use_reentrant=False
+             )
+        else:
+             temporal_out, gate_act = self.st_mamba(temporal_input, text_emb, view_scores)
 
-        # --- BƯỚC 5: ỔN ĐỊNH QUỸ ĐẠO (ASTROCYTIC POOL) ---
-        # Rút gọn mamba_out thành chuỗi thời gian bằng cách Global Average Pooling trên không gian
-        temporal_seq = mamba_out.view(B, T, self.h_prime * self.w_prime, self.d_model).mean(dim=2) # [B, T, d_model]
+        # ========================
+        # 5. MICRO LOCALIZATION
+        # ========================
+        global_flat = global_tokens.reshape(B * T, self.d_model)
+        fine_feat, coords, vis = self.micro_loc(feature_map, global_flat)
+        fine_feat = fine_feat.view(B, T, self.d_model)
         
-        # Bám vết và suy luận logic Text
-        tracked_features = self.memory_pool(temporal_seq, text_emb) # [B, T, d_model]
+        # [NEW]: Tính Diversity Loss ngay trong forward (chỉ khi train)
+        div_loss = self.micro_loc.get_diversity_loss(coords) if self.training else 0.0
 
-        # --- BƯỚC 6: XUẤT KẾT QUẢ ---
-        # 6a. Lấy đặc trưng ở khung hình cuối cùng để dự đoán BBox
-        last_tracked_feat = tracked_features[:, -1, :] # [B, d_model]
-        bbox_pred = self.bbox_head(last_tracked_feat)
+        # ========================
+        # 6. MEMORY (LNN - Cập nhật nhận/trả states)
+        # ========================
+        temporal_input_refined = temporal_out + fine_feat
+        temporal_refined, next_states = self.memory(
+            temporal_input_refined, 
+            text_emb, 
+            states=prev_states
+        )
+
+        # ========================
+        # 7. FINAL REPRESENTATION
+        # ========================
+        last_global = temporal_refined[:, -1]
+        last_fine = fine_feat[:, -1]
+
+        fused = torch.cat([last_global, last_fine], dim=-1)
         
-        # 6b. Tạo Vector Phân loại (Kết hợp Tổng thể + Chi tiết)
-        # Nối đặc trưng quỹ đạo tổng thể và đặc trưng hạt mịn (hãng xe)
-        last_fine_feat = fine_features[:, -1, :]
-        fused_feat = torch.cat([last_tracked_feat, last_fine_feat], dim=-1) # [B, d_model * 2]
-        cls_features = self.cls_head(fused_feat)
+        cls_feat = self.cls_head(fused)
+        bbox = self.bbox_head(last_global)
 
-        return bbox_pred, gate_act, cls_features
+        # ========================
+        # 8. DETECTION HEAD
+        # ========================
+        pyramid = self.fpn(feature_map)
+        det_out = self.det_head(pyramid)
+
+        # Đóng gói toàn bộ Output và Auxiliary Losses
+        return {
+            "bbox": bbox,
+            "cls_feat": cls_feat,
+            "det": det_out,
+            "mask": mask,
+            "feat_seq": temporal_refined,
+            "gate": gate_act,
+            "coords": coords,
+            "visibility": vis,
+            "next_states": next_states,           # Phục vụ chunking
+            "aux_frontend_loss": frontend_pred_loss, # Phục vụ backward
+            "aux_div_loss": div_loss              # Phục vụ backward
+        }

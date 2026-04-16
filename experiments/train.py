@@ -1,166 +1,268 @@
+import os
 import torch
+import torch.nn as nn
 import torch.nn.functional as F
-from torch.cuda.amp import autocast, GradScaler
-from tqdm import tqdm
+import torch.optim as optim
 from torch.utils.data import DataLoader
-import torchvision.ops as ops # <-- THÊM THƯ VIỆN NÀY CHO GIOU LOSS
+from torch.cuda.amp import GradScaler, autocast
+import json
 
-from models.fusion.lima import LiMaVLM
-from experiments.utils.cityflownl import CityFlowNLDataset
-from experiments.utils.loss import HierarchicalSupConLoss
+# Tạm giả định bạn đã lưu các class này trong các file tương ứng
+# Nếu bạn gom chung vào 1 file thì không cần import
+from models.lima import LiMaVLM
+from experiments.utils.dataset import CityFlowNLDataset
 
-def train_epoch(model, dataloader, optimizer, epoch, device, accumulation_steps=4):
-    """
-    Vòng lặp huấn luyện 1 Epoch tối ưu cho RTX 4060 (8GB VRAM)
-    Kiến trúc End-to-End: Vừa truy xuất Text (Gate) Vừa Regression BBox
-    """
-    model.train()
-    scaler = GradScaler()
-    h_supcon_criterion = HierarchicalSupConLoss(temperature=0.07, alpha=0.5).to(device)
+# ==========================================
+# 1. CÁC HÀM LOSS CHUYÊN DỤNG
+# ==========================================
+def focal_loss_centernet(pred_hm, gt_hm, alpha=2, beta=4):
+    """Focal Loss cho Heatmap"""
+    pred_hm = torch.clamp(pred_hm, min=1e-4, max=1 - 1e-4)
+    pos_inds = gt_hm.eq(1).float()
+    neg_inds = gt_hm.lt(1).float()
+
+    neg_weights = torch.pow(1 - gt_hm, beta)
     
-    total_loss_epoch = 0
-    optimizer.zero_grad() 
+    pos_loss = torch.log(pred_hm) * torch.pow(1 - pred_hm, alpha) * pos_inds
+    neg_loss = torch.log(1 - pred_hm) * torch.pow(pred_hm, alpha) * neg_weights * neg_inds
 
-    pbar = tqdm(enumerate(dataloader), total=len(dataloader), desc=f"Epoch {epoch}")
+    num_pos = pos_inds.float().sum()
+    pos_loss = pos_loss.sum()
+    neg_loss = neg_loss.sum()
+
+    if num_pos == 0:
+        return -neg_loss
+    return -(pos_loss + neg_loss) / num_pos
+
+def reg_l1_loss(pred, gt, mask):
+    """L1 Loss có mặt nạ (Chỉ phạt tại vị trí có xe)"""
+    pred = pred * mask
+    gt = gt * mask
+    loss = F.l1_loss(pred, gt, reduction='sum')
+    loss = loss / (mask.sum() + 1e-4)
+    return loss
+
+def in_batch_contrastive_loss(video_feat, text_feat, temperature=0.07):
+    """InfoNCE Loss cho Video-Text Retrieval"""
+    logits = (video_feat @ text_feat.T) / temperature
+    labels = torch.arange(logits.size(0), device=logits.device)
+    loss_v2t = F.cross_entropy(logits, labels)
+    loss_t2v = F.cross_entropy(logits.T, labels)
+    return (loss_v2t + loss_t2v) / 2
+
+# ==========================================
+# 2. HÀM VALIDATION
+# ==========================================
+@torch.no_grad()
+def validate_limavlm(model, val_loader, queries_json_path, text_embs_dict, device='cuda'):
+    model.eval()
     
-    for i, batch in pbar:
-        # Chuyển dữ liệu lên GPU
-        video_input = batch['video'].to(device)       # [B, 3, T, 112, 112]
-        text_emb = batch['text_emb'].to(device)       # [B, d_text]
-        is_match = batch['is_match'].to(device)       # [B]
-        target_bbox = batch['bbox'].to(device)        # [B, 4] dạng [c_x, c_y, w, h]
-        coarse_labels = batch['coarse_label'].to(device) 
-        fine_labels = batch['fine_label'].to(device)  
+    # --- BƯỚC MỚI: Đọc file JSON từ đầu để map track_id -> query ---
+    print("📖 Đang nạp metadata để chuẩn bị text cho Gallery...")
+    with open(val_loader.dataset.json_path, 'r') as f:
+        full_track_ids = list(json.load(f).keys())
+        
+    with open(queries_json_path, 'r') as f:
+        queries_data = json.load(f)
+    full_query_ids = list(queries_data.keys())
+    # -------------------------------------------------------------
 
+    # 1. Trích xuất đặc trưng Gallery
+    gallery_feats_dict = {}
+    print("📹 Đang trích xuất Gallery features (Sử dụng Real Text)...")
+    for batch in val_loader:
+        video = batch['video'].to(device)
+        video = video.permute(0, 2, 1, 3, 4).contiguous()
+        ids = batch['track_id']
+        
+        # --- BẮT ĐẦU THAY THẾ DUMMY TEXT ---
+        batch_text_tokens = []
+        for tid in ids:
+            original_idx = full_track_ids.index(tid)
+            q_id = full_query_ids[original_idx]
+            nl_text = queries_data[q_id]['nl'][0].strip().lower()
+            
+            # Lấy text embedding tương ứng (shape: [32, 512])
+            t_feat = text_embs_dict.get(nl_text, torch.zeros(32, 512))
+            batch_text_tokens.append(t_feat)
+            
+        # Ghép thành batch [B, 32, 512] và đưa lên GPU
+        real_text_tokens = torch.stack(batch_text_tokens).to(device)
+        # --- KẾT THÚC THAY THẾ DUMMY TEXT ---
+        
         with autocast():
-            # Chạy qua mạng Li-Ma
-            bbox_pred, gate_activation, features = model(video_input, text_emb)
+            # Truyền text thật của track_id đó vào mô hình
+            outputs = model(video, real_text_tokens) 
             
-            # --- TÍNH TOÁN CÁC HÀM LOSS ---
-            
-        # a. Loss Cổng Text (Binary Cross Entropy) - Dạy mạng biết video có chứa xe khớp text không
-        loss_gate = F.binary_cross_entropy(gate_activation.float().view(-1), is_match.float().view(-1))
+        feats = outputs["retrieval_feat"].cpu()
+        for i, tid in enumerate(ids):
+            gallery_feats_dict[tid] = feats[i]
+
+    ordered_track_ids = val_loader.dataset.track_ids 
+    gallery_feats = torch.stack([gallery_feats_dict[tid] for tid in ordered_track_ids])
+
+    # --- BẮT ĐẦU FIX LỖI LOGIC SO KHỚP (Giữ nguyên 100% logic của bạn) ---
+    print("📖 Đang nạp Query features (Khớp vị trí gốc)...")
+    
+    query_feats = []
+    
+    # Duyệt qua từng video S01 đã được lọc
+    for tid in ordered_track_ids:
+        # Tìm vị trí (index) gốc của video này trong file test-tracks
+        original_idx = full_track_ids.index(tid)
         
-        # b. Loss Phân cấp H-SupCon 
-        valid_mask = (is_match == 1.0)
-        loss_h_supcon = torch.tensor(0.0).to(device)
-        # Chỉ tính nếu có ít nhất 2 mẫu hợp lệ VÀ nhãn không bị gán mặc định (0) toàn bộ
-        if valid_mask.sum() > 1 and coarse_labels[valid_mask].sum() > 0: 
-            try:
-                loss_h_supcon = h_supcon_criterion(features[valid_mask], 
-                                                    coarse_labels[valid_mask], 
-                                                    fine_labels[valid_mask])
-            except Exception as e:
-                pass # Bỏ qua nếu dữ liệu nhãn giả không đủ đa dạng để tính Contrastive
-            
-        # c. Loss Bounding Box (L1 + GIoU)
-        # Khởi tạo danh sách chứa loss của từng sample trong batch
-        batch_bbox_losses = []
+        # Bốc đúng query ở vị trí tương ứng trong file test-queries
+        q_id = full_query_ids[original_idx]
+        nl_text = queries_data[q_id]['nl'][0].strip().lower()
         
-        for b in range(video_input.size(0)):
-            if is_match[b] == 1.0:
-                # 1. L1 Loss
-                l1 = F.l1_loss(bbox_pred[b], target_bbox[b])
+        # Tra cứu embedding
+        t_feat = text_embs_dict.get(nl_text, torch.zeros(32, 512)).mean(dim=0)
+        query_feats.append(F.normalize(t_feat, dim=0))
+    
+    query_feats = torch.stack(query_feats) # [num_available, 512]
+    # --- KẾT THÚC FIX LỖI LOGIC ---
+
+    # 3. Tính Recall@1 (Lúc này index i chắc chắn khớp với index i)
+    sim_matrix = query_feats @ gallery_feats.T
+    targets = torch.arange(len(ordered_track_ids))
+    preds = sim_matrix.argmax(dim=1)
+    
+    recall_1 = (preds == targets).float().mean().item()
+    print(f"📊 Kết quả Validation (S01): Recall@1 = {recall_1:.4f}")
+    
+    return recall_1
+
+# ==========================================
+# 3. VÒNG LẶP HUẤN LUYỆN CHÍNH
+# ==========================================
+def train_limavlm(model, train_loader, val_loader, epochs=15, val_interval=2, device='cuda'):
+    optimizer = optim.AdamW(model.parameters(), lr=1e-4, weight_decay=1e-4)
+    scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=epochs)
+    scaler = GradScaler()
+    
+    model.to(device)
+    best_recall = 0.0
+    text_embs_dict = torch.load("./data/data/clip_text_tokens.pt")
+    for epoch in range(1, epochs + 1):
+        # --- CURRICULUM LEARNING ---
+        if epoch == 1:
+            print("\n🚀 STAGE 1: Warm-up Macro-Tracking (Epoch 1-5)")
+            for param in model.blocks.parameters(): param.requires_grad = False
+            for param in model.micro_loc.parameters(): param.requires_grad = False
+            for param in model.liquid_memory.parameters(): param.requires_grad = False
+            
+            lambda_hm, lambda_sz, lambda_off = 1.0, 0.1, 1.0
+            lambda_div, lambda_ret = 0.0, 0.0 
+            
+        elif epoch == 20:
+            print("\n🚀 STAGE 2: Full Multi-Task Learning (Epoch 6-15)")
+            for param in model.parameters(): param.requires_grad = True
+            
+            lambda_hm, lambda_sz, lambda_off = 1.0, 0.1, 1.0
+            lambda_div, lambda_ret = 0.5, 5.0 
+
+        model.train()
+        total_loss_epoch = 0
+
+        for batch_idx, batch in enumerate(train_loader):
+            video = batch['video'].to(device)       # [B, T, 3, H, W]
+            gt_hm = batch['hm'].to(device)          # [B, T, 1, H', W']
+            gt_sz = batch['sz'].to(device)          # [B, T, 2, H', W']
+            gt_off = batch['off'].to(device)        # [B, T, 2, H', W']
+            text_tokens = batch['text_tokens'].to(device) # [B, 32, 512]
+            
+            B, T = video.shape[:2]
+            video = video.permute(0, 2, 1, 3, 4).contiguous()
+            
+            # Flatten trục thời gian cho CenterNet
+            gt_hm_2d = gt_hm.view(B*T, 1, gt_hm.size(-2), gt_hm.size(-1))
+            gt_sz_2d = gt_sz.view(B*T, 2, gt_sz.size(-2), gt_sz.size(-1))
+            gt_off_2d = gt_off.view(B*T, 2, gt_off.size(-2), gt_off.size(-1))
+            mask = gt_hm_2d.eq(1).float().expand_as(gt_sz_2d)
+
+            optimizer.zero_grad()
+
+            # Forward Pass với AMP
+            with autocast():
+                outputs = model(video, text_tokens)
                 
-                # 2. GIoU Loss
-                pred_box_xyxy = ops.box_convert(bbox_pred[b].unsqueeze(0), in_fmt='cxcywh', out_fmt='xyxy')
-                target_box_xyxy = ops.box_convert(target_bbox[b].unsqueeze(0), in_fmt='cxcywh', out_fmt='xyxy')
-                giou = ops.generalized_box_iou_loss(pred_box_xyxy, target_box_xyxy).squeeze()
+                pred_hm, pred_sz, pred_off = outputs["tracking_heads"]
+                retrieval_feat = outputs["retrieval_feat"]
+                coords, vis = outputs["micro_parts"]
                 
-                # Lưu tổng loss của sample này (có thể thêm trọng số cho L1 và GIoU nếu muốn)
-                batch_bbox_losses.append(l1 + giou)
-            else:
-                # Nếu text không khớp, ép mạng xuất ra Box [0,0,0,0]
-                # l1_loss lúc này đóng vai trò như penalty
-                l1_penalty = F.l1_loss(bbox_pred[b], torch.zeros_like(bbox_pred[b]))
-                batch_bbox_losses.append(l1_penalty)
-        
-        # Tính trung bình toàn bộ list bằng torch.stack (rất an toàn cho đồ thị tính toán)
-        if len(batch_bbox_losses) > 0:
-            loss_bbox = torch.stack(batch_bbox_losses).mean()
-        else:
-            loss_bbox = torch.tensor(0.0, device=device, requires_grad=True)
-        
-        loss_bbox = loss_bbox / video_input.size(0) # Trung bình theo batch
+                # Tính Losses
+                l_hm = focal_loss_centernet(pred_hm, gt_hm_2d)
+                l_sz = reg_l1_loss(pred_sz, gt_sz_2d, mask)
+                l_off = reg_l1_loss(pred_off, gt_off_2d, mask)
+                
+                l_div = model.micro_loc.get_diversity_loss(coords)
+                
+                text_global = F.normalize(text_tokens.mean(dim=1), dim=-1)
+                l_ret = in_batch_contrastive_loss(retrieval_feat, text_global)
 
-        # d. Tổng hợp Loss
-        # Hệ số Loss BBox thường cần lớn hơn (vd: 2.0 hoặc 5.0) vì giá trị L1/GIoU rất nhỏ so với BCE
-        loss = 2.0 * loss_gate + 0.5 * loss_h_supcon + 5.0 * loss_bbox
-        
-        loss = loss / accumulation_steps
+                loss = (lambda_hm * l_hm) + (lambda_sz * l_sz) + \
+                       (lambda_off * l_off) + (lambda_div * l_div) + \
+                       (lambda_ret * l_ret)
 
-        # Backward Pass thông qua Scaler
-        scaler.scale(loss).backward()
-
-        if (i + 1) % accumulation_steps == 0 or (i + 1) == len(dataloader):
+            # Backward Pass
+            scaler.scale(loss).backward()
             scaler.unscale_(optimizer)
             torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
             scaler.step(optimizer)
             scaler.update()
-            optimizer.zero_grad()
 
-        total_loss_epoch += loss.item() * accumulation_steps
-        pbar.set_postfix({
-            'Loss': f"{(total_loss_epoch / (i + 1)):.4f}", 
-            'Gate': f"{loss_gate.item():.4f}",
-            'Box': f"{loss_bbox.item():.4f}"
-        })
+            total_loss_epoch += loss.item()
+
+            if batch_idx % 10 == 0:
+                print(f"Epoch [{epoch}/{epochs}] Batch [{batch_idx}/{len(train_loader)}] "
+                      f"Loss: {loss.item():.4f} (HM: {l_hm.item():.4f}, Ret: {l_ret.item():.4f})")
+
+        scheduler.step()
+        avg_loss = total_loss_epoch / len(train_loader)
+        print(f"✅ Epoch {epoch} Xong! Average Loss: {avg_loss:.4f}")
         
-    return total_loss_epoch / len(dataloader)
-
-
-def main():
-    DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    print(f"Đang sử dụng thiết bị: {DEVICE}")
-    
-    BATCH_SIZE = 2      # Để vừa 8GB VRAM (Mỗi batch chứa video 8 frame)
-    ACCUM_STEPS = 4     # Batch size thực tế cập nhật gradient = 8
-    EPOCHS = 50
-
-    print("Đang khởi tạo Dataset...")
-    train_dataset = CityFlowNLDataset(
-        data_root="./data/data", # SỬA LẠI: Trỏ vào folder chứa VIDEO/FRAME TOÀN CẢNH, không dùng folder crops
-        json_path='./data/data/train-tracks.json', # Tên file JSON gốc thường có đuôi -tracks
-        num_frames=8,
-        img_size=112,
-        is_train=True
-    )
-    
-    train_loader = DataLoader(
-        train_dataset, 
-        batch_size=BATCH_SIZE, 
-        shuffle=True, 
-        num_workers=4, # Tăng lên 4 nếu CPU của bạn có từ 8 luồng trở lên để nạp data nhanh hơn
-        pin_memory=True
-    )
-
-    print("Đang khởi tạo Kiến trúc Li-Ma...")
-    model = LiMaVLM(
-        in_channels=3, 
-        d_model=128, 
-        d_text=512, 
-        num_frames=8, 
-        img_size=112
-    ).to(DEVICE)
-
-    optimizer = torch.optim.AdamW(model.parameters(), lr=2e-4, weight_decay=0.05)
-
-    print("BẮT ĐẦU HUẤN LUYỆN!")
-    print("===================")
-    
-    best_loss = float('inf')
-
-    for epoch in range(1, EPOCHS + 1):
-        avg_loss = train_epoch(model, train_loader, optimizer, epoch, DEVICE, ACCUM_STEPS)
-        
-        print(f"\n[Kết quả Epoch {epoch}] Trung bình Loss: {avg_loss:.4f}")
-        
-        if avg_loss < best_loss:
-            best_loss = avg_loss
-            torch.save(model.state_dict(), "lima_cityflownl_detection_best.pth")
-            print(">>> Đã lưu model tốt nhất!")
+        # --- THỰC HIỆN VALIDATION ---
+        if epoch % val_interval == 0:
+            current_recall = validate_limavlm(model, val_loader, "./data/data/test-queries.json", text_embs_dict, device)
             
-        torch.cuda.empty_cache()
+            if current_recall > best_recall:
+                best_recall = current_recall
+                torch.save(model.state_dict(), "best_limavlm.pth")
+                print(f"🌟 LƯU BEST MODEL MỚI (Recall@1: {best_recall:.4f})")
+        
+        # Lưu checkpoint dự phòng mỗi epoch
+        torch.save(model.state_dict(), f"checkpoint_epoch_{epoch}.pth")
 
+# ==========================================
+# 4. CHẠY CHƯƠNG TRÌNH (MAIN)
+# ==========================================
 if __name__ == "__main__":
-    main()
+    # KIỂM TRA GPU
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    print(f"💻 Đang sử dụng thiết bị: {device}")
+    if device == "cuda":
+        print(f"Tên GPU: {torch.cuda.get_device_name(0)}")
+
+    # ĐƯỜNG DẪN DỮ LIỆU (BẠN CHỈNH SỬA Ở ĐÂY)
+    DATA_ROOT = "./data/data"
+    TRAIN_JSON = os.path.join(DATA_ROOT, "train-tracks.json")
+    VAL_JSON = os.path.join(DATA_ROOT, "test-tracks.json") # Đổi thành file validation của bạn
+    TEXT_EMB_PATH = os.path.join(DATA_ROOT, "clip_text_tokens.pt")
+
+    # KHỞI TẠO DATASET VÀ DATALOADER
+    print("📦 Đang chuẩn bị dữ liệu...")
+    train_dataset = CityFlowNLDataset(TRAIN_JSON, DATA_ROOT, TEXT_EMB_PATH, max_frames=8)
+    # Validation nên lấy max_frames cố định để đánh giá công bằng
+    val_dataset = CityFlowNLDataset(VAL_JSON, DATA_ROOT, TEXT_EMB_PATH, max_frames=8) 
+
+    # Batch_size=4 cho RTX 4060 8GB. Nếu OOM, giảm xuống 2.
+    train_loader = DataLoader(train_dataset, batch_size=4, shuffle=True, num_workers=4, pin_memory=True)
+    val_loader = DataLoader(val_dataset, batch_size=4, shuffle=False, num_workers=4, pin_memory=True)
+
+    # KHỞI TẠO MÔ HÌNH
+    print("🧠 Đang khởi tạo LiMaVLM...")
+    model = LiMaVLM(d_model=256, d_text=512, num_blocks=3)
+
+    # BẮT ĐẦU HUẤN LUYỆN
+    print("🔥 Bắt đầu quá trình huấn luyện!")
+    train_limavlm(model, train_loader, val_loader, epochs=80, val_interval=2, device=device)

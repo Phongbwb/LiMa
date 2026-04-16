@@ -26,18 +26,22 @@ def main():
     print("Đang trích xuất đặc trưng văn bản...")
     # Lặp qua tất cả các xe
     for track_id, track_info in tqdm(raw_data.items()):
-        for nl_query in track_info['nl']:
+        
+        # FIX: Gộp cả hai danh sách lại để không bỏ sót bất kỳ câu query nào
+        all_queries = track_info.get('nl', []) + track_info.get('nl_other_views', [])
+        
+        for nl_query in all_queries:
+            # Chuẩn hóa chuỗi trước khi lưu (phòng hờ lỗi khoảng trắng)
+            clean_text = nl_query.strip().lower()
+            
             # Nếu câu này chưa được mã hóa thì tiến hành mã hóa
-            if nl_query not in text_to_emb:
-                # Tokenize và đưa lên GPU
+            if clean_text not in text_to_emb:
                 inputs = tokenizer(nl_query, padding=True, truncation=True, return_tensors="pt").to(device)
                 
                 with torch.no_grad():
-                    # pooler_output là vector 512 chiều đại diện cho toàn bộ câu
                     emb = text_encoder(**inputs).pooler_output 
                 
-                # Chuyển về CPU để tránh tràn RAM, và xóa chiều batch (squeeze)
-                text_to_emb[nl_query] = emb.squeeze(0).cpu()
+                text_to_emb[clean_text] = emb.squeeze(0).cpu()
 
     # 3. Lưu toàn bộ từ điển ra file
     save_path = './data/data/clip_text_embeddings.pt'
