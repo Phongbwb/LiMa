@@ -1,0 +1,1 @@
+{"_runtime": 183608.468068864, "Train/Total_Loss": 7.309493541717529, "Train/Loss_Gate": 0.6917453408241272, "Train/Loss_LiMa": 0.007280746009200811, "_timestamp": 1775851236.2533166, "Train/Loss_BBox": 1.1778944730758667, "System/LR_Head": 4.75240378875314e-06, "System/Grad_Norm": 9.955343246459961, "_step": 29640}

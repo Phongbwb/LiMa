@@ -1,189 +1,196 @@
-import os
 import json
+import os
+import random
 import torch
-import numpy as np
-from PIL import Image
+from PIL import Image, ImageFilter
 from torch.utils.data import Dataset
-import torchvision.transforms as T
+import torch.nn.functional as F
+
+def default_loader(path):
+    return Image.open(path).convert('RGB')
 
 class CityFlowNLDataset(Dataset):
-    def __init__(self, json_path, data_root, text_emb_path, transform=None, 
-                 max_frames=8, img_size=384, feat_stride=16):
+    def __init__(self, data_cfg, json_path, text_emb_path, transform=None, Random=True, type=None, finetune=False):
         """
-        Args:
-            json_path: Đường dẫn file train-track.json hoặc test-track.json
-            data_root: Thư mục chứa các folder S01, S02...
-            max_frames: Số lượng frame tối đa load trong 1 batch (T) để tránh OOM
-            feat_stride: Tỉ lệ thu nhỏ của backbone (xuống heatmap)
+        Dataset chuyên biệt cho kiến trúc Two-Stream MambaVLM.
+        :param data_cfg: CfgNode chứa cấu hình đường dẫn (DATA_DIR, CITYFLOW_PATH).
+        :param json_path: Đường dẫn tới file JSON chứa tracks (train/val).
+        :param text_emb_path: Đường dẫn tới file .pt chứa CLIP text embeddings đã bóc tách.
         """
-        self.data_root = data_root
-        self.json_path = json_path # <--- Sửa lỗi AttributeError
+        self.data_cfg = data_cfg
+        self.crop_area = data_cfg.CROP_AREA
+        self.dataset_dir = os.path.join(self.data_cfg.DATA_DIR, self.data_cfg.CITYFLOW_PATH)
+        self.json_dir = os.path.join(self.data_cfg.ROOT_DIR, json_path)
         
-        with open(json_path, 'r') as f:
-            full_data = json.load(f)
+        self.random = Random
+        self.finetune = finetune
+        self.type = type
         
-        # Chỉ nạp những folder bạn đang có (S01, S02, S05)
-        available_folders = ["S01", "S02", "S05"]
-        self.data = {}
-        for tid, info in full_data.items():
-            f_path = info['frames'][0]
-            if any(folder in f_path for folder in available_folders):
-                self.data[tid] = info
+        # --- CẤU HÌNH SEQUENCE ---
+        self.num_frames_to_sample = 4  # Số lượng frame trong chuỗi thời gian
+        self.blur_radius = 10          # Độ mờ của background (Ảnh Spatial)
         
-        # Danh sách ID này bây giờ CHỈ chứa S01 (đối với tập test)
-        self.track_ids = list(self.data.keys())
-        print(f"📦 Dataset: Đã nạp {len(self.track_ids)} tracks.")
+        # --- 1. TẢI TEXT EMBEDDINGS ---
+        print(f"[{self.type}] Đang tải Text Embeddings từ: {text_emb_path}")
+        self.text_embs = torch.load(text_emb_path, map_location="cpu")
         
-        self.max_frames = max_frames
-        self.img_size = img_size
-        self.feat_stride = feat_stride
-        self.output_size = img_size // feat_stride
+        # --- 2. TẢI FILE JSON TRỢ GIÚP ---
+        with open(self.json_dir) as f:
+            tracks = json.load(f)
+            if self.type == "train":
+                print(f"Loading JSON for training from: {self.json_dir}")
+            else:
+                print(f"Loading JSON for evaluation from: {self.json_dir}")
+
+        self.list_of_uuids = list(tracks.keys())
+        self.list_of_tracks = list(tracks.values())
+        self.transform = transform
         
-        # Transform cơ bản: Resize -> Tensor -> Normalize (theo chuẩn ImageNet)
-        self.transform = transform or T.Compose([
-            T.Resize((img_size, img_size)),
-            T.ToTensor(),
-            T.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
-        ])
-        # 1. TẢI TỪ ĐIỂN TEXT EMBEDDING VÀO RAM
-        print(f"Đang tải Text Embeddings từ {text_emb_path}...")
-        self.text_embs = torch.load(text_emb_path)
+        self.all_indexs = list(range(len(self.list_of_uuids)))
+        print(f"[{self.type}] Tổng số lượng xe (tracks): {len(self.all_indexs)}")
 
     def __len__(self):
-        return len(self.track_ids)
+        return len(self.all_indexs)
 
-    def _get_gaussian_radius(self, box_w, box_h, min_overlap=0.7):
-        """Tính bán kính Gaussian cho Heatmap dựa trên kích thước box"""
-        a1  = 1
-        b1  = (box_w + box_h)
-        c1  = box_w * box_h * (1 - min_overlap) / (1 + min_overlap)
-        sq1 = np.sqrt(b1 ** 2 - 4 * a1 * c1)
-        r1  = (b1 + sq1) / 2
-
-        a2  = 4
-        b2  = 2 * (box_w + box_h)
-        c2  = (1 - min_overlap) * box_w * box_h
-        sq2 = np.sqrt(b2 ** 2 - 4 * a2 * c2)
-        r2  = (b2 + sq2) / 2
-
-        a3  = 4 * min_overlap
-        b3  = -2 * min_overlap * (box_w + box_h)
-        c3  = (min_overlap - 1) * box_w * box_h
-        sq3 = np.sqrt(b3 ** 2 - 4 * a3 * c3)
-        r3  = (b3 + sq3) / 2
-        return min(r1, r2, r3)
-
-    def _draw_gaussian(self, heatmap, center, radius, k=1):
-        """Vẽ điểm cực đại Gaussian lên heatmap"""
-        diameter = 2 * radius + 1
-        gaussian = self._gaussian_label(radius, sigma=diameter/6)
+    def __getitem__(self, index):
+        tmp_index = self.all_indexs[index]
+        track = self.list_of_tracks[tmp_index]
         
-        x, y = int(center[0]), int(center[1])
-        height, width = heatmap.shape[0:2]
-        
-        left, right = min(x, radius), min(width - x, radius + 1)
-        top, bottom = min(y, radius), min(height - y, radius + 1)
-
-        masked_heatmap  = heatmap[y - top:y + bottom, x - left:x + right]
-        masked_gaussian = gaussian[radius - top:radius + bottom, radius - left:radius + right]
-        if min(masked_gaussian.shape) > 0 and min(masked_heatmap.shape) > 0:
-            np.maximum(masked_heatmap, masked_gaussian * k, out=masked_heatmap)
-        return heatmap
-
-    def _gaussian_label(self, radius, sigma=1):
-        x, y = np.ogrid[-radius:radius+1, -radius:radius+1]
-        h = np.exp(-(x*x + y*y) / (2 * sigma * sigma))
-        h[h < np.finfo(h.dtype).eps * h.max()] = 0
-        return h
-
-    def __getitem__(self, idx):
-        track_id = self.track_ids[idx]
-        item = self.data[track_id]
-        
-        frames_path = item['frames']
-        boxes = np.array(item['boxes']) # [x, y, w, h]
-        n_frames = len(frames_path)
-
-        # --- ĐOẠN CODE MỚI: XỬ LÝ SỐ LƯỢNG FRAME ---
-        indices = list(range(n_frames))
-        
-        if n_frames > self.max_frames:
-            # Video dài: Cắt một cửa sổ ngẫu nhiên
-            start_f = np.random.randint(0, n_frames - self.max_frames)
-            indices = indices[start_f : start_f + self.max_frames]
+        # ==========================================
+        # 1. LẤY VÀ XỬ LÝ TEXT QUERIES
+        # ==========================================
+        if self.random:
+            nl_idx = random.randint(0, len(track["nl"]) - 1)
         else:
-            # Video ngắn: Lặp lại frame cuối cùng cho đến khi đủ max_frames
-            while len(indices) < self.max_frames:
-                indices.append(indices[-1])
-        
-        # Áp dụng indices đã xử lý để lấy frame và box
-        selected_frames = [frames_path[i] for i in indices]
-        selected_boxes = [boxes[i] for i in indices]
-
-        video_tensor = []
-        hms, szs, offs = [], [], []
-
-        # FIX: Xử lý đường dẫn cho frame đầu tiên để lấy kích thước
-        first_frame_clean = selected_frames[0].lstrip('./') 
-        first_frame_full = os.path.normpath(os.path.join(self.data_root, first_frame_clean))
-        
-        with Image.open(first_frame_full) as img:
-            orig_w, orig_h = img.size
-
-        for i, f_path in enumerate(selected_frames):
-            full_path = os.path.join(self.data_root, f_path)
-            img = Image.open(full_path).convert('RGB')
-            video_tensor.append(self.transform(img))
-
-            # Ground Truth cho CenterNet
-            hm = np.zeros((self.output_size, self.output_size), dtype=np.float32)
-            sz = np.zeros((2, self.output_size, self.output_size), dtype=np.float32)
-            off = np.zeros((2, self.output_size, self.output_size), dtype=np.float32)
-
-            box = selected_boxes[i] # [x, y, w, h]
-            # Chuyển sang tọa độ Feature Map
-            f_box_w = (box[2] / orig_w) * self.output_size
-            f_box_h = (box[3] / orig_h) * self.output_size
-            f_cx = ((box[0] + box[2]/2) / orig_w) * self.output_size
-            f_cy = ((box[1] + box[3]/2) / orig_h) * self.output_size
-
-            radius = max(0, int(self._get_gaussian_radius(f_box_w, f_box_h)))
-            ct = np.array([f_cx, f_cy], dtype=np.float32)
-            ct_int = ct.astype(np.int32)
+            nl_idx = 1 if len(track["nl"]) > 1 else 0
             
-            # Vẽ Heatmap
-            self._draw_gaussian(hm, ct_int, radius)
-            # Ghi nhận Size (w, h) và Offset tại vị trí tâm
-            if ct_int[0] < self.output_size and ct_int[1] < self.output_size:
-                sz[:, ct_int[1], ct_int[0]] = [f_box_w, f_box_h]
-                off[:, ct_int[1], ct_int[0]] = ct - ct_int
-
-            hms.append(hm); szs.append(sz); offs.append(off)
-
-        # 4. Xử lý Text (NL)
-        # Chọn ngẫu nhiên 1 trong các câu mô tả để tăng tính đa dạng (Augmentation)
-        # --- BẢN VÁ TRIỆT ĐỂ: XỬ LÝ TEXT ---
-        all_nl = item.get('nl', []) + item.get('nl_other_views', [])
-        text_tensor = torch.zeros(32, 512, dtype=torch.float32)
-
-        # 1. Lọc bỏ ngay lập tức những chuỗi rỗng hoặc chỉ có dấu cách
-        valid_nls = [text for text in all_nl if text.strip() != ""]
-
-        # 2. Nếu sau khi lọc mà vẫn còn text hợp lệ thì mới xử lý
-        if len(valid_nls) > 0:
-            selected_nl = np.random.choice(valid_nls).strip().lower()
+        if self.finetune:
+            nl_idx = 0
             
-            if selected_nl in self.text_embs:
-                text_tensor = self.text_embs[selected_nl]
+        raw_text = track["nl"][nl_idx]
+        # Chuẩn hóa text để làm key tra cứu embedding (Khớp với tool bóc tách)
+        clean_text = raw_text.strip().lower()
+
+        # ==========================================
+        # 2. LẤY MẪU CHUỖI 4 FRAMES
+        # ==========================================
+        num_frames_in_track = len(track["frames"])
+        
+        if self.random:
+            if num_frames_in_track >= self.num_frames_to_sample:
+                frame_indices = random.sample(range(num_frames_in_track), self.num_frames_to_sample)
             else:
-                # Lúc này chắc chắn selected_nl là một câu có chữ đàng hoàng
-                print(f"⚠️ Cảnh báo: Không tìm thấy embedding cho '{selected_nl}'")
+                frame_indices = [random.randint(0, num_frames_in_track - 1) for _ in range(self.num_frames_to_sample)]
+        else:
+            frame_indices = [i % num_frames_in_track for i in range(self.num_frames_to_sample)]
 
-        return {
-            "video": torch.stack(video_tensor), # [T, 3, 384, 384]
-            "hm": torch.from_numpy(np.stack(hms)),   # [T, 1, H', W']
-            "sz": torch.from_numpy(np.stack(szs)),   # [T, 2, H', W']
-            "off": torch.from_numpy(np.stack(offs)), # [T, 2, H', W']
-            "text_tokens": text_tensor,
-            "track_id": track_id
+        crop_list = []
+        frame_list = []
+        blurred_frame_list = [] 
+
+        # ==========================================
+        # 3. XỬ LÝ HÌNH ẢNH (SPATIAL & CONTEXT)
+        # ==========================================
+        for f_idx in frame_indices:
+            frame_path = os.path.join(self.dataset_dir, track["frames"][f_idx])
+            frame = default_loader(frame_path)
+            
+            raw_box = track["boxes"][f_idx]
+            exact_box = (
+                int(raw_box[0]), int(raw_box[1]), 
+                int(raw_box[0] + raw_box[2]), int(raw_box[1] + raw_box[3])
+            )
+            
+            # --- LUỒNG SPATIAL 1: LÀM MỜ NỀN ---
+            blurred_frame = frame.filter(ImageFilter.GaussianBlur(radius=self.blur_radius))
+            sharp_car = frame.crop(exact_box)
+            blurred_frame.paste(sharp_car, exact_box)
+            
+            # --- LUỒNG SPATIAL 2: CẮT RIÊNG BBOX ---
+            if self.crop_area == 1.6666667:
+                box_expanded = (int(raw_box[0]-raw_box[2]/3.), int(raw_box[1]-raw_box[3]/3.), int(raw_box[0]+4*raw_box[2]/3.), int(raw_box[1]+4*raw_box[3]/3.))
+            else:
+                box_expanded = (int(raw_box[0]-(self.crop_area-1)*raw_box[2]/2.), int(raw_box[1]-(self.crop_area-1)*raw_box[3]/2), int(raw_box[0]+(self.crop_area+1)*raw_box[2]/2.), int(raw_box[1]+(self.crop_area+1)*raw_box[3]/2.))
+            
+            crop = frame.crop(box_expanded)
+            
+            # ==========================================================
+            #  SỬA LỖI Ở ĐÂY: Ép buộc tất cả ảnh phải là RGB (3 Kênh)
+            # ==========================================================
+            crop = crop.convert('RGB')
+            frame = frame.convert('RGB')
+            blurred_frame = blurred_frame.convert('RGB')
+            
+            # --- ÁP DỤNG DATA AUGMENTATION ---
+            if self.transform is not None:
+                crop = self.transform(crop)
+                frame = self.transform(frame)
+                blurred_frame = self.transform(blurred_frame)
+            
+            crop_list.append(crop)
+            frame_list.append(frame)
+            blurred_frame_list.append(blurred_frame)
+
+        # Gộp danh sách thành Tensors 4D: [T, C, H, W]
+        if self.transform is not None:
+            crop_tensor = torch.stack(crop_list)             
+            frame_tensor = torch.stack(frame_list)           
+            blurred_frame_tensor = torch.stack(blurred_frame_list) 
+        else:
+            crop_tensor = crop_list
+            frame_tensor = frame_list
+            blurred_frame_tensor = blurred_frame_list
+
+        # ==========================================
+        # 4. ĐÓNG GÓI OUTPUT DICTIONARY
+        # ==========================================
+        data = {
+            # HÌNH ẢNH
+            "crop": crop_tensor,                   # Ảnh chỉ cắt vùng xe (Spatial Option 1)
+            "blurred_frame": blurred_frame_tensor, # Ảnh toàn cảnh làm mờ nền (Spatial Option 2)
+            "frame": frame_tensor,                 # Ảnh gốc toàn cảnh (Dành cho Context Branch)
+            
+            # METADATA
+            "text": raw_text,                      
+            "car_id": tmp_index,                   # ID thứ tự của xe (Dùng cho nhánh Re-ID)
+            "track_uuid": self.list_of_uuids[tmp_index] 
         }
+
+        # KẾT NỐI TEXT EMBEDDINGS TỪ FILE .PT
+        if clean_text in self.text_embs:
+            emb_dict = self.text_embs[clean_text]
+            data.update({
+                "color_embedding": emb_dict["color_embedding"],       # Shape: [8, 512]
+                "type_embedding": emb_dict["type_embedding"],         # Shape: [8, 512]
+                "motion_embedding": emb_dict["motion_embedding"],     # Shape: [16, 512]
+                "context_embedding": emb_dict["context_embedding"],   # Shape: [16, 512]
+                "color_input_ids": emb_dict["color_input_ids"],
+                "type_input_ids": emb_dict["type_input_ids"],
+                "motion_input_ids": emb_dict["motion_input_ids"],
+                "context_input_ids": emb_dict["context_input_ids"],
+                
+                # ĐÃ THÊM: Embeddings của câu tổng hợp (Color + Type + Motion)
+                "text_embeds": emb_dict["text_embeds"],             # Shape: [32, 512]
+                "text_embeds_ids": emb_dict["text_embeds_ids"],     # Shape: [32]
+                "text_embeds_text": emb_dict["text_embeds_text"],   # String
+            })
+        else:
+            # Fallback an toàn nếu có câu text chưa được encode
+            print(f"[Warning] Text embedding not found for: '{clean_text}'")
+            data.update({
+                "color_embedding": torch.zeros((8, 512), dtype=torch.float32),
+                "type_embedding": torch.zeros((8, 512), dtype=torch.float32),
+                "motion_embedding": torch.zeros((16, 512), dtype=torch.float32),
+                "context_embedding": torch.zeros((16, 512), dtype=torch.float32),
+                "color_input_ids": torch.zeros((8,), dtype=torch.long),
+                "type_input_ids": torch.zeros((8,), dtype=torch.long),
+                "motion_input_ids": torch.zeros((16,), dtype=torch.long),
+                "context_input_ids": torch.zeros((16,), dtype=torch.long),
+                
+                # ĐÃ THÊM: Fallback cho text_embeds (max_len = 32 khớp với script trích xuất)
+                "text_embeds": torch.zeros((32, 512), dtype=torch.float32),
+                "text_embeds_ids": torch.zeros((32,), dtype=torch.long),
+                "text_embeds_text": "unknown vehicle",
+            })
+
+        return data

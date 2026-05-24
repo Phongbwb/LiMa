@@ -1,0 +1,60 @@
+_wandb:
+    value:
+        cli_version: 0.25.1
+        e:
+            2hy61r0p7hr1fz1mofv70vjh5jp7044l:
+                cpu_count: 6
+                cpu_count_logical: 12
+                cudaVersion: "12.6"
+                disk:
+                    /:
+                        total: "1081101176832"
+                        used: "19786145792"
+                email: nguyenthephongctn@gmail.com
+                executable: /home/phong/miniconda3/envs/grdthesis/bin/python
+                git:
+                    commit: 11b481397dde987213136a26bc66c1d69c439de6
+                    remote: https://github.com/Phongbwb/LiMa.git
+                gpu: NVIDIA GeForce RTX 4060
+                gpu_count: 1
+                gpu_nvidia:
+                    - architecture: Ada
+                      memoryTotal: "8585740288"
+                      name: NVIDIA GeForce RTX 4060
+                      uuid: GPU-81c19db9-f433-4f3c-337f-1bbfec7b5962
+                host: DESKTOP-NS5Q3ER
+                memory:
+                    total: "12542226432"
+                os: Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.39
+                program: -m experiments.train
+                python: CPython 3.10.20
+                root: /mnt/d/code/DATN
+                startedAt: "2026-04-11T05:46:43.115083Z"
+                writerId: 2hy61r0p7hr1fz1mofv70vjh5jp7044l
+        m: []
+        python_version: 3.10.20
+        t:
+            "1":
+                - 1
+                - 11
+                - 41
+                - 49
+            "2":
+                - 1
+                - 11
+                - 41
+                - 49
+            "3":
+                - 13
+                - 16
+            "4": 3.10.20
+            "5": 0.25.1
+            "6": 4.38.2
+            "12": 0.25.1
+            "13": linux-x86_64
+accum_steps:
+    value: 8
+batch_size:
+    value: 2
+bfloat16:
+    value: true

@@ -1,268 +1,475 @@
 import os
+import json
+import random
+import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
+from torch.optim.lr_scheduler import SequentialLR, LinearLR, CosineAnnealingLR
+from torch.optim.swa_utils import AveragedModel, SWALR
 from torch.utils.data import DataLoader
 from torch.cuda.amp import GradScaler, autocast
-import json
+import argparse
+from tqdm import tqdm
 
-# Tạm giả định bạn đã lưu các class này trong các file tương ứng
-# Nếu bạn gom chung vào 1 file thì không cần import
+# Import model và dataset của bạn
 from models.lima import LiMaVLM
 from experiments.utils.dataset import CityFlowNLDataset
 
 # ==========================================
-# 1. CÁC HÀM LOSS CHUYÊN DỤNG
+# 1. CÁC HÀM TÍNH LOSS
 # ==========================================
-def focal_loss_centernet(pred_hm, gt_hm, alpha=2, beta=4):
-    """Focal Loss cho Heatmap"""
-    pred_hm = torch.clamp(pred_hm, min=1e-4, max=1 - 1e-4)
-    pos_inds = gt_hm.eq(1).float()
-    neg_inds = gt_hm.lt(1).float()
+def focal_loss_centernet(pred_hm, gt_hm, alpha=1.5, beta=4):
+    """Focal Loss cho Heatmap Coarse (CenterNet)"""
+    pred_hm = pred_hm.float()
+    gt_hm = gt_hm.float()
+    pred_hm = torch.clamp(pred_hm, 1e-4, 1 - 1e-4)
+    pos = gt_hm.eq(1).float()
+    neg = gt_hm.lt(1).float()
+    neg_weight = torch.pow(1 - gt_hm, beta)
+    pos_loss = torch.log(pred_hm) * torch.pow(1 - pred_hm, alpha) * pos
+    neg_loss = torch.log(1 - pred_hm) * torch.pow(pred_hm, alpha) * neg_weight * neg
+    num_pos = pos.sum()
+    if num_pos == 0: return -neg_loss.sum()
+    return -(pos_loss.sum() + neg_loss.sum()) / num_pos
 
-    neg_weights = torch.pow(1 - gt_hm, beta)
-    
-    pos_loss = torch.log(pred_hm) * torch.pow(1 - pred_hm, alpha) * pos_inds
-    neg_loss = torch.log(1 - pred_hm) * torch.pow(pred_hm, alpha) * neg_weights * neg_inds
-
-    num_pos = pos_inds.float().sum()
-    pos_loss = pos_loss.sum()
-    neg_loss = neg_loss.sum()
-
-    if num_pos == 0:
-        return -neg_loss
-    return -(pos_loss + neg_loss) / num_pos
-
-def reg_l1_loss(pred, gt, mask):
-    """L1 Loss có mặt nạ (Chỉ phạt tại vị trí có xe)"""
-    pred = pred * mask
-    gt = gt * mask
-    loss = F.l1_loss(pred, gt, reduction='sum')
-    loss = loss / (mask.sum() + 1e-4)
+def masked_l1_loss(pred, target, mask):
+    """L1 Loss cho Size và Offset chỉ tại vị trí tâm"""
+    mask = mask.unsqueeze(2) 
+    loss = F.l1_loss(pred, target, reduction='none')
+    loss = (loss * mask).sum() / (mask.sum() * 2 + 1e-3) 
     return loss
 
-def in_batch_contrastive_loss(video_feat, text_feat, temperature=0.07):
-    """InfoNCE Loss cho Video-Text Retrieval"""
-    logits = (video_feat @ text_feat.T) / temperature
-    labels = torch.arange(logits.size(0), device=logits.device)
-    loss_v2t = F.cross_entropy(logits, labels)
-    loss_t2v = F.cross_entropy(logits.T, labels)
-    return (loss_v2t + loss_t2v) / 2
+def hard_contrastive_and_ranking_loss(vid_feat, txt_pos, txt_neg, temperature=0.05, margin=0.2, label_smoothing=0.1):
+    """InfoNCE Loss và Margin Ranking Loss có tích hợp Label Smoothing & Feature Dropout"""
+    if vid_feat.requires_grad: 
+        vid_feat = F.dropout(vid_feat, p=0.1, training=True)
+        txt_pos = F.dropout(txt_pos, p=0.1, training=True)
+
+    vid_feat = F.normalize(vid_feat, p=2, dim=-1)
+    txt_pos = F.normalize(txt_pos, p=2, dim=-1)
+    txt_neg = F.normalize(txt_neg, p=2, dim=-1)
+
+    # InfoNCE Loss
+    sim_v2t_inbatch = torch.matmul(vid_feat, txt_pos.t()) / temperature 
+    sim_v2t_hard = torch.sum(vid_feat * txt_neg, dim=-1, keepdim=True) / temperature
+    logits_v2t = torch.cat([sim_v2t_inbatch, sim_v2t_hard], dim=1) 
+    labels = torch.arange(vid_feat.size(0), dtype=torch.long, device=vid_feat.device)
+    
+    loss_v2t = F.cross_entropy(logits_v2t, labels, label_smoothing=label_smoothing)
+    logits_t2v = sim_v2t_inbatch.t()
+    loss_t2v = F.cross_entropy(logits_t2v, labels, label_smoothing=label_smoothing)
+    loss_cl = (loss_v2t + loss_t2v) / 2.0
+
+    # Margin Ranking Loss
+    sim_pos_score = torch.sum(vid_feat * txt_pos, dim=-1)
+    sim_neg_score = torch.sum(vid_feat * txt_neg, dim=-1)
+    target = torch.ones_like(sim_pos_score)
+    loss_rank = F.margin_ranking_loss(sim_pos_score, sim_neg_score, target, margin=margin)
+
+    return loss_cl, loss_rank
 
 # ==========================================
-# 2. HÀM VALIDATION
+# 2. CHẾ ĐỘ ĐÓNG BĂNG MẠNG VÀ OPTIMIZER
 # ==========================================
+def setup_training_stage(model, stage, lr):
+    for p in model.parameters():
+        p.requires_grad = False
+
+    random_initialized_modules = [
+        model.video_backbone.proj if hasattr(model.video_backbone, 'proj') else None,
+        model.video_backbone.deform_patch_embed if hasattr(model.video_backbone, 'deform_patch_embed') else None,
+        model.video_backbone.spatial_gate,
+        model.video_backbone.temp_mlp,
+        model.video_backbone.spatial_mlp,
+        model.text_proj, 
+        model.mamba,
+        model.coarse_hm_head, 
+        model.coarse_sz_head, 
+        model.coarse_offset_head
+    ]
+    random_initialized_modules = [m for m in random_initialized_modules if m is not None]
+
+    if stage == 1:
+        print("🟢 STAGE 1: Warm-up (Train các layer ngẫu nhiên | FREEZE Backbone & LNN)")
+        for m in random_initialized_modules:
+            for p in m.parameters(): p.requires_grad = True
+        if hasattr(model.video_backbone, 'pe_scale'): model.video_backbone.pe_scale.requires_grad = True
+
+    elif stage == 2:
+        print("🟢 STAGE 2: Joint Finetune (UNFREEZE Backbone Late Layers + Các layer ngẫu nhiên | FREEZE LNN)")
+        for m in random_initialized_modules:
+            for p in m.parameters(): p.requires_grad = True
+        if hasattr(model.video_backbone, 'pe_scale'): model.video_backbone.pe_scale.requires_grad = True
+        
+        if hasattr(model.video_backbone, 'feature_extractor'):
+            if len(model.video_backbone.feature_extractor) > 6:
+                for p in model.video_backbone.feature_extractor[6].parameters(): p.requires_grad = True
+            else:
+                for p in model.video_backbone.feature_extractor[-1].parameters(): p.requires_grad = True
+
+    elif stage == 3:
+        print("🟢 STAGE 3: (Bỏ qua Trajectory Comparator)")
+        pass 
+            
+    elif stage == 4:
+        print("🟢 STAGE 4: Finetune ALL (End-to-End)")
+        for p in model.parameters(): p.requires_grad = True
+    else:
+        raise ValueError(f"Stage {stage} không hợp lệ!")
+
+    resnet_params = []
+    if stage in [2, 4] and hasattr(model.video_backbone, 'feature_extractor'):
+        resnet_params = [p for p in model.video_backbone.feature_extractor.parameters() if p.requires_grad]
+        
+    resnet_ids = set(id(p) for p in resnet_params)
+    other_params = [p for p in model.parameters() if p.requires_grad and id(p) not in resnet_ids]
+
+    def split_decay_nodecay(params):
+        decay = [p for p in params if p.ndim >= 2]
+        nodecay = [p for p in params if p.ndim < 2]
+        return decay, nodecay
+
+    optim_groups = []
+    if resnet_params: 
+        res_decay, res_nodecay = split_decay_nodecay(resnet_params)
+        optim_groups.append({'params': res_decay, 'lr': lr * 0.1, 'weight_decay': 1e-4})
+        optim_groups.append({'params': res_nodecay, 'lr': lr * 0.1, 'weight_decay': 0.0})
+        
+    if other_params: 
+        oth_decay, oth_nodecay = split_decay_nodecay(other_params)
+        optim_groups.append({'params': oth_decay, 'lr': lr, 'weight_decay': 1e-4})
+        optim_groups.append({'params': oth_nodecay, 'lr': lr, 'weight_decay': 0.0})
+
+    return optim_groups
+
+# ==========================================
+# 3. EMA & CÁC HÀM TIỆN ÍCH BỔ TRỢ
+# ==========================================
+class EMA:
+    def __init__(self, model, decay=0.999):
+        self.model = model
+        self.decay = decay
+        self.shadow, self.backup = {}, {}
+        for k, v in model.named_parameters():
+            if v.requires_grad: self.shadow[k] = v.clone().detach()
+
+    def update(self):
+        for k, v in self.model.named_parameters():
+            if v.requires_grad: self.shadow[k] = self.decay * self.shadow[k] + (1 - self.decay) * v.detach()
+
+    def apply_shadow(self):
+        self.backup = {}
+        for k, v in self.model.named_parameters():
+            if v.requires_grad:
+                self.backup[k] = v.clone()
+                v.data.copy_(self.shadow[k])
+
+    def restore(self):
+        for k, v in self.model.named_parameters():
+            if v.requires_grad: v.data.copy_(self.backup[k])
+
 @torch.no_grad()
-def validate_limavlm(model, val_loader, queries_json_path, text_embs_dict, device='cuda'):
+def custom_update_bn(loader, model, device='cuda'):
+    print("🔄 Đang chạy Custom Update BatchNorm cho SWA...")
+    momenta = {}
+    for module in model.modules():
+        if isinstance(module, torch.nn.modules.batchnorm._BatchNorm):
+            module.running_mean = torch.zeros_like(module.running_mean)
+            module.running_var = torch.ones_like(module.running_var)
+            momenta[module] = module.momentum
+
+    if not momenta: return
+
+    was_training = model.training
+    model.train()
+    for module in momenta.keys():
+        module.momentum = None
+        if hasattr(module, 'num_batches_tracked'):
+            module.num_batches_tracked *= 0
+
+    for batch in loader:
+        video = batch['video'].to(device, non_blocking=True)
+        color_emb = batch['color_embedding'].to(device, non_blocking=True)
+        type_emb = batch['type_embedding'].to(device, non_blocking=True)
+        motion_emb = batch['motion_embedding'].to(device, non_blocking=True)
+        context_emb = batch['context_embedding'].to(device, non_blocking=True)
+        
+        with torch.cuda.amp.autocast(dtype=torch.bfloat16):
+            model(video, color_emb, type_emb, motion_emb, context_emb)
+
+    for module in momenta.keys():
+        module.momentum = momenta[module]
+    model.train(was_training)
+
+@torch.no_grad()
+def validate_limavlm(model, val_loader, device='cuda'):
     model.eval()
+    print("📹 Đang chạy Validation...")
     
-    # --- BƯỚC MỚI: Đọc file JSON từ đầu để map track_id -> query ---
-    print("📖 Đang nạp metadata để chuẩn bị text cho Gallery...")
-    with open(val_loader.dataset.json_path, 'r') as f:
-        full_track_ids = list(json.load(f).keys())
-        
-    with open(queries_json_path, 'r') as f:
-        queries_data = json.load(f)
-    full_query_ids = list(queries_data.keys())
-    # -------------------------------------------------------------
-
-    # 1. Trích xuất đặc trưng Gallery
-    gallery_feats_dict = {}
-    print("📹 Đang trích xuất Gallery features (Sử dụng Real Text)...")
+    total_samples = 0
+    dummy_metric = 0.0 # TODO: Viết hàm IoU hoặc Accuracy của bạn ở đây
+    
     for batch in val_loader:
-        video = batch['video'].to(device)
-        video = video.permute(0, 2, 1, 3, 4).contiguous()
-        ids = batch['track_id']
+        video = batch['video'].to(device, non_blocking=True)
+        B = video.size(0)
+        color_emb = batch['color_embedding'].to(device, non_blocking=True)
+        type_emb = batch['type_embedding'].to(device, non_blocking=True)
+        motion_emb = batch['motion_embedding'].to(device, non_blocking=True)
+        context_emb = batch['context_embedding'].to(device, non_blocking=True)
         
-        # --- BẮT ĐẦU THAY THẾ DUMMY TEXT ---
-        batch_text_tokens = []
-        for tid in ids:
-            original_idx = full_track_ids.index(tid)
-            q_id = full_query_ids[original_idx]
-            nl_text = queries_data[q_id]['nl'][0].strip().lower()
+        with autocast(dtype=torch.bfloat16):
+            out = model(video, color_emb, type_emb, motion_emb, context_emb)
             
-            # Lấy text embedding tương ứng (shape: [32, 512])
-            t_feat = text_embs_dict.get(nl_text, torch.zeros(32, 512))
-            batch_text_tokens.append(t_feat)
-            
-        # Ghép thành batch [B, 32, 512] và đưa lên GPU
-        real_text_tokens = torch.stack(batch_text_tokens).to(device)
-        # --- KẾT THÚC THAY THẾ DUMMY TEXT ---
-        
-        with autocast():
-            # Truyền text thật của track_id đó vào mô hình
-            outputs = model(video, real_text_tokens) 
-            
-        feats = outputs["retrieval_feat"].cpu()
-        for i, tid in enumerate(ids):
-            gallery_feats_dict[tid] = feats[i]
+            # Tích hợp logic tìm Bbox tốt nhất tại bước Evaluation
+            pred_bboxes = out.get("final_bboxes") # [B, T, 5, 4]
+            pred_scores = out.get("frame_scores") # [B, T, 5]
 
-    ordered_track_ids = val_loader.dataset.track_ids 
-    gallery_feats = torch.stack([gallery_feats_dict[tid] for tid in ordered_track_ids])
+            if pred_bboxes is not None and pred_scores is not None:
+                B_out, T_out, _, _ = pred_bboxes.shape
+                best_idx = torch.argmax(pred_scores, dim=2) # [B, T]
+                
+                b_idx = torch.arange(B_out, device=device).view(B_out, 1).expand(B_out, T_out)
+                t_idx = torch.arange(T_out, device=device).view(1, T_out).expand(B_out, T_out)
+                
+                best_bboxes = pred_bboxes[b_idx, t_idx, best_idx] # [B, T, 4]
+                best_scores = pred_scores[b_idx, t_idx, best_idx] # [B, T]
+                
+                # TODO: So sánh best_bboxes với Ground Truth (batch['gt_boxes']) bằng hàm IoU
+                pass
+                
+        total_samples += B
 
-    # --- BẮT ĐẦU FIX LỖI LOGIC SO KHỚP (Giữ nguyên 100% logic của bạn) ---
-    print("📖 Đang nạp Query features (Khớp vị trí gốc)...")
-    
-    query_feats = []
-    
-    # Duyệt qua từng video S01 đã được lọc
-    for tid in ordered_track_ids:
-        # Tìm vị trí (index) gốc của video này trong file test-tracks
-        original_idx = full_track_ids.index(tid)
-        
-        # Bốc đúng query ở vị trí tương ứng trong file test-queries
-        q_id = full_query_ids[original_idx]
-        nl_text = queries_data[q_id]['nl'][0].strip().lower()
-        
-        # Tra cứu embedding
-        t_feat = text_embs_dict.get(nl_text, torch.zeros(32, 512)).mean(dim=0)
-        query_feats.append(F.normalize(t_feat, dim=0))
-    
-    query_feats = torch.stack(query_feats) # [num_available, 512]
-    # --- KẾT THÚC FIX LỖI LOGIC ---
-
-    # 3. Tính Recall@1 (Lúc này index i chắc chắn khớp với index i)
-    sim_matrix = query_feats @ gallery_feats.T
-    targets = torch.arange(len(ordered_track_ids))
-    preds = sim_matrix.argmax(dim=1)
-    
-    recall_1 = (preds == targets).float().mean().item()
-    print(f"📊 Kết quả Validation (S01): Recall@1 = {recall_1:.4f}")
-    
-    return recall_1
+    print(f"📊 Kết quả Validation: Dummy Metric = {dummy_metric:.4f}")
+    return dummy_metric
 
 # ==========================================
-# 3. VÒNG LẶP HUẤN LUYỆN CHÍNH
+# 4. TRAIN LOOP CHÍNH
 # ==========================================
-def train_limavlm(model, train_loader, val_loader, epochs=15, val_interval=2, device='cuda'):
-    optimizer = optim.AdamW(model.parameters(), lr=1e-4, weight_decay=1e-4)
-    scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=epochs)
-    scaler = GradScaler()
-    
+def train(model, train_loader, val_loader, args, device='cuda'):
     model.to(device)
-    best_recall = 0.0
-    text_embs_dict = torch.load("./data/data/clip_text_tokens.pt")
-    for epoch in range(1, epochs + 1):
-        # --- CURRICULUM LEARNING ---
-        if epoch == 1:
-            print("\n🚀 STAGE 1: Warm-up Macro-Tracking (Epoch 1-5)")
-            for param in model.blocks.parameters(): param.requires_grad = False
-            for param in model.micro_loc.parameters(): param.requires_grad = False
-            for param in model.liquid_memory.parameters(): param.requires_grad = False
-            
-            lambda_hm, lambda_sz, lambda_off = 1.0, 0.1, 1.0
-            lambda_div, lambda_ret = 0.0, 0.0 
-            
-        elif epoch == 20:
-            print("\n🚀 STAGE 2: Full Multi-Task Learning (Epoch 6-15)")
-            for param in model.parameters(): param.requires_grad = True
-            
-            lambda_hm, lambda_sz, lambda_off = 1.0, 0.1, 1.0
-            lambda_div, lambda_ret = 0.5, 5.0 
 
+    optim_groups = setup_training_stage(model, args.stage, args.lr)
+    optimizer = optim.AdamW(optim_groups) 
+
+    steps_per_epoch = len(train_loader)
+    warmup_epochs = max(1, args.epochs // 10) if args.start_epoch == 1 else 0
+    warmup_steps = warmup_epochs * steps_per_epoch
+    
+    warmup_scheduler = LinearLR(optimizer, start_factor=0.01, total_iters=warmup_steps)
+    t_max_steps = max(1, (args.epochs - warmup_epochs) * steps_per_epoch)
+    cosine_scheduler = CosineAnnealingLR(optimizer, T_max=t_max_steps)
+    scheduler = SequentialLR(optimizer, schedulers=[warmup_scheduler, cosine_scheduler], milestones=[warmup_steps])
+    
+    scaler = GradScaler()
+    ema = EMA(model)
+    best_metric = 0.0
+    epochs_no_improve = 0 
+
+    use_swa = (args.stage == 4)
+    if use_swa:
+        swa_model = AveragedModel(model)
+        swa_start_epoch = int(args.epochs * 0.7) 
+        swa_scheduler = SWALR(optimizer, swa_lr=args.lr * 0.5)
+
+    lambda_hm      = 1.0 if args.stage in [1, 2, 4] else 0.0
+    lambda_sz      = 0.1 if args.stage in [1, 2, 4] else 0.0
+    lambda_offset  = 1.0 if args.stage in [1, 2, 4] else 0.0
+    lambda_cl      = 2.5 if args.stage in [1, 2, 4] else 0.0 
+    lambda_offset_backbone = 0.01 if args.stage in [1, 2, 4] else 0.0 
+
+    for epoch in range(args.start_epoch, args.epochs + 1):
         model.train()
         total_loss_epoch = 0
 
-        for batch_idx, batch in enumerate(train_loader):
-            video = batch['video'].to(device)       # [B, T, 3, H, W]
-            gt_hm = batch['hm'].to(device)          # [B, T, 1, H', W']
-            gt_sz = batch['sz'].to(device)          # [B, T, 2, H', W']
-            gt_off = batch['off'].to(device)        # [B, T, 2, H', W']
-            text_tokens = batch['text_tokens'].to(device) # [B, 32, 512]
+        pbar = tqdm(train_loader, desc=f"Stage {args.stage} | Epoch [{epoch}/{args.epochs}]", leave=False, dynamic_ncols=True)
+        
+        for batch_idx, batch in enumerate(pbar):
+            optimizer.zero_grad() 
             
-            B, T = video.shape[:2]
-            video = video.permute(0, 2, 1, 3, 4).contiguous()
+            video = batch['video'].to(device, non_blocking=True)
+            gt_hm = batch['hm'].to(device, non_blocking=True)       
+            gt_sz = batch['sz'].to(device, non_blocking=True)       
+            gt_offset = batch['offset'].to(device, non_blocking=True) 
+            reg_mask = batch['reg_mask'].to(device, non_blocking=True) 
+
+            color_emb = batch['color_embedding'].to(device, non_blocking=True)
+            type_emb = batch['type_embedding'].to(device, non_blocking=True)
+            motion_emb = batch['motion_embedding'].to(device, non_blocking=True)
+            context_emb = batch['context_embedding'].to(device, non_blocking=True)
             
-            # Flatten trục thời gian cho CenterNet
-            gt_hm_2d = gt_hm.view(B*T, 1, gt_hm.size(-2), gt_hm.size(-1))
-            gt_sz_2d = gt_sz.view(B*T, 2, gt_sz.size(-2), gt_sz.size(-1))
-            gt_off_2d = gt_off.view(B*T, 2, gt_off.size(-2), gt_off.size(-1))
-            mask = gt_hm_2d.eq(1).float().expand_as(gt_sz_2d)
+            hn_color_emb = batch['hn_color_embedding'].to(device, non_blocking=True)
+            hn_type_emb = batch['hn_type_embedding'].to(device, non_blocking=True)
 
-            optimizer.zero_grad()
+            with autocast(dtype=torch.bfloat16):
+                out = model(video, color_emb, type_emb, motion_emb, context_emb)
+                
+                # --- TÍCH HỢP TÌM BEST BBOX ---
+                pred_bboxes = out.get("final_bboxes") # [B, T, 5, 4]
+                pred_scores = out.get("frame_scores") # [B, T, 5]
 
-            # Forward Pass với AMP
-            with autocast():
-                outputs = model(video, text_tokens)
-                
-                pred_hm, pred_sz, pred_off = outputs["tracking_heads"]
-                retrieval_feat = outputs["retrieval_feat"]
-                coords, vis = outputs["micro_parts"]
-                
-                # Tính Losses
-                l_hm = focal_loss_centernet(pred_hm, gt_hm_2d)
-                l_sz = reg_l1_loss(pred_sz, gt_sz_2d, mask)
-                l_off = reg_l1_loss(pred_off, gt_off_2d, mask)
-                
-                l_div = model.micro_loc.get_diversity_loss(coords)
-                
-                text_global = F.normalize(text_tokens.mean(dim=1), dim=-1)
-                l_ret = in_batch_contrastive_loss(retrieval_feat, text_global)
+                if pred_bboxes is not None and pred_scores is not None:
+                    B_out, T_out, _, _ = pred_bboxes.shape
+                    best_idx = torch.argmax(pred_scores, dim=2) # [B, T]
+                    
+                    b_idx = torch.arange(B_out, device=device).view(B_out, 1).expand(B_out, T_out)
+                    t_idx = torch.arange(T_out, device=device).view(1, T_out).expand(B_out, T_out)
+                    
+                    best_bboxes = pred_bboxes[b_idx, t_idx, best_idx] # [B, T, 4]
+                    best_scores = pred_scores[b_idx, t_idx, best_idx] # [B, T]
+                    
+                    # (Tùy chọn) Nếu bạn muốn tính thêm GIoU Loss giữa best_bboxes và GT Bboxes:
+                    # loss_bbox = compute_giou(best_bboxes, gt_bboxes) 
+                # -------------------------------
 
-                loss = (lambda_hm * l_hm) + (lambda_sz * l_sz) + \
-                       (lambda_off * l_off) + (lambda_div * l_div) + \
-                       (lambda_ret * l_ret)
+                l_hm = focal_loss_centernet(out["hm_coarse"], gt_hm) if lambda_hm > 0 else torch.tensor(0.0, device=device)
+                l_sz = masked_l1_loss(out["sz_coarse"], gt_sz, reg_mask) if lambda_sz > 0 else torch.tensor(0.0, device=device)
+                l_offset = masked_l1_loss(out["offset_coarse"], gt_offset, reg_mask) if lambda_offset > 0 else torch.tensor(0.0, device=device)
+                offset_loss = out["loss_off"].mean() if lambda_offset_backbone > 0 else torch.tensor(0.0, device=device)
+                    
+                mamba_out = out.get("mamba_out_grounded") 
+                if lambda_cl > 0 and mamba_out is not None:
+                    B_m, T_m, H, W, D = mamba_out.shape
+                    loss_cl = 0.0; loss_cl_rank = 0.0; valid_items = 0
+                    
+                    noise_std = 0.01
+                    c_emb_noisy = color_emb + torch.randn_like(color_emb) * noise_std
+                    t_emb_noisy = type_emb + torch.randn_like(type_emb) * noise_std
 
-            # Backward Pass
+                    txt_color_pos = model.text_proj(c_emb_noisy).mean(dim=1) 
+                    txt_type_pos = model.text_proj(t_emb_noisy).mean(dim=1) 
+                    txt_color_neg = model.text_proj(hn_color_emb).mean(dim=1) 
+                    txt_type_neg = model.text_proj(hn_type_emb).mean(dim=1) 
+                    
+                    for b in range(B_m):
+                        for t in range(T_m):
+                            mask_bt = reg_mask[b, t]
+                            if mask_bt.sum() == 0: continue 
+                            
+                            pos_y, pos_x = torch.where(mask_bt == 1)
+                            car_feature = mamba_out[b, t, pos_y[0], pos_x[0], :].unsqueeze(0)
+                            
+                            l_cl_color, l_rank_color = hard_contrastive_and_ranking_loss(
+                                car_feature, txt_color_pos[b].unsqueeze(0), txt_color_neg[b].unsqueeze(0)
+                            )
+                            l_cl_type, l_rank_type = hard_contrastive_and_ranking_loss(
+                                car_feature, txt_type_pos[b].unsqueeze(0), txt_type_neg[b].unsqueeze(0)
+                            )
+                            
+                            loss_cl += (l_cl_color + l_cl_type) / 2.0
+                            loss_cl_rank += (l_rank_color + l_rank_type) / 2.0
+                            valid_items += 1
+                            
+                    if valid_items > 0:
+                        l_cl, l_cl_rank = loss_cl / valid_items, loss_cl_rank / valid_items
+                    else:
+                        l_cl = l_cl_rank = torch.tensor(0.0, device=device)
+                else:
+                    l_cl = l_cl_rank = torch.tensor(0.0, device=device)
+
+                # Tổng hợp Loss
+                loss = (lambda_hm * l_hm) + (lambda_sz * l_sz) + (lambda_offset * l_offset) + \
+                       (lambda_cl * l_cl) + (lambda_cl * l_cl_rank) + (lambda_offset_backbone * offset_loss)
+
             scaler.scale(loss).backward()
             scaler.unscale_(optimizer)
             torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
             scaler.step(optimizer)
             scaler.update()
+            ema.update()
+
+            if use_swa and epoch >= swa_start_epoch:
+                swa_model.update_parameters(model)
+                swa_scheduler.step()
+            else:
+                scheduler.step()
 
             total_loss_epoch += loss.item()
+            pbar.set_postfix({'L': f"{loss.item():.2f}", 'Hm': f"{l_hm.item():.2f}" if lambda_hm > 0 else "-", 'CL': f"{l_cl.item():.2f}" if lambda_cl > 0 else "-"})
 
-            if batch_idx % 10 == 0:
-                print(f"Epoch [{epoch}/{epochs}] Batch [{batch_idx}/{len(train_loader)}] "
-                      f"Loss: {loss.item():.4f} (HM: {l_hm.item():.4f}, Ret: {l_ret.item():.4f})")
-
-        scheduler.step()
         avg_loss = total_loss_epoch / len(train_loader)
-        print(f"✅ Epoch {epoch} Xong! Average Loss: {avg_loss:.4f}")
-        
-        # --- THỰC HIỆN VALIDATION ---
-        if epoch % val_interval == 0:
-            current_recall = validate_limavlm(model, val_loader, "./data/data/test-queries.json", text_embs_dict, device)
-            
-            if current_recall > best_recall:
-                best_recall = current_recall
-                torch.save(model.state_dict(), "best_limavlm.pth")
-                print(f"🌟 LƯU BEST MODEL MỚI (Recall@1: {best_recall:.4f})")
-        
-        # Lưu checkpoint dự phòng mỗi epoch
-        torch.save(model.state_dict(), f"checkpoint_epoch_{epoch}.pth")
+        print(f"✅ Epoch {epoch}/{args.epochs} | Avg Loss: {avg_loss:.4f} | LR: {optimizer.param_groups[-1]['lr']:.6f}")
+
+        # VALIDATION VÀ EARLY STOPPING
+        if epoch % args.val_interval == 0 or epoch == 1 or epoch == args.epochs:
+            if args.stage >= 3:
+                ema.apply_shadow()
+                current_metric = validate_limavlm(model, val_loader, device)
+                ema.restore()
+
+                if current_metric >= best_metric: # >= để ít nhất save ở epoch 1
+                    best_metric = current_metric
+                    epochs_no_improve = 0 
+                    torch.save(model.state_dict(), os.path.join(args.data_root, f"best_limavlm_stage{args.stage}.pth"))
+                    print(f"🌟 LƯU BEST MODEL (Metric: {best_metric:.4f})")
+                else:
+                    epochs_no_improve += 1
+                    print(f"⚠️ Không tăng cường trên Validation. Patience: {epochs_no_improve}/{args.patience}")
+                    
+                if epochs_no_improve >= args.patience:
+                    print(f"🛑 Kích hoạt Early Stopping tại Epoch {epoch}. Best Metric: {best_metric:.4f}")
+                    break 
+            else:
+                torch.save(model.state_dict(), os.path.join(args.data_root, f"best_limavlm_stage{args.stage}.pth"))
+
+        checkpoint_path = os.path.join(args.data_root, f"checkpoint_stage{args.stage}_epoch_{epoch}.pth")
+        torch.save(model.state_dict(), checkpoint_path)
+
+    if use_swa:
+        print("🌟 Đang tổng hợp SWA Model...")
+        custom_update_bn(train_loader, swa_model, device)
+        torch.save(swa_model.state_dict(), os.path.join(args.data_root, f"best_limavlm_stage4_SWA.pth"))
+        print("✅ Lưu thành công mô hình SWA!")
 
 # ==========================================
-# 4. CHẠY CHƯƠNG TRÌNH (MAIN)
+# 5. MAIN EXECUTION
 # ==========================================
 if __name__ == "__main__":
-    # KIỂM TRA GPU
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--stage", type=int, default=1, choices=[1, 2, 3, 4], help="Giai đoạn huấn luyện (1-4)")
+    parser.add_argument("--data_root", type=str, default="./data/data")
+    parser.add_argument("--train_json", type=str, default="train-tracks.json")
+    parser.add_argument("--val_json", type=str, default="test-tracks.json")
+    parser.add_argument("--text_emb", type=str, default="clip_text_tokens_extracted_optimized.pt")
+    parser.add_argument("--epochs", type=int, default=30)
+    parser.add_argument("--start_epoch", type=int, default=1) 
+    parser.add_argument("--val_interval", type=int, default=2)
+    parser.add_argument("--batch_size", type=int, default=4)
+    parser.add_argument("--num_workers", type=int, default=4)
+    parser.add_argument("--lr", type=float, default=1e-4)
+    parser.add_argument("--seed", type=int, default=42)
+    parser.add_argument("--resume", type=str, default=None)
+    parser.add_argument("--patience", type=int, default=5, help="Số epoch tối đa kích hoạt Early Stopping")
+    args = parser.parse_args()
+
+    def set_seed(seed):
+        random.seed(seed)
+        np.random.seed(seed)
+        torch.manual_seed(seed)
+        torch.cuda.manual_seed_all(seed)
+        torch.backends.cudnn.deterministic = True
+        torch.backends.cudnn.benchmark = False
+        
+    set_seed(args.seed)
     device = "cuda" if torch.cuda.is_available() else "cpu"
-    print(f"💻 Đang sử dụng thiết bị: {device}")
-    if device == "cuda":
-        print(f"Tên GPU: {torch.cuda.get_device_name(0)}")
+    print(f"\n💻 Thiết bị: {device} | 📦 Batch Size: {args.batch_size}")
+    
+    TRAIN_JSON = os.path.join(args.data_root, args.train_json)
+    VAL_JSON = os.path.join(args.data_root, args.val_json)
+    TEXT_EMB_PATH = os.path.join(args.data_root, args.text_emb)
+    
+    train_dataset = CityFlowNLDataset(TRAIN_JSON, args.data_root, TEXT_EMB_PATH, max_frames=8, img_size=384)
+    val_dataset = CityFlowNLDataset(VAL_JSON, args.data_root, TEXT_EMB_PATH, max_frames=8, img_size=384)
+    
+    train_loader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True, num_workers=args.num_workers, pin_memory=True, drop_last=True)
+    val_loader = DataLoader(val_dataset, batch_size=args.batch_size, shuffle=False, num_workers=args.num_workers, pin_memory=True)
+    
+    model = LiMaVLM(d_model=256, d_text=512, num_blocks=4)
 
-    # ĐƯỜNG DẪN DỮ LIỆU (BẠN CHỈNH SỬA Ở ĐÂY)
-    DATA_ROOT = "./data/data"
-    TRAIN_JSON = os.path.join(DATA_ROOT, "train-tracks.json")
-    VAL_JSON = os.path.join(DATA_ROOT, "test-tracks.json") # Đổi thành file validation của bạn
-    TEXT_EMB_PATH = os.path.join(DATA_ROOT, "clip_text_tokens.pt")
-
-    # KHỞI TẠO DATASET VÀ DATALOADER
-    print("📦 Đang chuẩn bị dữ liệu...")
-    train_dataset = CityFlowNLDataset(TRAIN_JSON, DATA_ROOT, TEXT_EMB_PATH, max_frames=8)
-    # Validation nên lấy max_frames cố định để đánh giá công bằng
-    val_dataset = CityFlowNLDataset(VAL_JSON, DATA_ROOT, TEXT_EMB_PATH, max_frames=8) 
-
-    # Batch_size=4 cho RTX 4060 8GB. Nếu OOM, giảm xuống 2.
-    train_loader = DataLoader(train_dataset, batch_size=4, shuffle=True, num_workers=4, pin_memory=True)
-    val_loader = DataLoader(val_dataset, batch_size=4, shuffle=False, num_workers=4, pin_memory=True)
-
-    # KHỞI TẠO MÔ HÌNH
-    print("🧠 Đang khởi tạo LiMaVLM...")
-    model = LiMaVLM(d_model=256, d_text=512, num_blocks=3)
-
-    # BẮT ĐẦU HUẤN LUYỆN
-    print("🔥 Bắt đầu quá trình huấn luyện!")
-    train_limavlm(model, train_loader, val_loader, epochs=80, val_interval=2, device=device)
+    if args.resume is not None and os.path.exists(args.resume):
+        print(f"🔄 Đang tải checkpoint: {args.resume}")
+        model.load_state_dict(torch.load(args.resume, map_location=device))
+        
+    print(f"\n🔥 BẮT ĐẦU TRAINING - STAGE {args.stage}\n")
+    train(model=model, train_loader=train_loader, val_loader=val_loader, args=args, device=device)

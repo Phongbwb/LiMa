@@ -1,25 +1,32 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-# Yêu cầu cài đặt: pip install mamba-ssm einops
+import numpy as np
+
+# ==========================================
+# 0. KHỞI TẠO MODULE MAMBA SSM
+# ==========================================
 try:
     from mamba_ssm.ops.selective_scan_interface import selective_scan_fn
 except ImportError:
     selective_scan_fn = None
-    print("⚠️ Cảnh báo: Không tìm thấy mamba_ssm. SelectiveScan sẽ không hoạt động trên GPU.")
-    
+    print("⚠️ Cảnh báo: mamba_ssm chưa được cài đặt. Không thể chạy module Mamba.")
+
 # ==========================================
-# 2. CORE: BI-DIRECTIONAL HIERARCHICAL MAMBA
+# 1. CORE MODULES (LÕI MAMBA CHUẨN)
 # ==========================================
 class MambaCore(nn.Module):
-    """Lõi Mamba thuần túy tái sử dụng được"""
+    """Lõi Mamba 1D chuẩn. Trọng số được chia sẻ (Weight Sharing) để quét nhiều hướng."""
     def __init__(self, d_model, d_state=16):
         super().__init__()
         self.d_model = d_model
         self.d_state = d_state
         self.in_proj = nn.Linear(d_model, d_model * 2)
-        self.conv1d = nn.Conv1d(d_model, d_model, kernel_size=3, padding=2, groups=d_model)
+        
+        self.conv1d = nn.Conv1d(d_model, d_model, kernel_size=3, padding=1, groups=d_model)
+        
         self.x_proj = nn.Linear(d_model, d_model + 2 * d_state)
+        # Khởi tạo A_log theo chuẩn để tránh nổ gradient
         self.A_log = nn.Parameter(torch.log(torch.arange(1, d_state + 1).float().repeat(d_model, 1)))
         self.D_param = nn.Parameter(torch.ones(d_model))
         self.out_proj = nn.Linear(d_model, d_model)
@@ -28,117 +35,217 @@ class MambaCore(nn.Module):
         B, L, D = x.shape
         xz = self.in_proj(x)
         x_br, z_br = xz.chunk(2, dim=-1)
-        x_conv = F.silu(self.conv1d(x_br.transpose(1, 2))[:, :, :L]).transpose(1, 2)
-
+        
+        x_conv = F.silu(self.conv1d(x_br.transpose(1, 2))).transpose(1, 2)
         proj = self.x_proj(x_conv)
         delta, B_mat, C_mat = torch.split(proj, [D, self.d_state, self.d_state], dim=-1)
         A = -torch.exp(self.A_log.float())
 
+        if selective_scan_fn is None:
+            raise RuntimeError("mamba_ssm is required to run MambaCore.")
+
         y = selective_scan_fn(
-            x_conv.transpose(1, 2).contiguous(), delta.transpose(1, 2).contiguous(), 
-            A, B_mat.transpose(1, 2).contiguous(), 
-            C_mat.transpose(1, 2).contiguous(), self.D_param.float(),
+            x_conv.transpose(1, 2).contiguous(), 
+            delta.transpose(1, 2).contiguous(), 
+            A, 
+            B_mat.transpose(1, 2).contiguous(), 
+            C_mat.transpose(1, 2).contiguous(), 
+            self.D_param.float(),
             delta_softplus=True
         ).transpose(1, 2)
 
         return self.out_proj(y * F.silu(z_br))
 
-class BottleneckTextDecoupler(nn.Module):
-    """
-    Decoupler điểm ngọt: Vừa có tính phi tuyến để tách ngữ nghĩa tốt, 
-    vừa là dạng bottleneck để hội tụ nhanh và không phá hỏng gradient.
-    """
-    def __init__(self, d_model, reduction=4):
-        super().__init__()
-        
-        # d_hidden nhỏ (ví dụ 256 -> 64) ép mạng phải chắt lọc thông tin
-        d_hidden = d_model // reduction
-        
-        # Nhánh Appearance: Tìm kiếm đặc điểm tĩnh
-        self.app_proj = nn.Sequential(
-            nn.Linear(d_model, d_hidden, bias=False),
-            nn.SiLU(), # Hàm phi tuyến mượt mà, tốt hơn ReLU cho VLM
-            nn.Linear(d_hidden, d_model, bias=False)
-        )
-        
-        # Nhánh Motion: Tìm kiếm quỹ đạo
-        self.motion_proj = nn.Sequential(
-            nn.Linear(d_model, d_hidden, bias=False),
-            nn.SiLU(),
-            nn.Linear(d_hidden, d_model, bias=False)
-        )
-
-        # Mẹo khởi tạo (Zero-Init): 
-        # Khởi tạo lớp Linear thứ 2 bằng 0. Ban đầu nhánh này không tác động gì,
-        # giúp Mamba ổn định ở các epoch đầu (warm-up), sau đó mới học dần cách tách text.
-        nn.init.zeros_(self.app_proj[2].weight)
-        nn.init.zeros_(self.motion_proj[2].weight)
-
-    def forward(self, text_emb):
-        text_global = text_emb.mean(dim=1) # [B, d_model]
-        
-        # Tách ngữ nghĩa qua Bottleneck
-        text_app = self.app_proj(text_global)
-        text_motion = self.motion_proj(text_global)
-        
-        # Residual connection: Cộng lại với vector gốc để không làm mất thông tin tổng thể
-        return text_global + text_app, text_global + text_motion
-
-class DecoupledVLMambaBlock(nn.Module):
+# ==========================================
+# 2. KHỐI KHÔNG GIAN & BỐI CẢNH (ĐÃ BỎ TEXT)
+# ==========================================
+class SpatialMambaBlock(nn.Module):
+    """Quét 4 hướng thuần túy trên Visual Features (Không Cross-Attention Text)"""
     def __init__(self, d_model, d_state=16):
         super().__init__()
-        self.text_decoupler = BottleneckTextDecoupler(d_model)
+        self.spatial_conv2d = nn.Conv2d(d_model, d_model, kernel_size=3, padding=1, groups=d_model)
+        self.spatial_core = MambaCore(d_model, d_state) 
+        
+    def forward(self, x_norm):
+        B, T, H, W, D = x_norm.shape
+        
+        # Biến đổi không gian để quét
+        x_2d = x_norm.view(B * T, H, W, D).permute(0, 3, 1, 2).contiguous()
+        x_conv = x_2d + self.spatial_conv2d(x_2d)
+        x_base = x_conv.permute(0, 2, 3, 1).view(B * T, H * W, D)
+        
+        # Quét 4 hướng (Horizontal & Vertical)
+        h_fwd = self.spatial_core(x_base)
+        h_bwd = self.spatial_core(x_base.flip([1])).flip([1])
+        
+        x_v = x_base.view(B * T, H, W, D).transpose(1, 2).reshape(B * T, H * W, D)
+        v_fwd = self.spatial_core(x_v)
+        v_bwd = self.spatial_core(x_v.flip([1])).flip([1])
+        
+        # Đưa V-scan về lại không gian chuẩn
+        v_fwd = v_fwd.view(B * T, W, H, D).transpose(1, 2).reshape(B * T, H * W, D)
+        v_bwd = v_bwd.view(B * T, W, H, D).transpose(1, 2).reshape(B * T, H * W, D)
+        
+        out_spatial = (h_fwd + h_bwd + v_fwd + v_bwd) / 4.0
+        return out_spatial.view(B, T, H, W, D)
 
-        # 1. Nhánh Không gian (Appearance Tracking)
-        self.norm_spatial = nn.LayerNorm(d_model)
-        self.spatial_mamba = MambaCore(d_model, d_state)
+class ContextMambaBlock(nn.Module):
+    """Quét bối cảnh nền 1 chiều (Thuần Visual)"""
+    def __init__(self, d_model, d_state=16):
+        super().__init__()
+        self.context_core = MambaCore(d_model, d_state)
 
-        # 2. Nhánh Thời gian (Motion Tracking)
-        self.norm_temporal = nn.LayerNorm(d_model)
-        self.temporal_forward = MambaCore(d_model, d_state)
-        self.temporal_backward = MambaCore(d_model, d_state)
+    def forward(self, x_norm):
+        B, T, H, W, D = x_norm.shape
+        seq_ctx = x_norm.view(B, T * H * W, D)
+        
+        out_ctx_fwd = self.context_core(seq_ctx)
+        out_ctx_bwd = self.context_core(seq_ctx.flip([1])).flip([1])
+        
+        x_final = out_ctx_fwd + out_ctx_bwd
+        return x_final.view(B, T, H, W, D)
 
-    def forward(self, x, text_tokens):
-        # x: [B, T, H, W, D] (Output từ CustomVideoBackbone)
-        # text_tokens: [B, N, D]
+# ==========================================
+# 3. KHỐI THỜI GIAN LAI (MAMBA + CFC)
+# ==========================================
+class TemporalMambaBlock(nn.Module):
+    def __init__(self, d_model, d_state=16):
+        super().__init__()
+        self.temporal_core = MambaCore(d_model, d_state)
+
+    def forward(self, x):
         B, T, H, W, D = x.shape
-
-        # --- 0. TÁCH NGỮ CẢNH VĂN BẢN ---
-        text_app, text_motion = self.text_decoupler(text_tokens)
-        # --- 1. SPATIAL SCAN (Tìm "Ngoại hình" chiếc xe) ---
-        x_spatial = x.contiguous().view(B * T, H * W, D)
+        x_permuted = x.permute(0, 2, 3, 1, 4).contiguous() 
+        x_temporal = x_permuted.view(B * H * W, T, D)
         
-        # Lặp text_app cho T frame: [B, D] -> [B, 1, D] -> [B, T, 1, D] -> [B*T, 1, D]
-        text_app_prefix = text_app.unsqueeze(1).unsqueeze(2).expand(B, T, 1, D).reshape(B * T, 1, D)
+        out_t_fwd = self.temporal_core(x_temporal)
+        out_t_bwd = self.temporal_core(x_temporal.flip([1])).flip([1])
         
-        # Nối Text App làm token đầu tiên: [B*T, 1 + H*W, D]
-        seq_spatial = torch.cat([text_app_prefix, x_spatial], dim=1)
+        out = (out_t_fwd + out_t_bwd).view(B, H, W, T, D)
+        return out.permute(0, 3, 1, 2, 4).contiguous().view(B, T, H, W, D)
+
+class LiquidCfCCell(nn.Module):
+    def __init__(self, input_size, hidden_size):
+        super().__init__()
+        self.linear_x = nn.Linear(input_size, hidden_size)
+        self.linear_h = nn.Linear(hidden_size, hidden_size)
+        self.fc_candidate = nn.Linear(hidden_size, hidden_size)
+        self.fc_tau = nn.Linear(hidden_size, hidden_size)
+
+    def forward(self, x, h_prev, dt=1.0):
+        z = torch.tanh(self.linear_x(x) + self.linear_h(h_prev))
+        candidate = torch.tanh(self.fc_candidate(z))
+        tau = F.softplus(self.fc_tau(z)) + 1e-4
+        gate = torch.exp(-dt / tau)
+        return h_prev * gate + candidate * (1.0 - gate)
+
+class CustomCFCTemporalBlock(nn.Module):
+    def __init__(self, d_model):
+        super().__init__()
+        self.cfc_cell = LiquidCfCCell(input_size=d_model, hidden_size=d_model)
+
+    def forward(self, x, time_deltas=None):
+        B, T, H, W, D = x.shape
+        x_permuted = x.permute(0, 2, 3, 1, 4).contiguous() 
+        x_temporal = x_permuted.view(B * H * W, T, D)
         
-        # Đưa qua Mamba và bỏ token Text đầu tiên đi
-        out_spatial = self.spatial_mamba(self.norm_spatial(seq_spatial))[:, 1:, :] 
+        h = torch.zeros(B * H * W, D, device=x.device, dtype=x.dtype)
+        out_seq = []
+        for t in range(T):
+            x_t = x_temporal[:, t, :]
+            dt = 1.0 if time_deltas is None else time_deltas[:, t].view(-1, 1).repeat(H*W, 1)
+            h = self.cfc_cell(x_t, h, dt)
+            out_seq.append(h)
+            
+        out_cfc = torch.stack(out_seq, dim=1)
+        out = out_cfc.view(B, H, W, T, D)
+        return out.permute(0, 3, 1, 2, 4).contiguous().view(B, T, H, W, D)
+
+class HybridTemporalBlock(nn.Module):
+    """Hợp nhất động lực thời gian rời rạc (Mamba) và liên tục (CfC)"""
+    def __init__(self, d_model, d_state=16):
+        super().__init__()
+        self.mamba_temporal = TemporalMambaBlock(d_model, d_state)
+        self.cfc_temporal = CustomCFCTemporalBlock(d_model)
+        self.fusion_gate = nn.Sequential(nn.Linear(d_model * 2, d_model), nn.Sigmoid())
+        self.norm_out = nn.LayerNorm(d_model)
+
+    def forward(self, x):
+        out_mamba = self.mamba_temporal(x)
+        out_cfc = self.cfc_temporal(x)
+        gate = self.fusion_gate(torch.cat([out_mamba, out_cfc], dim=-1))
+        fused_out = gate * out_mamba + (1.0 - gate) * out_cfc
+        return self.norm_out(fused_out)
+
+# ==========================================
+# 4. VISUAL ENCODER TỔNG
+# ==========================================
+class VisualBranchEncoderLayer(nn.Module):
+    def __init__(self, d_model, branch_type, d_state=16):
+        super().__init__()
+        self.branch_type = branch_type
+        self.norm_core = nn.LayerNorm(d_model)
         
-        # Cộng Residual
-        x = x + out_spatial.view(B, T, H, W, D)
+        if branch_type == 'spatial':
+            self.core = SpatialMambaBlock(d_model, d_state)
+        else:
+            self.core = ContextMambaBlock(d_model, d_state)
+            
+        self.norm_mlp = nn.LayerNorm(d_model)
+        self.mlp = nn.Sequential(
+            nn.Linear(d_model, d_model * 4),
+            nn.GELU(),
+            nn.Linear(d_model * 4, d_model)
+        )
 
-        # --- 2. TEMPORAL SCAN (Theo dõi "Chuyển động" chiếc xe) ---
-        x_temporal = x.permute(0, 2, 3, 1, 4).contiguous().view(B * H * W, T, D)
+    def forward(self, x, spatial_pe):
+        residual = x
+        x_norm = self.norm_core(x)
         
-        # Lặp text_motion cho H*W pixel: [B, D] -> [B, 1, D] -> [B, H*W, 1, D] -> [B*H*W, 1, D]
-        text_motion_prefix = text_motion.unsqueeze(1).unsqueeze(2).expand(B, H * W, 1, D).reshape(B * H * W, 1, D)
+        # Bổ sung Positional Encoding trước khi vào core
+        if spatial_pe is not None:
+            B, T, H, W, D = x_norm.shape
+            x_norm = x_norm + spatial_pe.view(-1, H*W, D).view(1, 1, H, W, D)
 
-        # Hướng Tiến (Forward)
-        seq_forward = torch.cat([text_motion_prefix, x_temporal], dim=1) 
-        out_forward = self.temporal_forward(self.norm_temporal(seq_forward))[:, 1:, :] # Bỏ token Text
+        x_mamba = self.core(x_norm) 
+        x = residual + x_mamba
+        
+        residual_mlp = x
+        x = residual_mlp + self.mlp(self.norm_mlp(x))
+        return x
 
-        # Hướng Lùi (Backward)
-        x_temporal_rev = torch.flip(x_temporal, dims=[1])
-        seq_backward = torch.cat([text_motion_prefix, x_temporal_rev], dim=1)
-        out_backward = self.temporal_backward(self.norm_temporal(seq_backward))[:, 1:, :]
-        out_backward = torch.flip(out_backward, dims=[1]) # Lật xuôi lại
+class TwoStreamVisualEncoder(nn.Module):
+    def __init__(self, d_model, num_blocks=2, d_state=16):
+        super().__init__()
+        self.spatial_branch = nn.ModuleList([
+            VisualBranchEncoderLayer(d_model, 'spatial', d_state) for _ in range(num_blocks)
+        ])
+        self.context_branch = nn.ModuleList([
+            VisualBranchEncoderLayer(d_model, 'context', d_state) for _ in range(num_blocks)
+        ])
+        
+        self.fusion_proj = nn.Linear(d_model * 2, d_model)
+        self.norm_fusion = nn.LayerNorm(d_model)
+        
+        self.global_temporal = HybridTemporalBlock(d_model, d_state)
+        self.norm_f = nn.LayerNorm(d_model)
 
-        # Trộn đặc trưng
-        x_temporal_out = x_temporal + out_forward + out_backward
+    def forward(self, spatial_features, context_features, spatial_pe):
+        x_sp = spatial_features
+        x_ctx = context_features
 
-        # Trả về shape gốc [B, T, H, W, D]
-        x_out = x_temporal_out.view(B, H, W, T, D).permute(0, 3, 1, 2, 4)
-        return x_out
+        for layer in self.spatial_branch:
+            x_sp = layer(x_sp, spatial_pe)
+
+        for layer in self.context_branch:
+            x_ctx = layer(x_ctx, spatial_pe)
+
+        merged = torch.cat([x_sp, x_ctx], dim=-1)
+        x_fused = self.norm_fusion(self.fusion_proj(merged))
+
+        # Khai phá động lực học thời gian
+        x_final = self.global_temporal(x_fused) 
+        x_final = self.norm_f(x_final)
+        
+        
+        return x_final
