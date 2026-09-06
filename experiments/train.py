@@ -92,13 +92,13 @@ def setup_training_stage(model, stage, lr):
     random_initialized_modules = [m for m in random_initialized_modules if m is not None]
 
     if stage == 1:
-        print("🟢 STAGE 1: Warm-up (Train các layer ngẫu nhiên | FREEZE Backbone & LNN)")
+        print(" STAGE 1: Warm-up (Train các layer ngẫu nhiên | FREEZE Backbone & LNN)")
         for m in random_initialized_modules:
             for p in m.parameters(): p.requires_grad = True
         if hasattr(model.video_backbone, 'pe_scale'): model.video_backbone.pe_scale.requires_grad = True
 
     elif stage == 2:
-        print("🟢 STAGE 2: Joint Finetune (UNFREEZE Backbone Late Layers + Các layer ngẫu nhiên | FREEZE LNN)")
+        print(" STAGE 2: Joint Finetune (UNFREEZE Backbone Late Layers + Các layer ngẫu nhiên | FREEZE LNN)")
         for m in random_initialized_modules:
             for p in m.parameters(): p.requires_grad = True
         if hasattr(model.video_backbone, 'pe_scale'): model.video_backbone.pe_scale.requires_grad = True
@@ -110,11 +110,11 @@ def setup_training_stage(model, stage, lr):
                 for p in model.video_backbone.feature_extractor[-1].parameters(): p.requires_grad = True
 
     elif stage == 3:
-        print("🟢 STAGE 3: (Bỏ qua Trajectory Comparator)")
+        print(" STAGE 3: (Bỏ qua Trajectory Comparator)")
         pass 
             
     elif stage == 4:
-        print("🟢 STAGE 4: Finetune ALL (End-to-End)")
+        print(" STAGE 4: Finetune ALL (End-to-End)")
         for p in model.parameters(): p.requires_grad = True
     else:
         raise ValueError(f"Stage {stage} không hợp lệ!")
@@ -172,7 +172,7 @@ class EMA:
 
 @torch.no_grad()
 def custom_update_bn(loader, model, device='cuda'):
-    print("🔄 Đang chạy Custom Update BatchNorm cho SWA...")
+    print(" Đang chạy Custom Update BatchNorm cho SWA...")
     momenta = {}
     for module in model.modules():
         if isinstance(module, torch.nn.modules.batchnorm._BatchNorm):
@@ -206,7 +206,7 @@ def custom_update_bn(loader, model, device='cuda'):
 @torch.no_grad()
 def validate_limavlm(model, val_loader, device='cuda'):
     model.eval()
-    print("📹 Đang chạy Validation...")
+    print(" Đang chạy Validation...")
     
     total_samples = 0
     dummy_metric = 0.0 # TODO: Viết hàm IoU hoặc Accuracy của bạn ở đây
@@ -241,7 +241,7 @@ def validate_limavlm(model, val_loader, device='cuda'):
                 
         total_samples += B
 
-    print(f"📊 Kết quả Validation: Dummy Metric = {dummy_metric:.4f}")
+    print(f" Kết quả Validation: Dummy Metric = {dummy_metric:.4f}")
     return dummy_metric
 
 # ==========================================
@@ -389,7 +389,7 @@ def train(model, train_loader, val_loader, args, device='cuda'):
             pbar.set_postfix({'L': f"{loss.item():.2f}", 'Hm': f"{l_hm.item():.2f}" if lambda_hm > 0 else "-", 'CL': f"{l_cl.item():.2f}" if lambda_cl > 0 else "-"})
 
         avg_loss = total_loss_epoch / len(train_loader)
-        print(f"✅ Epoch {epoch}/{args.epochs} | Avg Loss: {avg_loss:.4f} | LR: {optimizer.param_groups[-1]['lr']:.6f}")
+        print(f" Epoch {epoch}/{args.epochs} | Avg Loss: {avg_loss:.4f} | LR: {optimizer.param_groups[-1]['lr']:.6f}")
 
         # VALIDATION VÀ EARLY STOPPING
         if epoch % args.val_interval == 0 or epoch == 1 or epoch == args.epochs:
@@ -402,13 +402,13 @@ def train(model, train_loader, val_loader, args, device='cuda'):
                     best_metric = current_metric
                     epochs_no_improve = 0 
                     torch.save(model.state_dict(), os.path.join(args.data_root, f"best_limavlm_stage{args.stage}.pth"))
-                    print(f"🌟 LƯU BEST MODEL (Metric: {best_metric:.4f})")
+                    print(f" LƯU BEST MODEL (Metric: {best_metric:.4f})")
                 else:
                     epochs_no_improve += 1
-                    print(f"⚠️ Không tăng cường trên Validation. Patience: {epochs_no_improve}/{args.patience}")
+                    print(f" Không tăng cường trên Validation. Patience: {epochs_no_improve}/{args.patience}")
                     
                 if epochs_no_improve >= args.patience:
-                    print(f"🛑 Kích hoạt Early Stopping tại Epoch {epoch}. Best Metric: {best_metric:.4f}")
+                    print(f" Kích hoạt Early Stopping tại Epoch {epoch}. Best Metric: {best_metric:.4f}")
                     break 
             else:
                 torch.save(model.state_dict(), os.path.join(args.data_root, f"best_limavlm_stage{args.stage}.pth"))
@@ -417,10 +417,10 @@ def train(model, train_loader, val_loader, args, device='cuda'):
         torch.save(model.state_dict(), checkpoint_path)
 
     if use_swa:
-        print("🌟 Đang tổng hợp SWA Model...")
+        print(" Đang tổng hợp SWA Model...")
         custom_update_bn(train_loader, swa_model, device)
         torch.save(swa_model.state_dict(), os.path.join(args.data_root, f"best_limavlm_stage4_SWA.pth"))
-        print("✅ Lưu thành công mô hình SWA!")
+        print(" Lưu thành công mô hình SWA!")
 
 # ==========================================
 # 5. MAIN EXECUTION
@@ -453,7 +453,7 @@ if __name__ == "__main__":
         
     set_seed(args.seed)
     device = "cuda" if torch.cuda.is_available() else "cpu"
-    print(f"\n💻 Thiết bị: {device} | 📦 Batch Size: {args.batch_size}")
+    print(f"\n Thiết bị: {device} |  Batch Size: {args.batch_size}")
     
     TRAIN_JSON = os.path.join(args.data_root, args.train_json)
     VAL_JSON = os.path.join(args.data_root, args.val_json)
@@ -468,8 +468,8 @@ if __name__ == "__main__":
     model = LiMaVLM(d_model=256, d_text=512, num_blocks=4)
 
     if args.resume is not None and os.path.exists(args.resume):
-        print(f"🔄 Đang tải checkpoint: {args.resume}")
+        print(f" Đang tải checkpoint: {args.resume}")
         model.load_state_dict(torch.load(args.resume, map_location=device))
         
-    print(f"\n🔥 BẮT ĐẦU TRAINING - STAGE {args.stage}\n")
+    print(f"\n BẮT ĐẦU TRAINING - STAGE {args.stage}\n")
     train(model=model, train_loader=train_loader, val_loader=val_loader, args=args, device=device)

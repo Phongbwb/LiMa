@@ -292,7 +292,6 @@ def train():
 
     optimizer = torch.optim.AdamW(list(backbone.parameters()) + list(vlm_head.parameters()), lr=1e-4)
     
-    # 🚀 VŨ KHÍ 1: Tăng lại Batch Size lên 4 (Tận dụng GPU)
     ds = CityFlowNLDataset("./data/data", "./data/data/train-tracks.json", img_size=img_size, down_ratio=down_ratio)
     dl = DataLoader(ds, batch_size=2, shuffle=True, num_workers=4, pin_memory=True, drop_last=True)
     
@@ -306,14 +305,14 @@ def train():
     
     
     if os.path.exists(best_model_path):
-        print(f"🔄 Tìm thấy checkpoint tại {best_model_path}. Đang tải...")
+        print(f" Tìm thấy checkpoint tại {best_model_path}. Đang tải...")
         checkpoint = torch.load(best_model_path, map_location=device)
         backbone.load_state_dict(checkpoint['backbone_state'])
         vlm_head.load_state_dict(checkpoint['vlm_state'], strict=False) 
         optimizer.load_state_dict(checkpoint['optimizer_state'])
         start_epoch = checkpoint['epoch']
         best_loss = checkpoint['best_loss']
-        print(f"✅ Đã tải thành công! Tiếp tục train từ Epoch {start_epoch + 1}")
+        print(f" Đã tải thành công! Tiếp tục train từ Epoch {start_epoch + 1}")
     else:
         print("Bắt đầu train từ đầu (Từ Epoch 1)...")
 
@@ -332,7 +331,6 @@ def train():
             
             optimizer.zero_grad()
             
-            # 🚀 VŨ KHÍ 3: Mở không gian Autocast (Ép kiểu Float16 tự động)
             with torch.autocast(device_type='cuda', dtype=torch.bfloat16):
                 feats = backbone(v)
                 p_hm, p_sz, p_off = vlm_head(feats, t_tokens) 
@@ -402,9 +400,9 @@ def train():
                 'best_loss': best_loss,
             }, best_model_path)
             
-            print(f"🌟 Epoch {epoch+1}: Kỷ lục Loss mới ({best_loss:.4f})! Đã lưu model.")
+            print(f" Epoch {epoch+1}: Kỷ lục Loss mới ({best_loss:.4f})! Đã lưu model.")
         else:
-            print(f"ℹ️ Epoch {epoch+1}: Loss ({avg_epoch_loss:.4f}) không cải thiện (Best: {best_loss:.4f}).")
+            print(f"Epoch {epoch+1}: Loss ({avg_epoch_loss:.4f}) không cải thiện (Best: {best_loss:.4f}).")
             
 if __name__ == "__main__":
     train()

@@ -1,0 +1,54 @@
+# Ignore all data folders and their contents
+/data/
+**/data/
+
+# Ignore checkpoints and outputs
+/checkpoints/
+/outputs/
+
+# Ignore Python cache and environment files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.env
+*.venv
+
+# Ignore model weights and logs
+*.pth
+*.pt
+*.log
+
+# Ignore Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Ignore system files
+.DS_Store
+Thumbs.db
+
+# Ignore VS Code settings
+.vscode/
+
+# Ignore image files
+*.jpg
+*.jpeg
+*.png
+*.bmp
+*.gif
+*.tiff
+*.webp
+*.svg
+
+# Ignore video files
+*.mp4
+*.avi
+*.mov
+*.mkv
+*.flv
+*.wmv
+*.webm
+*.mpeg
+*.mpg
+*.m4v
+
+*.wandb

@@ -4,6 +4,18 @@ from transformers import CLIPTokenizer, CLIPTextModel
 from tqdm import tqdm
 import os
 import re
+import spacy
+
+# ==============================================================================
+# 0. KHỞI TẠO MÔ HÌNH NLP
+# ==============================================================================
+# Tải mô hình tiếng Anh của spacy (để bên ngoài hàm để không bị load lại nhiều lần)
+print("Đang tải mô hình spaCy (en_core_web_sm)...")
+try:
+    nlp = spacy.load("en_core_web_sm")
+except OSError:
+    print("Không tìm thấy mô hình spaCy. Vui lòng chạy lệnh: python -m spacy download en_core_web_sm")
+    exit()
 
 # ==============================================================================
 # 1. BỘ TỪ ĐIỂN CHUẨN HÓA
@@ -62,8 +74,39 @@ MOTION_MAPPING = {
 }
 
 # ==============================================================================
-# 2. HÀM BÓC TÁCH THÔNG MINH
+# 2. HÀM BÓC TÁCH & LÀM SẠCH VĂN BẢN
 # ==============================================================================
+
+def clean_original_text(text):
+    """
+    1. Chuyển chữ thường.
+    2. Xóa mạo từ (a, an, the) ở đầu câu.
+    3. Dùng spaCy để nhận diện và đưa tất cả ĐỘNG TỪ về nguyên thể (Lemmatization).
+    """
+    text = text.lower().strip()
+    
+    # Xóa mạo từ ở đầu câu
+    text = re.sub(r'^(a|an|the)\s+', '', text)
+    
+    # Đưa câu qua mô hình spaCy để phân tích ngữ pháp
+    doc = nlp(text)
+    
+    clean_tokens = []
+    for token in doc:
+        # Nếu từ đó là Động từ (VERB) hoặc Trợ động từ (AUX), lấy dạng nguyên thể (lemma_)
+        if token.pos_ in ["VERB", "AUX"]:
+            clean_tokens.append(token.lemma_)
+        else:
+            # Các từ loại khác (Danh từ, tính từ...) giữ nguyên text gốc
+            clean_tokens.append(token.text)
+            
+    # Ghép các từ lại thành câu hoàn chỉnh
+    clean_sentence = " ".join(clean_tokens)
+    
+    # Loại bỏ khoảng trắng thừa trước dấu câu (nếu có do spacy tách token)
+    clean_sentence = re.sub(r'\s+([.,!?])', r'\1', clean_sentence)
+    
+    return clean_sentence
 
 def get_first_match(text, mapping):
     best_match_label = ""
@@ -195,9 +238,9 @@ def safe_string(text, dummy_val="unknown"):
 
 def main():
     device = "cuda" if torch.cuda.is_available() else "cpu"
-    print(f"🚀 Đang chạy trên {device}...")
+    print(f" Đang chạy trên {device}...")
 
-    print("📥 Đang tải mô hình CLIP...")
+    print(" Đang tải mô hình CLIP...")
     tokenizer = CLIPTokenizer.from_pretrained("openai/clip-vit-base-patch32")
     text_encoder = CLIPTextModel.from_pretrained("openai/clip-vit-base-patch32").to(device)
     text_encoder.eval()
@@ -208,7 +251,7 @@ def main():
     ] 
     unique_sentences = {}
     
-    print(f"📖 Đang đọc dữ liệu từ các file JSON...")
+    print(f" Đang đọc dữ liệu từ các file JSON...")
     for clean_json_path in clean_json_files:
         if os.path.exists(clean_json_path):
             print(f" -> Đang quét file: {clean_json_path}")
@@ -218,11 +261,12 @@ def main():
             for track_id, track_info in clean_data.items():
                 all_queries = track_info.get('nl', []) + track_info.get('nl_other_views', [])
                 for query in all_queries:
-                    cleaned_query = query.strip().lower()
+                    # Chuyển đổi từ Original -> Clean text (bao gồm đưa động từ về nguyên thể)
+                    cleaned_query = clean_original_text(query)
                     if cleaned_query:
                         unique_sentences[cleaned_query] = query 
         else:
-            print(f"⚠️ Cảnh báo: Không tìm thấy file tại đường dẫn: {clean_json_path}")
+            print(f" Cảnh báo: Không tìm thấy file tại đường dẫn: {clean_json_path}")
 
     text_to_emb = {}
 
@@ -244,8 +288,6 @@ def main():
             p_mot_safe = safe_string(mot, "unknown motion")
             p_ctx_safe = safe_string(ctx, "unknown context")
             
-            # --- 🔥 ĐÃ THÊM: Tạo đoạn text kết hợp Color + Type + Motion ---
-            # Ví dụ: "red pickup truck go straight"
             p_combined_safe = f"{p_color_safe} {p_type_safe} {p_mot_safe}".strip()
             
             c_ids, c_emb = encode_text(p_color_safe, max_len=8)      
@@ -253,7 +295,6 @@ def main():
             m_ids, m_emb = encode_text(p_mot_safe, max_len=16) 
             ctx_ids, ctx_emb = encode_text(p_ctx_safe, max_len=16) 
             
-            # Encode câu tổng hợp (Dùng max_len=32 để đảm bảo không bị cắt chữ)
             comb_ids, comb_emb = encode_text(p_combined_safe, max_len=32)
             
             text_to_emb[clean_text] = {
@@ -272,17 +313,16 @@ def main():
                 "context_embedding": ctx_emb, 
                 "context_input_ids": ctx_ids, 
                 
-                # --- 🔥 ĐÃ THÊM: Trả về text_embeds ---
                 "text_embeds_text": p_combined_safe,
-                "text_embeds": comb_emb,         # Trả về ma trận Embedding của câu tổng hợp
-                "text_embeds_ids": comb_ids,     # Trả về các token IDs của câu tổng hợp
+                "text_embeds": comb_emb,         
+                "text_embeds_ids": comb_ids,     
             }
 
     save_path = './data/data/clip_text_tokens_extracted.pt'
     os.makedirs(os.path.dirname(save_path), exist_ok=True)
     torch.save(text_to_emb, save_path)
     
-    print(f"\n✅ Thành công! Đã xử lý gộp dữ liệu và lưu {len(text_to_emb)} mẫu vào: {save_path}")
+    print(f"\n Thành công! Đã xử lý gộp dữ liệu và lưu {len(text_to_emb)} mẫu vào: {save_path}")
 
 if __name__ == "__main__":
     main()

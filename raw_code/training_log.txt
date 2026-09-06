@@ -1,0 +1,2903 @@
+Train Epoch 1: 100%|█████████████████████|
+64/64 [06:57<00:00,  6.52s/it,
+Loss=40.529, NCE=5.693, Cir=126.294, CE=7.770]
+Val Epoch 1: 100%|█████████████████████|
+4/4 [00:20<00:00,  5.05s/it,
+Val_Loss=33.022, NCE=2.625, Cir=119.207, CE=7.860]
+📊 Kết thúc Epoch 1 |
+Train Loss: 41.9611 | Val Loss: 34.7601
+ 
+⭐ Đã cập nhật Best Model (Val
+Loss: 34.7601) tại ./checkpoints/models/newlimavlm_best.pth
+Train Epoch 2: 100%|█████████████████████|
+64/64 [07:33<00:00,  7.08s/it,
+Loss=36.855, NCE=5.762, Cir=107.277, CE=7.751]
+Val Epoch 2: 100%|█████████████████████|
+4/4 [00:19<00:00,  4.94s/it,
+Val_Loss=29.740, NCE=2.653, Cir=102.586, CE=7.834]
+📊 Kết thúc Epoch 2 |
+Train Loss: 38.0027 | Val Loss: 31.4514
+ 
+⭐ Đã cập nhật Best Model (Val
+Loss: 31.4514) tại ./checkpoints/models/newlimavlm_best.pth
+Train Epoch 3: 100%|██████████████████████|
+64/64 [07:24<00:00,  6.94s/it,
+Loss=34.167, NCE=5.744, Cir=94.368, CE=7.613]
+Val Epoch 3: 100%|██████████████████████|
+4/4 [00:21<00:00,  5.43s/it,
+Val_Loss=27.313, NCE=2.627, Cir=90.702, CE=7.839]
+📊 Kết thúc Epoch 3 |
+Train Loss: 35.3667 | Val Loss: 29.1047
+ 
+⭐ Đã cập nhật Best Model (Val
+Loss: 29.1047) tại ./checkpoints/models/newlimavlm_best.pth
+Train Epoch 4: 100%|██████████████████████|
+64/64 [07:23<00:00,  6.94s/it,
+Loss=32.198, NCE=5.811, Cir=83.462, CE=7.769]
+Val Epoch 4: 100%|██████████████████████|
+4/4 [00:18<00:00,  4.75s/it,
+Val_Loss=25.645, NCE=2.619, Cir=82.293, CE=7.895]
+📊 Kết thúc Epoch 4 |
+Train Loss: 33.3136 | Val Loss: 27.2935
+ 
+⭐ Đã cập nhật Best Model (Val
+Loss: 27.2935) tại ./checkpoints/models/newlimavlm_best.pth
+Train Epoch 5: 100%|██████████████████████|
+64/64 [07:12<00:00,  6.76s/it,
+Loss=31.521, NCE=5.758, Cir=80.457, CE=7.827]
+Val Epoch 5: 100%|██████████████████████|
+4/4 [00:18<00:00,  4.70s/it,
+Val_Loss=24.040, NCE=2.590, Cir=74.517, CE=7.912]
+📊 Kết thúc Epoch 5 |
+Train Loss: 31.7529 | Val Loss: 25.9519
+ 
+⭐ Đã cập nhật Best Model (Val
+Loss: 25.9519) tại ./checkpoints/models/newlimavlm_best.pth
+📦 Đã lưu Checkpoint định
+kỳ tại ./checkpoints/models/newlimavlm_epoch_5.pth
+ 
+Train Epoch 6: 100%|██████████████████████|
+64/64 [07:12<00:00,  6.75s/it,
+Loss=30.720, NCE=5.753, Cir=76.569, CE=7.801]
+Val Epoch 6: 100%|██████████████████████|
+4/4 [00:18<00:00,  4.74s/it,
+Val_Loss=22.786, NCE=2.569, Cir=68.383, CE=7.943]
+📊 Kết thúc Epoch 6 |
+Train Loss: 30.6295 | Val Loss: 25.0533
+ 
+⭐ Đã cập nhật Best Model (Val
+Loss: 25.0533) tại ./checkpoints/models/newlimavlm_best.pth
+Train Epoch 7: 100%|██████████████████████|
+64/64 [07:13<00:00,  6.77s/it,
+Loss=29.423, NCE=5.792, Cir=69.921, CE=7.707]
+Val Epoch 7: 100%|██████████████████████|
+4/4 [00:19<00:00,  4.79s/it,
+Val_Loss=22.932, NCE=2.572, Cir=68.789, CE=8.061]
+📊 Kết thúc Epoch 7 |
+Train Loss: 29.8830 | Val Loss: 24.6005
+ 
+⭐ Đã cập nhật Best Model (Val
+Loss: 24.6005) tại ./checkpoints/models/newlimavlm_best.pth
+Train Epoch 8: 100%|██████████████████████|
+64/64 [07:11<00:00,  6.75s/it,
+Loss=29.284, NCE=5.920, Cir=67.954, CE=7.707]
+Val Epoch 8: 100%|██████████████████████|
+4/4 [00:19<00:00,  4.87s/it,
+Val_Loss=22.294, NCE=2.567, Cir=65.776, CE=8.008]
+📊 Kết thúc Epoch 8 |
+Train Loss: 29.6042 | Val Loss: 24.1413
+ 
+⭐ Đã cập nhật Best Model (Val
+Loss: 24.1413) tại ./checkpoints/models/newlimavlm_best.pth
+Train Epoch 9: 100%|██████████████████████|
+64/64 [07:15<00:00,  6.81s/it,
+Loss=29.149, NCE=5.950, Cir=67.073, CE=7.668]
+Val Epoch 9: 100%|██████████████████████|
+4/4 [00:18<00:00,  4.66s/it,
+Val_Loss=22.761, NCE=2.538, Cir=68.269, CE=8.062]
+📊 Kết thúc Epoch 9 |
+Train Loss: 29.6227 | Val Loss: 24.0649
+ 
+⭐ Đã cập nhật Best Model (Val
+Loss: 24.0649) tại ./checkpoints/models/newlimavlm_best.pth
+Train Epoch 10: 100%|█████████████████████|
+64/64 [07:14<00:00,  6.79s/it,
+Loss=29.634, NCE=6.026, Cir=68.600, CE=7.724]
+Val Epoch 10: 100%|█████████████████████|
+4/4 [00:18<00:00,  4.73s/it,
+Val_Loss=22.208, NCE=2.549, Cir=65.594, CE=7.983]
+📊 Kết thúc Epoch 10 |
+Train Loss: 29.6439 | Val Loss: 24.2378
+ 
+📦 Đã lưu Checkpoint định
+kỳ tại ./checkpoints/models/newlimavlm_epoch_10.pth
+ 
+Train Epoch 11: 100%|█████████████████████|
+64/64 [07:15<00:00,  6.80s/it,
+Loss=29.393, NCE=6.003, Cir=67.980, CE=7.582]
+Val Epoch 11: 100%|█████████████████████|
+4/4 [00:19<00:00,  4.76s/it,
+Val_Loss=21.990, NCE=2.543, Cir=64.280, CE=8.096]
+📊 Kết thúc Epoch 11 |
+Train Loss: 29.6929 | Val Loss: 24.1005
+ 
+Train Epoch 12: 100%|█████████████████████|
+64/64 [07:14<00:00,  6.80s/it,
+Loss=29.501, NCE=6.082, Cir=67.745, CE=7.575]
+Val Epoch 12: 100%|█████████████████████|
+4/4 [00:18<00:00,  4.73s/it,
+Val_Loss=22.892, NCE=2.535, Cir=68.988, CE=8.049]
+📊 Kết thúc Epoch 12 |
+Train Loss: 29.6505 | Val Loss: 24.1787
+ 
+Train Epoch 13: 100%|█████████████████████|
+64/64 [07:11<00:00,  6.74s/it,
+Loss=29.315, NCE=5.939, Cir=68.323, CE=7.544]
+Val Epoch 13: 100%|█████████████████████|
+4/4 [00:18<00:00,  4.65s/it,
+Val_Loss=21.907, NCE=2.533, Cir=64.346, CE=7.942]
+📊 Kết thúc Epoch 13 |
+Train Loss: 29.5440 | Val Loss: 23.9391
+ 
+⭐ Đã cập nhật Best Model (Val
+Loss: 23.9391) tại ./checkpoints/models/newlimavlm_best.pth
+Train Epoch 14: 100%|█████████████████████|
+64/64 [07:15<00:00,  6.81s/it,
+Loss=29.193, NCE=5.964, Cir=67.744, CE=7.432]
+Val Epoch 14: 100%|█████████████████████|
+4/4 [00:18<00:00,  4.59s/it,
+Val_Loss=22.317, NCE=2.529, Cir=66.144, CE=8.058]
+📊 Kết thúc Epoch 14 |
+Train Loss: 29.5267 | Val Loss: 24.2634
+ 
+Train Epoch 15: 100%|█████████████████████|
+64/64 [07:13<00:00,  6.77s/it,
+Loss=29.104, NCE=5.954, Cir=66.946, CE=7.613]
+Val Epoch 15: 100%|█████████████████████|
+4/4 [00:19<00:00,  4.78s/it,
+Val_Loss=22.376, NCE=2.517, Cir=66.437, CE=8.111]
+📊 Kết thúc Epoch 15 |
+Train Loss: 29.4401 | Val Loss: 24.0759
+ 
+📦 Đã lưu Checkpoint định
+kỳ tại ./checkpoints/models/newlimavlm_epoch_15.pth
+ 
+Train Epoch 16: 100%|█████████████████████|
+64/64 [07:13<00:00,  6.77s/it,
+Loss=29.319, NCE=5.923, Cir=68.600, CE=7.506]
+Val Epoch 16: 100%|█████████████████████|
+4/4 [00:18<00:00,  4.71s/it,
+Val_Loss=22.142, NCE=2.524, Cir=65.458, CE=8.005]
+📊 Kết thúc Epoch 16 |
+Train Loss: 29.3450 | Val Loss: 23.9259
+ 
+⭐ Đã cập nhật Best Model (Val
+Loss: 23.9259) tại ./checkpoints/models/newlimavlm_best.pth
+Train Epoch 17: 100%|█████████████████████|
+64/64 [07:13<00:00,  6.78s/it,
+Loss=29.407, NCE=5.948, Cir=68.733, CE=7.530]
+Val Epoch 17: 100%|█████████████████████|
+4/4 [00:18<00:00,  4.72s/it,
+Val_Loss=22.142, NCE=2.536, Cir=65.154, CE=8.080]
+📊 Kết thúc Epoch 17 |
+Train Loss: 29.3280 | Val Loss: 24.0746
+ 
+Train Epoch 18: 100%|█████████████████████|
+64/64 [07:14<00:00,  6.78s/it,
+Loss=29.570, NCE=5.931, Cir=69.742, CE=7.520]
+Val Epoch 18: 100%|█████████████████████|
+4/4 [00:18<00:00,  4.63s/it,
+Val_Loss=22.399, NCE=2.514, Cir=66.312, CE=8.216]
+📊 Kết thúc Epoch 18 |
+Train Loss: 29.2717 | Val Loss: 24.1119
+ 
+Train Epoch 19: 100%|█████████████████████|
+64/64 [07:12<00:00,  6.76s/it,
+Loss=29.034, NCE=5.930, Cir=67.289, CE=7.433]
+Val Epoch 19: 100%|█████████████████████|
+4/4 [00:18<00:00,  4.58s/it,
+Val_Loss=21.925, NCE=2.515, Cir=63.813, CE=8.263]
+📊 Kết thúc Epoch 19 |
+Train Loss: 29.2192 | Val Loss: 24.0011
+ 
+Train Epoch 20: 100%|█████████████████████|
+64/64 [07:14<00:00,  6.78s/it,
+Loss=29.144, NCE=5.900, Cir=68.140, CE=7.430]
+Val Epoch 20: 100%|█████████████████████|
+4/4 [00:18<00:00,  4.68s/it,
+Val_Loss=22.415, NCE=2.507, Cir=66.319, CE=8.273]
+📊 Kết thúc Epoch 20 |
+Train Loss: 29.1777 | Val Loss: 24.1120
+ 
+📦 Đã lưu Checkpoint định
+kỳ tại ./checkpoints/models/newlimavlm_epoch_20.pth
+ 
+Train Epoch 21: 100%|█████████████████████|
+64/64 [07:14<00:00,  6.79s/it,
+Loss=29.117, NCE=5.906, Cir=68.349, CE=7.270]
+Val Epoch 21: 100%|█████████████████████|
+4/4 [00:18<00:00,  4.68s/it,
+Val_Loss=22.275, NCE=2.506, Cir=65.296, CE=8.410]
+📊 Kết thúc Epoch 21 |
+Train Loss: 29.1509 | Val Loss: 24.0746
+ 
+Train Epoch 22: 100%|█████████████████████|
+64/64 [07:12<00:00,  6.76s/it,
+Loss=29.084, NCE=5.933, Cir=67.682, CE=7.364]
+Val Epoch 22: 100%|█████████████████████|
+4/4 [00:18<00:00,  4.71s/it,
+Val_Loss=22.461, NCE=2.485, Cir=66.597, CE=8.343]
+📊 Kết thúc Epoch 22 |
+Train Loss: 29.1303 | Val Loss: 24.1297
+ 
+Train Epoch 23: 100%|█████████████████████|
+64/64 [07:13<00:00,  6.77s/it,
+Loss=29.225, NCE=5.947, Cir=68.494, CE=7.263]
+Val Epoch 23: 100%|█████████████████████|
+4/4 [00:18<00:00,  4.65s/it,
+Val_Loss=22.364, NCE=2.484, Cir=65.935, CE=8.417]
+📊 Kết thúc Epoch 23 |
+Train Loss: 29.1105 | Val Loss: 24.1406
+ 
+Train Epoch 24: 100%|█████████████████████|
+64/64 [07:15<00:00,  6.80s/it,
+Loss=28.904, NCE=5.926, Cir=67.440, CE=7.127]
+Val Epoch 24: 100%|█████████████████████|
+4/4 [00:18<00:00,  4.67s/it,
+Val_Loss=22.496, NCE=2.489, Cir=66.291, CE=8.521]
+📊 Kết thúc Epoch 24 |
+Train Loss: 29.0224 | Val Loss: 24.1130
+ 
+Train Epoch 25: 100%|█████████████████████|
+64/64 [07:12<00:00,  6.75s/it,
+Loss=29.240, NCE=5.956, Cir=69.053, CE=7.036]
+Val Epoch 25: 100%|█████████████████████|
+4/4 [00:18<00:00,  4.70s/it,
+Val_Loss=22.649, NCE=2.470, Cir=67.115, CE=8.570]
+📊 Kết thúc Epoch 25 |
+Train Loss: 28.9978 | Val Loss: 24.1951
+ 
+📦 Đã lưu Checkpoint định
+kỳ tại ./checkpoints/models/newlimavlm_epoch_25.pth
+ 
+Train Epoch 26: 100%|█████████████████████|
+64/64 [07:15<00:00,  6.80s/it,
+Loss=28.967, NCE=5.944, Cir=67.897, CE=7.000]
+Val Epoch 26: 100%|█████████████████████|
+4/4 [00:18<00:00,  4.67s/it,
+Val_Loss=22.500, NCE=2.486, Cir=66.141, CE=8.601]
+📊 Kết thúc Epoch 26 |
+Train Loss: 28.9906 | Val Loss: 24.2036
+ 
+Train Epoch 27: 100%|█████████████████████|
+64/64 [07:12<00:00,  6.75s/it,
+Loss=28.940, NCE=5.941, Cir=67.996, CE=6.918]
+Val Epoch 27: 100%|█████████████████████|
+4/4 [00:18<00:00,  4.73s/it,
+Val_Loss=22.400, NCE=2.493, Cir=65.306, CE=8.706]
+📊 Kết thúc Epoch 27 |
+Train Loss: 28.9925 | Val Loss: 24.2925
+ 
+Train Epoch 28: 100%|█████████████████████|
+64/64 [07:12<00:00,  6.76s/it,
+Loss=28.952, NCE=5.931, Cir=68.340, CE=6.842]
+Val Epoch 28: 100%|█████████████████████|
+4/4 [00:18<00:00,  4.60s/it,
+Val_Loss=22.588, NCE=2.475, Cir=66.426, CE=8.704]
+📊 Kết thúc Epoch 28 |
+Train Loss: 28.9792 | Val Loss: 24.2586
+ 
+Train Epoch 29: 100%|█████████████████████|
+64/64 [07:15<00:00,  6.80s/it,
+Loss=28.897, NCE=5.999, Cir=67.486, CE=6.804]
+Val Epoch 29: 100%|█████████████████████|
+4/4 [00:18<00:00,  4.67s/it,
+Val_Loss=22.578, NCE=2.480, Cir=65.916, CE=8.870]
+📊 Kết thúc Epoch 29 |
+Train Loss: 28.9456 | Val Loss: 24.3900
+ 
+Train Epoch 30: 100%|█████████████████████|
+64/64 [07:13<00:00,  6.78s/it,
+Loss=29.012, NCE=5.974, Cir=68.258, CE=6.823]
+Val Epoch 30: 100%|█████████████████████|
+4/4 [00:18<00:00,  4.66s/it,
+Val_Loss=22.749, NCE=2.466, Cir=66.724, CE=8.943]
+📊 Kết thúc Epoch 30 |
+Train Loss: 28.9572 | Val Loss: 24.4045
+ 
+📦 Đã lưu Checkpoint định
+kỳ tại ./checkpoints/models/newlimavlm_epoch_30.pth
+ 
+Train Epoch 31: 100%|█████████████████████|
+64/64 [07:13<00:00,  6.77s/it,
+Loss=29.098, NCE=5.991, Cir=68.912, CE=6.669]
+Val Epoch 31: 100%|█████████████████████|
+4/4 [00:18<00:00,  4.72s/it,
+Val_Loss=23.001, NCE=2.459, Cir=67.919, CE=9.000]
+📊 Kết thúc Epoch 31 |
+Train Loss: 28.9505 | Val Loss: 24.4582
+ 
+Train Epoch 32: 100%|█████████████████████|
+64/64 [07:15<00:00,  6.80s/it,
+Loss=28.962, NCE=6.000, Cir=67.816, CE=6.798]
+Val Epoch 32: 100%|█████████████████████|
+4/4 [00:18<00:00,  4.59s/it,
+Val_Loss=22.677, NCE=2.410, Cir=66.141, CE=9.257]
+📊 Kết thúc Epoch 32 |
+Train Loss: 28.9671 | Val Loss: 24.4511
+ 
+Train Epoch 33: 100%|█████████████████████|
+64/64 [07:11<00:00,  6.75s/it,
+Loss=28.868, NCE=5.975, Cir=68.444, CE=6.457]
+Val Epoch 33: 100%|█████████████████████|
+4/4 [00:18<00:00,  4.70s/it,
+Val_Loss=22.860, NCE=2.464, Cir=66.307, CE=9.342]
+📊 Kết thúc Epoch 33 |
+Train Loss: 28.9175 | Val Loss: 24.5553
+ 
+Train Epoch 34: 100%|█████████████████████|
+64/64 [07:14<00:00,  6.78s/it,
+Loss=28.885, NCE=6.009, Cir=67.840, CE=6.597]
+Val Epoch 34: 100%|█████████████████████|
+4/4 [00:18<00:00,  4.71s/it,
+Val_Loss=22.975, NCE=2.450, Cir=67.224, CE=9.259]
+📊 Kết thúc Epoch 34 |
+Train Loss: 28.8875 | Val Loss: 24.5350
+ 
+Train Epoch 35: 100%|█████████████████████|
+64/64 [07:14<00:00,  6.78s/it,
+Loss=28.965, NCE=6.020, Cir=68.557, CE=6.425]
+Val Epoch 35: 100%|█████████████████████|
+4/4 [00:18<00:00,  4.69s/it,
+Val_Loss=22.731, NCE=2.450, Cir=65.591, CE=9.426]
+📊 Kết thúc Epoch 35 |
+Train Loss: 28.9145 | Val Loss: 24.5941
+ 
+📦 Đã lưu Checkpoint định
+kỳ tại ./checkpoints/models/newlimavlm_epoch_35.pth
+ 
+Train Epoch 36: 100%|█████████████████████|
+64/64 [07:13<00:00,  6.77s/it,
+Loss=28.864, NCE=6.041, Cir=68.110, CE=6.320]
+Val Epoch 36: 100%|█████████████████████|
+4/4 [00:18<00:00,  4.62s/it,
+Val_Loss=22.831, NCE=2.460, Cir=65.773, CE=9.515]
+📊 Kết thúc Epoch 36 |
+Train Loss: 28.8348 | Val Loss: 24.6026
+ 
+Train Epoch 37: 100%|█████████████████████|
+64/64 [07:10<00:00,  6.73s/it,
+Loss=28.664, NCE=6.002, Cir=67.968, CE=6.133]
+Val Epoch 37: 100%|█████████████████████|
+4/4 [00:18<00:00,  4.68s/it,
+Val_Loss=22.823, NCE=2.403, Cir=65.841, CE=9.699]
+📊 Kết thúc Epoch 37 |
+Train Loss: 28.7830 | Val Loss: 24.6535
+ 
+Train Epoch 38: 100%|█████████████████████|
+64/64 [07:13<00:00,  6.77s/it,
+Loss=28.695, NCE=6.070, Cir=67.536, CE=6.096]
+Val Epoch 38: 100%|█████████████████████|
+4/4 [00:18<00:00,  4.67s/it,
+Val_Loss=23.032, NCE=2.374, Cir=67.253, CE=9.666]
+📊 Kết thúc Epoch 38 |
+Train Loss: 28.7323 | Val Loss: 24.6669
+ 
+Train Epoch 39: 100%|█████████████████████|
+64/64 [07:14<00:00,  6.79s/it,
+Loss=28.614, NCE=6.020, Cir=67.779, CE=6.035]
+Val Epoch 39: 100%|█████████████████████|
+4/4 [00:18<00:00,  4.62s/it,
+Val_Loss=22.981, NCE=2.408, Cir=66.738, CE=9.635]
+📊 Kết thúc Epoch 39 |
+Train Loss: 28.6673 | Val Loss: 24.6764
+ 
+Train Epoch 40: 100%|█████████████████████|
+64/64 [07:14<00:00,  6.79s/it,
+Loss=28.573, NCE=6.020, Cir=68.051, CE=5.844]
+Val Epoch 40: 100%|█████████████████████|
+4/4 [00:18<00:00,  4.64s/it,
+Val_Loss=23.052, NCE=2.403, Cir=66.820, CE=9.766]
+📊 Kết thúc Epoch 40 |
+Train Loss: 28.6112 | Val Loss: 24.6495
+ 
+📦 Đã lưu Checkpoint định
+kỳ tại ./checkpoints/models/newlimavlm_epoch_40.pth
+ 
+Train Epoch 41: 100%|█████████████████████|
+64/64 [07:14<00:00,  6.80s/it,
+Loss=28.554, NCE=5.977, Cir=68.729, CE=5.708]
+Val Epoch 41: 100%|████████████████████|
+4/4 [00:18<00:00,  4.70s/it,
+Val_Loss=23.256, NCE=2.426, Cir=66.785, CE=10.094]
+📊 Kết thúc Epoch 41 |
+Train Loss: 28.5753 | Val Loss: 24.8562
+ 
+Train Epoch 42: 100%|█████████████████████|
+64/64 [07:11<00:00,  6.74s/it,
+Loss=28.548, NCE=6.027, Cir=68.059, CE=5.764]
+Val Epoch 42: 100%|█████████████████████|
+4/4 [00:18<00:00,  4.69s/it,
+Val_Loss=23.050, NCE=2.388, Cir=66.510, CE=9.946]
+📊 Kết thúc Epoch 42 |
+Train Loss: 28.4944 | Val Loss: 24.7326
+ 
+Train Epoch 43: 100%|█████████████████████|
+64/64 [07:13<00:00,  6.78s/it,
+Loss=28.440, NCE=5.999, Cir=68.236, CE=5.589]
+Val Epoch 43: 100%|█████████████████████|
+4/4 [00:19<00:00,  4.79s/it,
+Val_Loss=23.197, NCE=2.463, Cir=66.481, CE=9.949]
+📊 Kết thúc Epoch 43 |
+Train Loss: 28.4052 | Val Loss: 24.7470
+ 
+Train Epoch 44: 100%|█████████████████████|
+64/64 [07:13<00:00,  6.77s/it,
+Loss=28.338, NCE=5.950, Cir=68.526, CE=5.467]
+Val Epoch 44: 100%|████████████████████|
+4/4 [00:19<00:00,  4.79s/it,
+Val_Loss=23.351, NCE=2.391, Cir=67.236, CE=10.241]
+📊 Kết thúc Epoch 44 |
+Train Loss: 28.3474 | Val Loss: 24.8897
+ 
+Train Epoch 45: 100%|█████████████████████|
+64/64 [07:12<00:00,  6.76s/it,
+Loss=28.206, NCE=6.013, Cir=67.385, CE=5.405]
+Val Epoch 45: 100%|█████████████████████|
+4/4 [00:18<00:00,  4.69s/it,
+Val_Loss=23.144, NCE=2.406, Cir=66.704, CE=9.984]
+📊 Kết thúc Epoch 45 |
+Train Loss: 28.3144 | Val Loss: 24.7878
+ 
+📦 Đã lưu Checkpoint định
+kỳ tại ./checkpoints/models/newlimavlm_epoch_45.pth
+ 
+Train Epoch 46: 100%|█████████████████████|
+64/64 [07:14<00:00,  6.79s/it,
+Loss=28.393, NCE=5.990, Cir=68.512, CE=5.422]
+Val Epoch 46: 100%|████████████████████|
+4/4 [00:18<00:00,  4.71s/it,
+Val_Loss=23.167, NCE=2.347, Cir=66.474, CE=10.355]
+📊 Kết thúc Epoch 46 |
+Train Loss: 28.2843 | Val Loss: 24.8482
+ 
+Train Epoch 47: 100%|█████████████████████|
+64/64 [07:12<00:00,  6.76s/it,
+Loss=28.191, NCE=5.963, Cir=68.071, CE=5.300]
+Val Epoch 47: 100%|████████████████████|
+4/4 [00:18<00:00,  4.67s/it,
+Val_Loss=23.250, NCE=2.362, Cir=67.251, CE=10.151]
+📊 Kết thúc Epoch 47 |
+Train Loss: 28.2079 | Val Loss: 24.8605
+ 
+Train Epoch 48: 100%|█████████████████████|
+64/64 [07:12<00:00,  6.76s/it,
+Loss=28.098, NCE=5.938, Cir=68.068, CE=5.216]
+Val Epoch 48: 100%|████████████████████|
+4/4 [00:18<00:00,  4.65s/it,
+Val_Loss=23.143, NCE=2.391, Cir=66.111, CE=10.279]
+📊 Kết thúc Epoch 48 |
+Train Loss: 28.1125 | Val Loss: 24.8523
+ 
+Train Epoch 49: 100%|█████████████████████|
+64/64 [07:14<00:00,  6.79s/it,
+Loss=27.954, NCE=5.926, Cir=67.832, CE=5.072]
+Val Epoch 49: 100%|████████████████████|
+4/4 [00:18<00:00,  4.60s/it,
+Val_Loss=23.067, NCE=2.345, Cir=66.545, CE=10.135]
+📊 Kết thúc Epoch 49 |
+Train Loss: 27.9933 | Val Loss: 24.7743
+ 
+Train Epoch 50: 100%|█████████████████████|
+64/64 [07:12<00:00,  6.75s/it,
+Loss=28.011, NCE=5.931, Cir=67.952, CE=5.118]
+Val Epoch 50: 100%|████████████████████|
+4/4 [00:18<00:00,  4.68s/it,
+Val_Loss=23.527, NCE=2.412, Cir=67.183, CE=10.535]
+📊 Kết thúc Epoch 50 |
+Train Loss: 27.9269 | Val Loss: 24.9179
+ 
+📦 Đã lưu Checkpoint định
+kỳ tại ./checkpoints/models/newlimavlm_epoch_50.pth
+ 
+Train Epoch 51: 100%|█████████████████████|
+64/64 [07:12<00:00,  6.76s/it,
+Loss=27.894, NCE=5.915, Cir=67.865, CE=4.980]
+Val Epoch 51: 100%|████████████████████|
+4/4 [00:19<00:00,  4.76s/it,
+Val_Loss=23.153, NCE=2.371, Cir=66.669, CE=10.154]
+📊 Kết thúc Epoch 51 |
+Train Loss: 27.8825 | Val Loss: 24.6929
+ 
+Train Epoch 52: 100%|█████████████████████|
+64/64 [07:12<00:00,  6.76s/it,
+Loss=27.800, NCE=5.949, Cir=67.376, CE=4.852]
+Val Epoch 52: 100%|████████████████████|
+4/4 [00:18<00:00,  4.64s/it,
+Val_Loss=23.236, NCE=2.356, Cir=66.321, CE=10.520]
+📊 Kết thúc Epoch 52 |
+Train Loss: 27.8054 | Val Loss: 24.7877
+ 
+Train Epoch 53: 100%|█████████████████████|
+64/64 [07:16<00:00,  6.82s/it,
+Loss=27.808, NCE=5.885, Cir=68.337, CE=4.741]
+Val Epoch 53: 100%|████████████████████|
+4/4 [00:18<00:00,  4.69s/it,
+Val_Loss=23.212, NCE=2.378, Cir=65.994, CE=10.513]
+📊 Kết thúc Epoch 53 |
+Train Loss: 27.7547 | Val Loss: 24.7896
+ 
+Train Epoch 54: 100%|█████████████████████|
+64/64 [07:12<00:00,  6.76s/it,
+Loss=27.751, NCE=5.962, Cir=67.397, CE=4.694]
+Val Epoch 54: 100%|████████████████████|
+4/4 [00:18<00:00,  4.74s/it,
+Val_Loss=23.174, NCE=2.365, Cir=66.066, CE=10.461]
+📊 Kết thúc Epoch 54 |
+Train Loss: 27.7387 | Val Loss: 24.8075
+ 
+Train Epoch 55: 100%|█████████████████████|
+64/64 [07:15<00:00,  6.80s/it,
+Loss=27.700, NCE=5.980, Cir=67.307, CE=4.558]
+Val Epoch 55: 100%|████████████████████|
+4/4 [00:18<00:00,  4.69s/it,
+Val_Loss=23.216, NCE=2.346, Cir=66.630, CE=10.394]
+📊 Kết thúc Epoch 55 |
+Train Loss: 27.6901 | Val Loss: 24.7880
+ 
+📦 Đã lưu Checkpoint định
+kỳ tại ./checkpoints/models/newlimavlm_epoch_55.pth
+ 
+Train Epoch 56: 100%|█████████████████████|
+64/64 [07:13<00:00,  6.77s/it,
+Loss=27.663, NCE=5.936, Cir=67.543, CE=4.563]
+Val Epoch 56: 100%|████████████████████|
+4/4 [00:18<00:00,  4.68s/it,
+Val_Loss=23.049, NCE=2.309, Cir=65.867, CE=10.514]
+📊 Kết thúc Epoch 56 |
+Train Loss: 27.6084 | Val Loss: 24.7579
+ 
+Train Epoch 57: 100%|█████████████████████|
+64/64 [07:12<00:00,  6.76s/it,
+Loss=27.526, NCE=5.886, Cir=67.376, CE=4.558]
+Val Epoch 57: 100%|████████████████████|
+4/4 [00:18<00:00,  4.70s/it,
+Val_Loss=23.068, NCE=2.316, Cir=65.556, CE=10.648]
+📊 Kết thúc Epoch 57 |
+Train Loss: 27.4947 | Val Loss: 24.8167
+ 
+Train Epoch 58: 100%|█████████████████████|
+64/64 [07:13<00:00,  6.77s/it,
+Loss=27.486, NCE=5.847, Cir=67.527, CE=4.573]
+Val Epoch 58: 100%|████████████████████|
+4/4 [00:18<00:00,  4.73s/it,
+Val_Loss=23.058, NCE=2.304, Cir=66.428, CE=10.330]
+📊 Kết thúc Epoch 58 |
+Train Loss: 27.3959 | Val Loss: 24.7570
+ 
+Train Epoch 59: 100%|█████████████████████|
+64/64 [07:15<00:00,  6.80s/it,
+Loss=27.424, NCE=5.884, Cir=67.321, CE=4.384]
+Val Epoch 59: 100%|████████████████████|
+4/4 [00:19<00:00,  4.75s/it,
+Val_Loss=23.310, NCE=2.307, Cir=66.514, CE=10.786]
+📊 Kết thúc Epoch 59 |
+Train Loss: 27.3627 | Val Loss: 24.8614
+ 
+Train Epoch 60: 100%|█████████████████████|
+64/64 [07:11<00:00,  6.75s/it,
+Loss=27.383, NCE=5.921, Cir=66.972, CE=4.295]
+Val Epoch 60: 100%|████████████████████|
+4/4 [00:18<00:00,  4.62s/it,
+Val_Loss=23.196, NCE=2.326, Cir=66.023, CE=10.678]
+📊 Kết thúc Epoch 60 |
+Train Loss: 27.3361 | Val Loss: 24.7786
+ 
+📦 Đã lưu Checkpoint định
+kỳ tại ./checkpoints/models/newlimavlm_epoch_60.pth
+ 
+Train Epoch 61: 100%|█████████████████████|
+64/64 [07:12<00:00,  6.75s/it,
+Loss=27.454, NCE=5.898, Cir=67.912, CE=4.152]
+Val Epoch 61: 100%|████████████████████|
+4/4 [00:18<00:00,  4.62s/it,
+Val_Loss=23.096, NCE=2.298, Cir=65.992, CE=10.601]
+📊 Kết thúc Epoch 61 |
+Train Loss: 27.2816 | Val Loss: 24.7372
+ 
+Train Epoch 62: 100%|█████████████████████|
+64/64 [07:16<00:00,  6.82s/it,
+Loss=27.171, NCE=5.945, Cir=66.402, CE=4.000]
+Val Epoch 62: 100%|████████████████████|
+4/4 [00:18<00:00,  4.71s/it,
+Val_Loss=23.063, NCE=2.270, Cir=65.682, CE=10.773]
+📊 Kết thúc Epoch 62 |
+Train Loss: 27.2383 | Val Loss: 24.7771
+ 
+Train Epoch 63: 100%|█████████████████████|
+64/64 [07:14<00:00,  6.79s/it,
+Loss=27.024, NCE=5.881, Cir=66.382, CE=3.970]
+Val Epoch 63: 100%|████████████████████|
+4/4 [00:18<00:00,  4.66s/it,
+Val_Loss=23.361, NCE=2.273, Cir=66.249, CE=11.133]
+📊 Kết thúc Epoch 63 |
+Train Loss: 27.1991 | Val Loss: 24.8695
+ 
+Train Epoch 64: 100%|█████████████████████|
+64/64 [07:13<00:00,  6.78s/it,
+Loss=27.030, NCE=5.841, Cir=66.532, CE=4.082]
+Val Epoch 64: 100%|████████████████████|
+4/4 [00:18<00:00,  4.65s/it,
+Val_Loss=23.121, NCE=2.278, Cir=65.394, CE=10.973]
+📊 Kết thúc Epoch 64 |
+Train Loss: 27.0846 | Val Loss: 24.8089
+ 
+Train Epoch 65: 100%|█████████████████████|
+64/64 [07:14<00:00,  6.78s/it,
+Loss=26.956, NCE=5.809, Cir=67.053, CE=3.854]
+Val Epoch 65: 100%|████████████████████|
+4/4 [00:18<00:00,  4.70s/it,
+Val_Loss=23.176, NCE=2.264, Cir=66.493, CE=10.699]
+📊 Kết thúc Epoch 65 |
+Train Loss: 26.9891 | Val Loss: 24.7180
+ 
+📦 Đã lưu Checkpoint định
+kỳ tại ./checkpoints/models/newlimavlm_epoch_65.pth
+ 
+Train Epoch 66: 100%|█████████████████████|
+64/64 [07:14<00:00,  6.79s/it,
+Loss=26.984, NCE=5.827, Cir=67.112, CE=3.817]
+Val Epoch 66: 100%|████████████████████|
+4/4 [00:18<00:00,  4.70s/it,
+Val_Loss=23.154, NCE=2.287, Cir=65.569, CE=10.933]
+📊 Kết thúc Epoch 66 |
+Train Loss: 26.9244 | Val Loss: 24.7655
+ 
+Train Epoch 67: 100%|█████████████████████|
+64/64 [07:15<00:00,  6.80s/it,
+Loss=26.836, NCE=5.855, Cir=66.281, CE=3.737]
+Val Epoch 67: 100%|████████████████████|
+4/4 [00:18<00:00,  4.73s/it,
+Val_Loss=23.181, NCE=2.254, Cir=66.002, CE=10.943]
+📊 Kết thúc Epoch 67 |
+Train Loss: 26.8833 | Val Loss: 24.7003
+ 
+Train Epoch 68: 100%|█████████████████████|
+64/64 [07:15<00:00,  6.80s/it,
+Loss=26.901, NCE=5.865, Cir=66.289, CE=3.826]
+Val Epoch 68: 100%|████████████████████|
+4/4 [00:19<00:00,  4.81s/it,
+Val_Loss=23.067, NCE=2.282, Cir=65.020, CE=10.997]
+📊 Kết thúc Epoch 68 |
+Train Loss: 26.8812 | Val Loss: 24.7498
+ 
+Train Epoch 69: 100%|█████████████████████|
+64/64 [07:13<00:00,  6.77s/it,
+Loss=26.947, NCE=5.876, Cir=67.000, CE=3.588]
+Val Epoch 69: 100%|████████████████████|
+4/4 [00:18<00:00,  4.69s/it,
+Val_Loss=23.120, NCE=2.212, Cir=65.270, CE=11.285]
+📊 Kết thúc Epoch 69 |
+Train Loss: 26.8129 | Val Loss: 24.8135
+ 
+Train Epoch 70: 100%|█████████████████████|
+64/64 [07:14<00:00,  6.79s/it,
+Loss=26.677, NCE=5.873, Cir=65.870, CE=3.513]
+Val Epoch 70: 100%|████████████████████|
+4/4 [00:18<00:00,  4.70s/it,
+Val_Loss=22.977, NCE=2.262, Cir=65.187, CE=10.831]
+📊 Kết thúc Epoch 70 |
+Train Loss: 26.7697 | Val Loss: 24.7209
+ 
+📦 Đã lưu Checkpoint định
+kỳ tại ./checkpoints/models/newlimavlm_epoch_70.pth
+ 
+Train Epoch 71: 100%|█████████████████████|
+64/64 [07:16<00:00,  6.82s/it,
+Loss=26.585, NCE=5.808, Cir=65.985, CE=3.547]
+Val Epoch 71: 100%|████████████████████|
+4/4 [00:18<00:00,  4.70s/it,
+Val_Loss=23.296, NCE=2.231, Cir=65.963, CE=11.282]
+📊 Kết thúc Epoch 71 |
+Train Loss: 26.6315 | Val Loss: 24.8083
+ 
+Train Epoch 72: 100%|█████████████████████|
+64/64 [07:14<00:00,  6.79s/it,
+Loss=26.445, NCE=5.802, Cir=65.640, CE=3.426]
+Val Epoch 72: 100%|████████████████████|
+4/4 [00:18<00:00,  4.63s/it,
+Val_Loss=23.024, NCE=2.255, Cir=64.835, CE=11.094]
+📊 Kết thúc Epoch 72 |
+Train Loss: 26.5610 | Val Loss: 24.7616
+ 
+Train Epoch 73: 100%|█████████████████████|
+64/64 [07:13<00:00,  6.77s/it,
+Loss=26.825, NCE=5.803, Cir=67.274, CE=3.528]
+Val Epoch 73: 100%|████████████████████|
+4/4 [00:18<00:00,  4.64s/it,
+Val_Loss=23.001, NCE=2.208, Cir=65.416, CE=11.002]
+📊 Kết thúc Epoch 73 |
+Train Loss: 26.5218 | Val Loss: 24.7331
+ 
+Train Epoch 74: 100%|█████████████████████|
+64/64 [07:17<00:00,  6.84s/it,
+Loss=26.595, NCE=5.810, Cir=66.257, CE=3.448]
+Val Epoch 74: 100%|████████████████████|
+4/4 [00:18<00:00,  4.71s/it,
+Val_Loss=23.001, NCE=2.215, Cir=64.711, CE=11.258]
+📊 Kết thúc Epoch 74 |
+Train Loss: 26.4981 | Val Loss: 24.7608
+ 
+Train Epoch 75: 100%|█████████████████████|
+64/64 [07:12<00:00,  6.76s/it,
+Loss=26.526, NCE=5.795, Cir=66.152, CE=3.410]
+Val Epoch 75: 100%|████████████████████|
+4/4 [00:19<00:00,  4.75s/it,
+Val_Loss=23.055, NCE=2.231, Cir=65.012, CE=11.180]
+📊 Kết thúc Epoch 75 |
+Train Loss: 26.4540 | Val Loss: 24.7065
+ 
+📦 Đã lưu Checkpoint định
+kỳ tại ./checkpoints/models/newlimavlm_epoch_75.pth
+ 
+Train Epoch 76: 100%|█████████████████████|
+64/64 [07:16<00:00,  6.82s/it,
+Loss=26.456, NCE=5.784, Cir=66.174, CE=3.305]
+Val Epoch 76: 100%|████████████████████|
+4/4 [00:18<00:00,  4.66s/it,
+Val_Loss=23.181, NCE=2.306, Cir=65.101, CE=11.096]
+📊 Kết thúc Epoch 76 |
+Train Loss: 26.4060 | Val Loss: 24.7274
+ 
+Train Epoch 77: 100%|█████████████████████|
+64/64 [07:13<00:00,  6.77s/it,
+Loss=26.185, NCE=5.794, Cir=64.975, CE=3.205]
+Val Epoch 77: 100%|████████████████████|
+4/4 [00:18<00:00,  4.66s/it,
+Val_Loss=22.937, NCE=2.185, Cir=64.834, CE=11.201]
+📊 Kết thúc Epoch 77 |
+Train Loss: 26.3679 | Val Loss: 24.6585
+ 
+Train Epoch 78: 100%|█████████████████████|
+64/64 [07:13<00:00,  6.78s/it,
+Loss=26.360, NCE=5.735, Cir=66.170, CE=3.315]
+Val Epoch 78: 100%|████████████████████|
+4/4 [00:18<00:00,  4.62s/it,
+Val_Loss=22.940, NCE=2.228, Cir=63.948, CE=11.388]
+📊 Kết thúc Epoch 78 |
+Train Loss: 26.3134 | Val Loss: 24.7531
+ 
+Train Epoch 79: 100%|█████████████████████|
+64/64 [07:14<00:00,  6.78s/it,
+Loss=26.194, NCE=5.702, Cir=66.324, CE=3.051]
+Val Epoch 79: 100%|████████████████████|
+4/4 [00:18<00:00,  4.72s/it,
+Val_Loss=23.426, NCE=2.283, Cir=66.072, CE=11.292]
+📊 Kết thúc Epoch 79 |
+Train Loss: 26.2707 | Val Loss: 24.8095
+ 
+Train Epoch 80: 100%|█████████████████████|
+64/64 [07:12<00:00,  6.76s/it,
+Loss=26.234, NCE=5.733, Cir=65.597, CE=3.295]
+Val Epoch 80: 100%|████████████████████|
+4/4 [00:18<00:00,  4.73s/it,
+Val_Loss=22.995, NCE=2.215, Cir=64.362, CE=11.384]
+📊 Kết thúc Epoch 80 |
+Train Loss: 26.2276 | Val Loss: 24.7447
+ 
+📦 Đã lưu Checkpoint định
+kỳ tại ./checkpoints/models/newlimavlm_epoch_80.pth
+ 
+Train Epoch 81: 100%|█████████████████████|
+64/64 [07:15<00:00,  6.80s/it,
+Loss=26.030, NCE=5.711, Cir=65.635, CE=2.964]
+Val Epoch 81: 100%|████████████████████|
+4/4 [00:18<00:00,  4.68s/it,
+Val_Loss=23.069, NCE=2.250, Cir=65.044, CE=11.120]
+📊 Kết thúc Epoch 81 |
+Train Loss: 26.1865 | Val Loss: 24.7079
+ 
+Train Epoch 82: 100%|█████████████████████|
+64/64 [07:13<00:00,  6.77s/it,
+Loss=26.360, NCE=5.764, Cir=66.377, CE=3.113]
+Val Epoch 82: 100%|████████████████████|
+4/4 [00:18<00:00,  4.65s/it,
+Val_Loss=22.739, NCE=2.178, Cir=64.976, CE=10.776]
+📊 Kết thúc Epoch 82 |
+Train Loss: 26.1784 | Val Loss: 24.5522
+ 
+Train Epoch 83: 100%|█████████████████████|
+64/64 [07:13<00:00,  6.78s/it,
+Loss=26.029, NCE=5.743, Cir=65.529, CE=2.874]
+Val Epoch 83: 100%|████████████████████|
+4/4 [00:18<00:00,  4.66s/it,
+Val_Loss=22.888, NCE=2.184, Cir=64.769, CE=11.130]
+📊 Kết thúc Epoch 83 |
+Train Loss: 26.0964 | Val Loss: 24.6635
+ 
+Train Epoch 84: 100%|█████████████████████|
+64/64 [07:16<00:00,  6.82s/it,
+Loss=25.994, NCE=5.710, Cir=65.617, CE=2.901]
+Val Epoch 84: 100%|████████████████████|
+4/4 [00:18<00:00,  4.62s/it,
+Val_Loss=22.712, NCE=2.167, Cir=63.899, CE=11.197]
+📊 Kết thúc Epoch 84 |
+Train Loss: 26.0575 | Val Loss: 24.6317
+ 
+Train Epoch 85: 100%|█████████████████████|
+64/64 [07:21<00:00,  6.89s/it,
+Loss=25.766, NCE=5.707, Cir=65.086, CE=2.668]
+Val Epoch 85: 100%|████████████████████|
+4/4 [00:19<00:00,  4.76s/it,
+Val_Loss=22.594, NCE=2.179, Cir=63.297, CE=11.153]
+📊 Kết thúc Epoch 85 |
+Train Loss: 25.9521 | Val Loss: 24.4746
+ 
+📦 Đã lưu Checkpoint định
+kỳ tại ./checkpoints/models/newlimavlm_epoch_85.pth
+ 
+Train Epoch 86: 100%|█████████████████████|
+64/64 [07:14<00:00,  6.80s/it,
+Loss=26.042, NCE=5.721, Cir=65.616, CE=2.955]
+Val Epoch 86: 100%|████████████████████|
+4/4 [00:18<00:00,  4.65s/it,
+Val_Loss=22.723, NCE=2.184, Cir=63.271, CE=11.401]
+📊 Kết thúc Epoch 86 |
+Train Loss: 25.9038 | Val Loss: 24.6247
+ 
+Train Epoch 87: 100%|█████████████████████|
+64/64 [07:11<00:00,  6.74s/it,
+Loss=25.862, NCE=5.698, Cir=65.507, CE=2.728]
+Val Epoch 87: 100%|████████████████████|
+4/4 [00:18<00:00,  4.70s/it,
+Val_Loss=22.822, NCE=2.218, Cir=63.799, CE=11.253]
+📊 Kết thúc Epoch 87 |
+Train Loss: 25.8387 | Val Loss: 24.5630
+ 
+Train Epoch 88: 100%|█████████████████████|
+64/64 [07:16<00:00,  6.81s/it,
+Loss=25.863, NCE=5.711, Cir=65.520, CE=2.675]
+Val Epoch 88: 100%|████████████████████|
+4/4 [00:18<00:00,  4.66s/it,
+Val_Loss=22.704, NCE=2.159, Cir=64.023, CE=11.164]
+📊 Kết thúc Epoch 88 |
+Train Loss: 25.8357 | Val Loss: 24.4840
+ 
+Train Epoch 89: 100%|█████████████████████|
+64/64 [07:13<00:00,  6.77s/it,
+Loss=26.064, NCE=5.751, Cir=65.441, CE=2.948]
+Val Epoch 89: 100%|████████████████████|
+4/4 [00:18<00:00,  4.62s/it,
+Val_Loss=22.860, NCE=2.207, Cir=64.259, CE=11.189]
+📊 Kết thúc Epoch 89 |
+Train Loss: 25.7429 | Val Loss: 24.5348
+ 
+Train Epoch 90: 100%|█████████████████████|
+64/64 [07:11<00:00,  6.74s/it,
+Loss=25.730, NCE=5.653, Cir=65.087, CE=2.815]
+Val Epoch 90: 100%|████████████████████|
+4/4 [00:18<00:00,  4.62s/it,
+Val_Loss=22.704, NCE=2.180, Cir=64.106, CE=11.047]
+📊 Kết thúc Epoch 90 |
+Train Loss: 25.6805 | Val Loss: 24.5511
+ 
+📦 Đã lưu Checkpoint định
+kỳ tại ./checkpoints/models/newlimavlm_epoch_90.pth
+ 
+Train Epoch 91: 100%|█████████████████████|
+64/64 [07:13<00:00,  6.78s/it,
+Loss=25.782, NCE=5.647, Cir=65.665, CE=2.709]
+Val Epoch 91: 100%|████████████████████|
+4/4 [00:18<00:00,  4.70s/it,
+Val_Loss=22.950, NCE=2.177, Cir=64.551, CE=11.370]
+📊 Kết thúc Epoch 91 |
+Train Loss: 25.6185 | Val Loss: 24.5316
+ 
+Train Epoch 92: 100%|█████████████████████|
+64/64 [07:14<00:00,  6.79s/it,
+Loss=25.070, NCE=5.600, Cir=63.920, CE=2.171]
+Val Epoch 92: 100%|████████████████████|
+4/4 [00:18<00:00,  4.65s/it,
+Val_Loss=22.917, NCE=2.197, Cir=64.096, CE=11.408]
+📊 Kết thúc Epoch 92 |
+Train Loss: 25.5979 | Val Loss: 24.4718
+ 
+Train Epoch 93: 100%|█████████████████████|
+64/64 [07:13<00:00,  6.78s/it,
+Loss=25.656, NCE=5.644, Cir=65.708, CE=2.453]
+Val Epoch 93: 100%|████████████████████|
+4/4 [00:18<00:00,  4.70s/it,
+Val_Loss=22.741, NCE=2.222, Cir=63.237, CE=11.300]
+📊 Kết thúc Epoch 93 |
+Train Loss: 25.5522 | Val Loss: 24.5094
+ 
+Train Epoch 94: 100%|█████████████████████|
+64/64 [07:15<00:00,  6.80s/it,
+Loss=25.230, NCE=5.610, Cir=64.291, CE=2.303]
+Val Epoch 94: 100%|████████████████████|
+4/4 [00:18<00:00,  4.69s/it,
+Val_Loss=23.123, NCE=2.169, Cir=65.657, CE=11.307]
+📊 Kết thúc Epoch 94 |
+Train Loss: 25.5050 | Val Loss: 24.6131
+ 
+Train Epoch 95: 100%|█████████████████████|
+64/64 [07:14<00:00,  6.79s/it,
+Loss=25.265, NCE=5.551, Cir=65.395, CE=2.169]
+Val Epoch 95: 100%|████████████████████|
+4/4 [00:19<00:00,  4.79s/it,
+Val_Loss=22.431, NCE=2.155, Cir=62.010, CE=11.438]
+📊 Kết thúc Epoch 95 |
+Train Loss: 25.4455 | Val Loss: 24.4105
+ 
+📦 Đã lưu Checkpoint định
+kỳ tại ./checkpoints/models/newlimavlm_epoch_95.pth
+ 
+Train Epoch 96: 100%|█████████████████████|
+64/64 [07:16<00:00,  6.82s/it,
+Loss=25.465, NCE=5.622, Cir=65.245, CE=2.344]
+Val Epoch 96: 100%|████████████████████|
+4/4 [00:25<00:00,  6.47s/it,
+Val_Loss=22.868, NCE=2.190, Cir=64.060, CE=11.354]
+📊 Kết thúc Epoch 96 |
+Train Loss: 25.3988 | Val Loss: 24.5425
+ 
+Train Epoch 97: 100%|█████████████████████|
+64/64 [07:24<00:00,  6.94s/it,
+Loss=25.444, NCE=5.611, Cir=64.962, CE=2.460]
+Val Epoch 97: 100%|████████████████████|
+4/4 [00:19<00:00,  4.98s/it,
+Val_Loss=22.749, NCE=2.127, Cir=63.867, CE=11.443]
+📊 Kết thúc Epoch 97 |
+Train Loss: 25.3230 | Val Loss: 24.4823
+ 
+Train Epoch 98: 100%|█████████████████████|
+64/64 [07:15<00:00,  6.80s/it,
+Loss=25.210, NCE=5.541, Cir=64.349, CE=2.518]
+Val Epoch 98: 100%|████████████████████|
+4/4 [00:18<00:00,  4.73s/it,
+Val_Loss=22.622, NCE=2.208, Cir=62.254, CE=11.511]
+📊 Kết thúc Epoch 98 |
+Train Loss: 25.3083 | Val Loss: 24.4471
+ 
+Train Epoch 99: 100%|█████████████████████|
+64/64 [07:10<00:00,  6.73s/it,
+Loss=25.377, NCE=5.597, Cir=65.320, CE=2.239]
+Val Epoch 99: 100%|████████████████████|
+4/4 [00:18<00:00,  4.70s/it,
+Val_Loss=22.664, NCE=2.127, Cir=63.228, CE=11.527]
+📊 Kết thúc Epoch 99 |
+Train Loss: 25.2550 | Val Loss: 24.4621
+ 
+Train Epoch 100: 100%|████████████████████|
+64/64 [07:14<00:00,  6.78s/it,
+Loss=25.043, NCE=5.541, Cir=64.809, CE=1.999]
+Val Epoch 100: 100%|███████████████████|
+4/4 [00:18<00:00,  4.64s/it,
+Val_Loss=22.831, NCE=2.134, Cir=64.289, CE=11.411]
+📊 Kết thúc Epoch 100 |
+Train Loss: 25.2070 | Val Loss: 24.5680
+ 
+📦 Đã lưu Checkpoint định
+kỳ tại ./checkpoints/models/newlimavlm_epoch_100.pth
+ 
+Train Epoch 101: 100%|████████████████████|
+64/64 [07:12<00:00,  6.76s/it,
+Loss=24.865, NCE=5.575, Cir=63.796, CE=1.911]
+Val Epoch 101: 100%|███████████████████|
+4/4 [00:19<00:00,  4.77s/it,
+Val_Loss=22.685, NCE=2.163, Cir=63.316, CE=11.392]
+📊 Kết thúc Epoch 101 |
+Train Loss: 25.1648 | Val Loss: 24.4680
+ 
+Train Epoch 102: 100%|████████████████████|
+64/64 [07:13<00:00,  6.77s/it,
+Loss=24.972, NCE=5.567, Cir=64.038, CE=2.061]
+Val Epoch 102: 100%|███████████████████|
+4/4 [00:18<00:00,  4.62s/it,
+Val_Loss=22.874, NCE=2.158, Cir=63.796, CE=11.599]
+📊 Kết thúc Epoch 102 |
+Train Loss: 25.1200 | Val Loss: 24.5311
+ 
+Train Epoch 103: 100%|████████████████████|
+64/64 [07:11<00:00,  6.75s/it,
+Loss=24.867, NCE=5.554, Cir=63.960, CE=1.934]
+Val Epoch 103: 100%|███████████████████|
+4/4 [00:19<00:00,  4.84s/it,
+Val_Loss=22.883, NCE=2.182, Cir=64.058, CE=11.414]
+📊 Kết thúc Epoch 103 |
+Train Loss: 25.0561 | Val Loss: 24.5512
+ 
+Train Epoch 104: 100%|████████████████████|
+64/64 [07:12<00:00,  6.77s/it,
+Loss=24.959, NCE=5.565, Cir=64.066, CE=2.030]
+Val Epoch 104: 100%|███████████████████|
+4/4 [00:18<00:00,  4.66s/it,
+Val_Loss=22.943, NCE=2.218, Cir=63.730, CE=11.523]
+📊 Kết thúc Epoch 104 |
+Train Loss: 25.0559 | Val Loss: 24.5103
+ 
+Train Epoch 105: 100%|████████████████████|
+64/64 [07:16<00:00,  6.82s/it,
+Loss=25.087, NCE=5.594, Cir=64.765, CE=1.892]
+Val Epoch 105: 100%|███████████████████|
+4/4 [00:18<00:00,  4.70s/it,
+Val_Loss=22.662, NCE=2.174, Cir=63.331, CE=11.294]
+📊 Kết thúc Epoch 105 |
+Train Loss: 25.0333 | Val Loss: 24.3896
+ 
+📦 Đã lưu Checkpoint định
+kỳ tại ./checkpoints/models/newlimavlm_epoch_105.pth
+ 
+Train Epoch 106: 100%|████████████████████|
+64/64 [07:20<00:00,  6.89s/it,
+Loss=25.145, NCE=5.541, Cir=65.049, CE=2.106]
+Val Epoch 106: 100%|███████████████████|
+4/4 [00:18<00:00,  4.66s/it,
+Val_Loss=22.527, NCE=2.149, Cir=62.849, CE=11.319]
+📊 Kết thúc Epoch 106 |
+Train Loss: 25.0055 | Val Loss: 24.4217
+ 
+Train Epoch 107: 100%|████████████████████|
+64/64 [07:16<00:00,  6.82s/it,
+Loss=24.926, NCE=5.544, Cir=64.662, CE=1.810]
+Val Epoch 107: 100%|███████████████████|
+4/4 [00:18<00:00,  4.62s/it,
+Val_Loss=22.706, NCE=2.186, Cir=63.147, CE=11.408]
+📊 Kết thúc Epoch 107 |
+Train Loss: 24.9678 | Val Loss: 24.4421
+ 
+Train Epoch 108: 100%|████████████████████|
+64/64 [07:24<00:00,  6.95s/it,
+Loss=25.122, NCE=5.595, Cir=64.672, CE=1.995]
+Val Epoch 108: 100%|███████████████████|
+4/4 [00:19<00:00,  4.76s/it,
+Val_Loss=22.576, NCE=2.077, Cir=63.290, CE=11.529]
+📊 Kết thúc Epoch 108 |
+Train Loss: 24.8769 | Val Loss: 24.3799
+ 
+Train Epoch 109: 100%|████████████████████|
+64/64 [07:19<00:00,  6.86s/it,
+Loss=24.947, NCE=5.460, Cir=65.237, CE=1.957]
+Val Epoch 109: 100%|███████████████████|
+4/4 [00:19<00:00,  4.84s/it,
+Val_Loss=22.847, NCE=2.129, Cir=64.087, CE=11.544]
+📊 Kết thúc Epoch 109 |
+Train Loss: 24.8076 | Val Loss: 24.4856
+ 
+Train Epoch 110: 100%|████████████████████|
+64/64 [07:22<00:00,  6.91s/it,
+Loss=24.734, NCE=5.512, Cir=64.370, CE=1.670]
+Val Epoch 110: 100%|███████████████████|
+4/4 [00:18<00:00,  4.71s/it,
+Val_Loss=22.362, NCE=2.106, Cir=62.495, CE=11.303]
+📊 Kết thúc Epoch 110 |
+Train Loss: 24.7639 | Val Loss: 24.3755
+ 
+📦 Đã lưu Checkpoint định
+kỳ tại ./checkpoints/models/newlimavlm_epoch_110.pth
+ 
+Train Epoch 111: 100%|████████████████████|
+64/64 [07:18<00:00,  6.86s/it,
+Loss=24.975, NCE=5.500, Cir=65.184, CE=1.877]
+Val Epoch 111: 100%|███████████████████|
+4/4 [00:18<00:00,  4.66s/it,
+Val_Loss=22.397, NCE=2.100, Cir=62.351, CE=11.454]
+📊 Kết thúc Epoch 111 |
+Train Loss: 24.7315 | Val Loss: 24.2995
+ 
+Train Epoch 112: 100%|████████████████████|
+64/64 [07:21<00:00,  6.90s/it,
+Loss=24.784, NCE=5.546, Cir=63.897, CE=1.824]
+Val Epoch 112: 100%|███████████████████|
+4/4 [00:18<00:00,  4.69s/it,
+Val_Loss=22.560, NCE=2.139, Cir=62.493, CE=11.567]
+📊 Kết thúc Epoch 112 |
+Train Loss: 24.6941 | Val Loss: 24.4261
+ 
+Train Epoch 113: 100%|████████████████████|
+64/64 [07:17<00:00,  6.84s/it,
+Loss=24.429, NCE=5.469, Cir=63.357, CE=1.639]
+Val Epoch 113: 100%|███████████████████|
+4/4 [00:18<00:00,  4.64s/it,
+Val_Loss=22.610, NCE=2.095, Cir=62.715, CE=11.753]
+📊 Kết thúc Epoch 113 |
+Train Loss: 24.6861 | Val Loss: 24.4092
+ 
+Train Epoch 114: 100%|████████████████████|
+64/64 [07:16<00:00,  6.83s/it,
+Loss=24.726, NCE=5.504, Cir=64.439, CE=1.659]
+Val Epoch 114: 100%|███████████████████|
+4/4 [00:18<00:00,  4.69s/it,
+Val_Loss=22.882, NCE=2.168, Cir=63.890, CE=11.536]
+📊 Kết thúc Epoch 114 |
+Train Loss: 24.5929 | Val Loss: 24.3953
+ 
+Train Epoch 115: 100%|████████████████████|
+64/64 [07:19<00:00,  6.86s/it,
+Loss=24.732, NCE=5.496, Cir=64.265, CE=1.774]
+Val Epoch 115: 100%|███████████████████|
+4/4 [00:18<00:00,  4.63s/it,
+Val_Loss=22.735, NCE=2.163, Cir=63.149, CE=11.559]
+📊 Kết thúc Epoch 115 |
+Train Loss: 24.5878 | Val Loss: 24.4733
+ 
+📦 Đã lưu Checkpoint định
+kỳ tại ./checkpoints/models/newlimavlm_epoch_115.pth
+ 
+Train Epoch 116: 100%|████████████████████|
+64/64 [07:20<00:00,  6.88s/it,
+Loss=24.408, NCE=5.459, Cir=63.716, CE=1.496]
+Val Epoch 116: 100%|███████████████████|
+4/4 [00:18<00:00,  4.71s/it,
+Val_Loss=22.720, NCE=2.118, Cir=63.044, CE=11.750]
+📊 Kết thúc Epoch 116 |
+Train Loss: 24.5592 | Val Loss: 24.5312
+ 
+Train Epoch 117: 100%|████████████████████|
+64/64 [07:17<00:00,  6.83s/it,
+Loss=24.759, NCE=5.526, Cir=63.995, CE=1.818]
+Val Epoch 117: 100%|███████████████████|
+4/4 [00:18<00:00,  4.64s/it,
+Val_Loss=22.821, NCE=2.144, Cir=63.267, CE=11.760]
+📊 Kết thúc Epoch 117 |
+Train Loss: 24.6094 | Val Loss: 24.4424
+ 
+Train Epoch 118: 100%|████████████████████|
+64/64 [07:18<00:00,  6.86s/it,
+Loss=24.410, NCE=5.485, Cir=63.582, CE=1.446]
+Val Epoch 118: 100%|███████████████████|
+4/4 [00:19<00:00,  4.87s/it,
+Val_Loss=22.706, NCE=2.088, Cir=63.734, CE=11.568]
+📊 Kết thúc Epoch 118 |
+Train Loss: 24.5869 | Val Loss: 24.3933
+ 
+Train Epoch 119: 100%|████████████████████|
+64/64 [07:20<00:00,  6.89s/it,
+Loss=24.378, NCE=5.450, Cir=63.591, CE=1.519]
+Val Epoch 119: 100%|███████████████████|
+4/4 [00:18<00:00,  4.72s/it,
+Val_Loss=22.686, NCE=2.099, Cir=63.126, CE=11.727]
+📊 Kết thúc Epoch 119 |
+Train Loss: 24.5260 | Val Loss: 24.4267
+ 
+Train Epoch 120: 100%|████████████████████|
+64/64 [07:18<00:00,  6.85s/it,
+Loss=24.333, NCE=5.431, Cir=63.610, CE=1.496]
+Val Epoch 120: 100%|███████████████████|
+4/4 [00:18<00:00,  4.68s/it,
+Val_Loss=22.519, NCE=2.119, Cir=62.232, CE=11.670]
+📊 Kết thúc Epoch 120 |
+Train Loss: 24.4681 | Val Loss: 24.3646
+ 
+📦 Đã lưu Checkpoint định
+kỳ tại ./checkpoints/models/newlimavlm_epoch_120.pth
+ 
+Train Epoch 121: 100%|████████████████████|
+64/64 [07:19<00:00,  6.87s/it,
+Loss=24.274, NCE=5.388, Cir=63.895, CE=1.440]
+Val Epoch 121: 100%|███████████████████|
+4/4 [00:18<00:00,  4.68s/it,
+Val_Loss=22.741, NCE=2.075, Cir=63.441, CE=11.807]
+📊 Kết thúc Epoch 121 |
+Train Loss: 24.4002 | Val Loss: 24.3273
+ 
+Train Epoch 122: 100%|████████████████████|
+64/64 [07:16<00:00,  6.82s/it,
+Loss=24.307, NCE=5.402, Cir=63.705, CE=1.526]
+Val Epoch 122: 100%|███████████████████|
+4/4 [00:18<00:00,  4.67s/it,
+Val_Loss=22.795, NCE=2.142, Cir=63.444, CE=11.645]
+📊 Kết thúc Epoch 122 |
+Train Loss: 24.3511 | Val Loss: 24.4828
+ 
+Train Epoch 123: 100%|████████████████████|
+64/64 [07:17<00:00,  6.83s/it,
+Loss=23.964, NCE=5.373, Cir=62.567, CE=1.411]
+Val Epoch 123: 100%|███████████████████|
+4/4 [00:18<00:00,  4.66s/it,
+Val_Loss=22.710, NCE=2.154, Cir=62.936, CE=11.632]
+📊 Kết thúc Epoch 123 |
+Train Loss: 24.3558 | Val Loss: 24.3809
+ 
+Train Epoch 124: 100%|████████████████████|
+64/64 [07:18<00:00,  6.85s/it,
+Loss=24.495, NCE=5.366, Cir=65.167, CE=1.458]
+Val Epoch 124: 100%|███████████████████|
+4/4 [00:18<00:00,  4.66s/it,
+Val_Loss=22.582, NCE=2.114, Cir=62.327, CE=11.780]
+📊 Kết thúc Epoch 124 |
+Train Loss: 24.3066 | Val Loss: 24.3766
+ 
+Train Epoch 125: 100%|████████████████████|
+64/64 [07:19<00:00,  6.86s/it,
+Loss=24.056, NCE=5.423, Cir=62.534, CE=1.405]
+Val Epoch 125: 100%|███████████████████|
+4/4 [00:19<00:00,  4.82s/it,
+Val_Loss=22.628, NCE=2.113, Cir=62.623, CE=11.753]
+📊 Kết thúc Epoch 125 |
+Train Loss: 24.2746 | Val Loss: 24.3569
+ 
+📦 Đã lưu Checkpoint định
+kỳ tại ./checkpoints/models/newlimavlm_epoch_125.pth
+ 
+Train Epoch 126: 100%|████████████████████|
+64/64 [07:23<00:00,  6.92s/it,
+Loss=24.193, NCE=5.430, Cir=63.724, CE=1.176]
+Val Epoch 126: 100%|███████████████████|
+4/4 [00:18<00:00,  4.64s/it,
+Val_Loss=22.593, NCE=2.142, Cir=62.217, CE=11.732]
+📊 Kết thúc Epoch 126 |
+Train Loss: 24.2497 | Val Loss: 24.4072
+ 
+Train Epoch 127: 100%|████████████████████|
+64/64 [07:16<00:00,  6.82s/it,
+Loss=24.269, NCE=5.392, Cir=64.402, CE=1.208]
+Val Epoch 127: 100%|███████████████████|
+4/4 [00:19<00:00,  4.86s/it,
+Val_Loss=22.676, NCE=2.087, Cir=63.567, CE=11.576]
+📊 Kết thúc Epoch 127 |
+Train Loss: 24.2431 | Val Loss: 24.3613
+ 
+Train Epoch 128: 100%|████████████████████|
+64/64 [07:18<00:00,  6.85s/it,
+Loss=24.176, NCE=5.384, Cir=63.934, CE=1.242]
+Val Epoch 128: 100%|███████████████████|
+4/4 [00:18<00:00,  4.68s/it,
+Val_Loss=22.479, NCE=2.120, Cir=61.870, CE=11.728]
+📊 Kết thúc Epoch 128 |
+Train Loss: 24.2664 | Val Loss: 24.3216
+ 
+Train Epoch 129: 100%|████████████████████|
+64/64 [07:16<00:00,  6.83s/it,
+Loss=23.954, NCE=5.371, Cir=63.074, CE=1.193]
+Val Epoch 129: 100%|███████████████████|
+4/4 [00:19<00:00,  4.77s/it,
+Val_Loss=22.729, NCE=2.140, Cir=62.395, CE=11.942]
+📊 Kết thúc Epoch 129 |
+Train Loss: 24.2747 | Val Loss: 24.3835
+ 
+Train Epoch 130: 100%|████████████████████|
+64/64 [07:35<00:00,  7.11s/it,
+Loss=24.168, NCE=5.427, Cir=63.666, CE=1.161]
+Val Epoch 130: 100%|███████████████████|
+4/4 [00:18<00:00,  4.66s/it,
+Val_Loss=22.683, NCE=2.089, Cir=62.790, CE=11.894]
+📊 Kết thúc Epoch 130 |
+Train Loss: 24.1958 | Val Loss: 24.4945
+ 
+📦 Đã lưu Checkpoint định
+kỳ tại ./checkpoints/models/newlimavlm_epoch_130.pth
+ 
+Train Epoch 131: 100%|████████████████████|
+64/64 [07:17<00:00,  6.84s/it,
+Loss=23.785, NCE=5.358, Cir=62.461, CE=1.154]
+Val Epoch 131: 100%|███████████████████|
+4/4 [00:18<00:00,  4.71s/it,
+Val_Loss=22.779, NCE=2.125, Cir=62.978, CE=11.866]
+📊 Kết thúc Epoch 131 |
+Train Loss: 24.1669 | Val Loss: 24.4212
+ 
+Train Epoch 132: 100%|████████████████████|
+64/64 [07:19<00:00,  6.86s/it,
+Loss=23.993, NCE=5.368, Cir=63.255, CE=1.213]
+Val Epoch 132: 100%|███████████████████|
+4/4 [00:19<00:00,  4.81s/it,
+Val_Loss=22.750, NCE=2.047, Cir=62.928, CE=12.142]
+📊 Kết thúc Epoch 132 |
+Train Loss: 24.1398 | Val Loss: 24.4121
+ 
+Train Epoch 133: 100%|████████████████████|
+64/64 [07:19<00:00,  6.86s/it,
+Loss=23.895, NCE=5.397, Cir=62.944, CE=1.025]
+Val Epoch 133: 100%|███████████████████|
+4/4 [00:19<00:00,  4.75s/it,
+Val_Loss=22.363, NCE=2.002, Cir=62.484, CE=11.725]
+📊 Kết thúc Epoch 133 |
+Train Loss: 24.1120 | Val Loss: 24.2637
+ 
+Train Epoch 134: 100%|████████████████████|
+64/64 [07:21<00:00,  6.89s/it,
+Loss=23.960, NCE=5.378, Cir=63.260, CE=1.102]
+Val Epoch 134: 100%|███████████████████|
+4/4 [00:18<00:00,  4.65s/it,
+Val_Loss=22.592, NCE=2.053, Cir=62.763, CE=11.867]
+📊 Kết thúc Epoch 134 |
+Train Loss: 24.0778 | Val Loss: 24.3556
+ 
+Train Epoch 135: 100%|████████████████████|
+64/64 [07:23<00:00,  6.92s/it,
+Loss=23.509, NCE=5.364, Cir=61.126, CE=1.112]
+Val Epoch 135: 100%|███████████████████|
+4/4 [00:18<00:00,  4.73s/it,
+Val_Loss=22.269, NCE=2.052, Cir=61.278, CE=11.820]
+📊 Kết thúc Epoch 135 |
+Train Loss: 24.0229 | Val Loss: 24.2869
+ 
+📦 Đã lưu Checkpoint định
+kỳ tại ./checkpoints/models/newlimavlm_epoch_135.pth
+ 
+Train Epoch 136: 100%|████████████████████|
+64/64 [07:19<00:00,  6.87s/it,
+Loss=24.011, NCE=5.358, Cir=63.474, CE=1.202]
+Val Epoch 136: 100%|███████████████████|
+4/4 [00:18<00:00,  4.69s/it,
+Val_Loss=22.220, NCE=2.058, Cir=61.223, CE=11.718]
+📊 Kết thúc Epoch 136 |
+Train Loss: 23.9849 | Val Loss: 24.2639
+ 
+Train Epoch 137: 100%|████████████████████|
+64/64 [07:18<00:00,  6.85s/it,
+Loss=24.188, NCE=5.369, Cir=64.128, CE=1.247]
+Val Epoch 137: 100%|███████████████████|
+4/4 [00:19<00:00,  4.93s/it,
+Val_Loss=22.732, NCE=2.169, Cir=62.275, CE=11.880]
+📊 Kết thúc Epoch 137 |
+Train Loss: 23.9761 | Val Loss: 24.5028
+ 
+Train Epoch 138: 100%|████████████████████|
+64/64 [07:21<00:00,  6.89s/it,
+Loss=24.187, NCE=5.324, Cir=64.972, CE=1.091]
+Val Epoch 138: 100%|███████████████████|
+4/4 [00:19<00:00,  4.88s/it,
+Val_Loss=22.635, NCE=2.053, Cir=62.462, CE=12.071]
+📊 Kết thúc Epoch 138 |
+Train Loss: 23.9800 | Val Loss: 24.3665
+ 
+Train Epoch 139: 100%|████████████████████|
+64/64 [09:43<00:00,  9.11s/it,
+Loss=24.443, NCE=5.532, Cir=63.943, CE=1.180]
+Val Epoch 139: 100%|███████████████████|
+4/4 [00:20<00:00,  5.03s/it,
+Val_Loss=22.514, NCE=2.070, Cir=61.590, CE=12.111]
+📊 Kết thúc Epoch 139 |
+Train Loss: 24.0054 | Val Loss: 24.3585
+ 
+Train Epoch 140: 100%|████████████████████|
+64/64 [07:28<00:00,  7.01s/it,
+Loss=23.868, NCE=5.283, Cir=63.838, CE=1.068]
+Val Epoch 140: 100%|███████████████████|
+4/4 [00:20<00:00,  5.03s/it,
+Val_Loss=22.617, NCE=2.132, Cir=62.293, CE=11.790]
+📊 Kết thúc Epoch 140 |
+Train Loss: 23.9243 | Val Loss: 24.3997
+ 
+📦 Đã lưu Checkpoint định
+kỳ tại ./checkpoints/models/newlimavlm_epoch_140.pth
+ 
+Train Epoch 141: 100%|████████████████████|
+64/64 [07:31<00:00,  7.06s/it,
+Loss=23.829, NCE=5.387, Cir=62.724, CE=1.021]
+Val Epoch 141: 100%|███████████████████|
+4/4 [00:19<00:00,  4.97s/it,
+Val_Loss=22.653, NCE=2.090, Cir=62.839, CE=11.809]
+📊 Kết thúc Epoch 141 |
+Train Loss: 23.8790 | Val Loss: 24.2864
+ 
+Train Epoch 142: 100%|████████████████████|
+64/64 [07:30<00:00,  7.04s/it,
+Loss=23.991, NCE=5.431, Cir=63.022, CE=1.051]
+Val Epoch 142: 100%|███████████████████|
+4/4 [00:19<00:00,  4.86s/it,
+Val_Loss=22.532, NCE=2.070, Cir=62.559, CE=11.762]
+📊 Kết thúc Epoch 142 |
+Train Loss: 23.9096 | Val Loss: 24.2763
+ 
+Train Epoch 143: 100%|████████████████████|
+64/64 [07:28<00:00,  7.00s/it,
+Loss=23.888, NCE=5.333, Cir=63.580, CE=1.013]
+Val Epoch 143: 100%|███████████████████|
+4/4 [00:19<00:00,  4.86s/it,
+Val_Loss=22.395, NCE=2.015, Cir=62.018, CE=11.924]
+📊 Kết thúc Epoch 143 |
+Train Loss: 23.9283 | Val Loss: 24.3703
+ 
+Train Epoch 144: 100%|████████████████████|
+64/64 [07:29<00:00,  7.02s/it,
+Loss=23.555, NCE=5.349, Cir=61.894, CE=0.957]
+Val Epoch 144: 100%|███████████████████|
+4/4 [00:19<00:00,  4.84s/it,
+Val_Loss=22.887, NCE=2.089, Cir=63.497, CE=12.022]
+📊 Kết thúc Epoch 144 |
+Train Loss: 23.8645 | Val Loss: 24.3279
+ 
+Train Epoch 145: 100%|████████████████████|
+64/64 [07:27<00:00,  7.00s/it,
+Loss=23.966, NCE=5.340, Cir=63.580, CE=1.142]
+Val Epoch 145: 100%|███████████████████|
+4/4 [00:19<00:00,  4.82s/it,
+Val_Loss=22.682, NCE=2.054, Cir=62.516, CE=12.141]
+📊 Kết thúc Epoch 145 |
+Train Loss: 23.7573 | Val Loss: 24.3817
+ 
+📦 Đã lưu Checkpoint định
+kỳ tại ./checkpoints/models/newlimavlm_epoch_145.pth
+ 
+Train Epoch 146: 100%|████████████████████|
+64/64 [07:29<00:00,  7.02s/it,
+Loss=23.585, NCE=5.277, Cir=62.714, CE=0.976]
+Val Epoch 146: 100%|███████████████████|
+4/4 [00:19<00:00,  4.89s/it,
+Val_Loss=22.578, NCE=2.095, Cir=62.476, CE=11.785]
+📊 Kết thúc Epoch 146 |
+Train Loss: 23.7188 | Val Loss: 24.2434
+ 
+Train Epoch 147: 100%|████████████████████|
+64/64 [07:30<00:00,  7.04s/it,
+Loss=23.618, NCE=5.273, Cir=63.049, CE=0.924]
+Val Epoch 147: 100%|███████████████████|
+4/4 [00:20<00:00,  5.01s/it,
+Val_Loss=22.736, NCE=2.073, Cir=62.468, CE=12.193]
+📊 Kết thúc Epoch 147 |
+Train Loss: 23.6757 | Val Loss: 24.4327
+ 
+Train Epoch 148: 100%|████████████████████|
+64/64 [07:28<00:00,  7.00s/it,
+Loss=23.618, NCE=5.261, Cir=62.990, CE=0.997]
+Val Epoch 148: 100%|███████████████████|
+4/4 [00:19<00:00,  4.86s/it,
+Val_Loss=22.622, NCE=2.104, Cir=62.414, CE=11.864]
+📊 Kết thúc Epoch 148 |
+Train Loss: 23.6678 | Val Loss: 24.3785
+ 
+Train Epoch 149: 100%|████████████████████|
+64/64 [07:32<00:00,  7.07s/it,
+Loss=23.795, NCE=5.319, Cir=63.383, CE=0.962]
+Val Epoch 149: 100%|███████████████████|
+4/4 [00:19<00:00,  4.84s/it,
+Val_Loss=22.688, NCE=2.042, Cir=62.842, CE=12.074]
+📊 Kết thúc Epoch 149 |
+Train Loss: 23.6956 | Val Loss: 24.4548
+ 
+Train Epoch 150: 100%|████████████████████|
+64/64 [07:27<00:00,  7.00s/it,
+Loss=23.596, NCE=5.274, Cir=63.091, CE=0.861]
+Val Epoch 150: 100%|███████████████████|
+4/4 [00:19<00:00,  4.88s/it,
+Val_Loss=22.640, NCE=2.061, Cir=62.343, CE=12.098]
+📊 Kết thúc Epoch 150 |
+Train Loss: 23.6803 | Val Loss: 24.3998
+ 
+📦 Đã lưu Checkpoint định
+kỳ tại ./checkpoints/models/newlimavlm_epoch_150.pth
+ 
+Train Epoch 151: 100%|████████████████████|
+64/64 [07:31<00:00,  7.05s/it,
+Loss=23.871, NCE=5.440, Cir=62.545, CE=0.964]
+Val Epoch 151: 100%|███████████████████|
+4/4 [00:19<00:00,  4.90s/it,
+Val_Loss=22.437, NCE=2.010, Cir=61.511, CE=12.230]
+📊 Kết thúc Epoch 151 |
+Train Loss: 23.6994 | Val Loss: 24.3730
+ 
+Train Epoch 152: 100%|████████████████████|
+64/64 [07:29<00:00,  7.02s/it,
+Loss=23.714, NCE=5.322, Cir=63.472, CE=0.751]
+Val Epoch 152: 100%|███████████████████|
+4/4 [00:19<00:00,  4.82s/it,
+Val_Loss=22.660, NCE=2.126, Cir=62.241, CE=11.919]
+📊 Kết thúc Epoch 152 |
+Train Loss: 23.6360 | Val Loss: 24.3890
+ 
+Train Epoch 153: 100%|████████████████████|
+64/64 [07:29<00:00,  7.02s/it,
+Loss=23.715, NCE=5.369, Cir=62.609, CE=0.909]
+Val Epoch 153: 100%|███████████████████|
+4/4 [00:19<00:00,  4.94s/it,
+Val_Loss=22.691, NCE=2.102, Cir=62.154, CE=12.112]
+📊 Kết thúc Epoch 153 |
+Train Loss: 23.6584 | Val Loss: 24.4750
+ 
+Train Epoch 154: 100%|████████████████████|
+64/64 [07:29<00:00,  7.02s/it,
+Loss=23.946, NCE=5.298, Cir=64.368, CE=0.952]
+Val Epoch 154: 100%|███████████████████|
+4/4 [00:19<00:00,  4.82s/it,
+Val_Loss=22.477, NCE=2.017, Cir=62.350, CE=11.947]
+📊 Kết thúc Epoch 154 |
+Train Loss: 23.6452 | Val Loss: 24.3285
+ 
+Train Epoch 155: 100%|████████████████████|
+64/64 [07:31<00:00,  7.05s/it,
+Loss=23.687, NCE=5.306, Cir=63.420, CE=0.783]
+Val Epoch 155: 100%|███████████████████|
+4/4 [00:20<00:00,  5.03s/it,
+Val_Loss=22.658, NCE=2.052, Cir=62.720, CE=12.019]
+📊 Kết thúc Epoch 155 |
+Train Loss: 23.6333 | Val Loss: 24.3606
+ 
+📦 Đã lưu Checkpoint định
+kỳ tại ./checkpoints/models/newlimavlm_epoch_155.pth
+ 
+Train Epoch 156: 100%|████████████████████|
+64/64 [07:30<00:00,  7.03s/it,
+Loss=23.608, NCE=5.301, Cir=63.234, CE=0.718]
+Val Epoch 156: 100%|███████████████████|
+4/4 [00:19<00:00,  4.98s/it,
+Val_Loss=23.006, NCE=2.120, Cir=63.588, CE=12.097]
+📊 Kết thúc Epoch 156 |
+Train Loss: 23.5659 | Val Loss: 24.5564
+ 
+Train Epoch 157: 100%|████████████████████|
+64/64 [07:28<00:00,  7.01s/it,
+Loss=23.440, NCE=5.248, Cir=62.797, CE=0.769]
+Val Epoch 157: 100%|███████████████████|
+4/4 [00:19<00:00,  4.89s/it,
+Val_Loss=22.357, NCE=2.060, Cir=61.615, CE=11.827]
+📊 Kết thúc Epoch 157 |
+Train Loss: 23.4899 | Val Loss: 24.1846
+ 
+Train Epoch 158: 100%|████████████████████|
+64/64 [07:29<00:00,  7.02s/it,
+Loss=23.292, NCE=5.214, Cir=62.535, CE=0.714]
+Val Epoch 158: 100%|███████████████████|
+4/4 [00:19<00:00,  4.89s/it,
+Val_Loss=22.431, NCE=2.070, Cir=61.700, CE=11.902]
+📊 Kết thúc Epoch 158 |
+Train Loss: 23.4658 | Val Loss: 24.3290
+ 
+Train Epoch 159: 100%|████████████████████|
+64/64 [07:27<00:00,  6.99s/it,
+Loss=23.052, NCE=5.181, Cir=62.018, CE=0.574]
+Val Epoch 159: 100%|███████████████████|
+4/4 [00:19<00:00,  4.98s/it,
+Val_Loss=22.423, NCE=2.022, Cir=61.708, CE=12.074]
+📊 Kết thúc Epoch 159 |
+Train Loss: 23.4008 | Val Loss: 24.2708
+ 
+Train Epoch 160: 100%|████████████████████|
+64/64 [07:30<00:00,  7.04s/it,
+Loss=23.486, NCE=5.224, Cir=63.398, CE=0.715]
+Val Epoch 160: 100%|███████████████████|
+4/4 [00:20<00:00,  5.02s/it,
+Val_Loss=22.315, NCE=2.023, Cir=61.347, CE=12.001]
+📊 Kết thúc Epoch 160 |
+Train Loss: 23.4414 | Val Loss: 24.2090
+ 
+📦 Đã lưu Checkpoint định
+kỳ tại ./checkpoints/models/newlimavlm_epoch_160.pth
+ 
+Train Epoch 161: 100%|████████████████████|
+64/64 [07:33<00:00,  7.09s/it,
+Loss=23.835, NCE=5.308, Cir=63.442, CE=1.060]
+Val Epoch 161: 100%|███████████████████|
+4/4 [00:19<00:00,  4.85s/it,
+Val_Loss=22.454, NCE=2.082, Cir=61.594, CE=11.939]
+📊 Kết thúc Epoch 161 |
+Train Loss: 23.4347 | Val Loss: 24.3040
+ 
+Train Epoch 162: 100%|████████████████████|
+64/64 [07:30<00:00,  7.04s/it,
+Loss=23.398, NCE=5.270, Cir=62.421, CE=0.748]
+Val Epoch 162: 100%|███████████████████|
+4/4 [00:19<00:00,  4.81s/it,
+Val_Loss=22.248, NCE=2.061, Cir=60.939, CE=11.875]
+📊 Kết thúc Epoch 162 |
+Train Loss: 23.4177 | Val Loss: 24.1489
+ 
+Train Epoch 163: 100%|████████████████████|
+64/64 [07:29<00:00,  7.02s/it,
+Loss=23.381, NCE=5.239, Cir=63.041, CE=0.591]
+Val Epoch 163: 100%|███████████████████|
+4/4 [00:19<00:00,  4.87s/it,
+Val_Loss=22.756, NCE=2.024, Cir=62.903, CE=12.253]
+📊 Kết thúc Epoch 163 |
+Train Loss: 23.4373 | Val Loss: 24.4741
+ 
+Train Epoch 164: 100%|████████████████████|
+64/64 [07:28<00:00,  7.00s/it,
+Loss=23.052, NCE=5.190, Cir=61.804, CE=0.623]
+Val Epoch 164: 100%|███████████████████|
+4/4 [00:19<00:00,  4.86s/it,
+Val_Loss=22.624, NCE=2.034, Cir=62.680, CE=12.040]
+📊 Kết thúc Epoch 164 |
+Train Loss: 23.3737 | Val Loss: 24.3816
+ 
+Train Epoch 165: 100%|████████████████████|
+64/64 [07:31<00:00,  7.05s/it,
+Loss=23.277, NCE=5.257, Cir=62.361, CE=0.583]
+Val Epoch 165: 100%|███████████████████|
+4/4 [00:20<00:00,  5.04s/it,
+Val_Loss=21.982, NCE=1.994, Cir=60.278, CE=11.877]
+📊 Kết thúc Epoch 165 |
+Train Loss: 23.4515 | Val Loss: 24.1570
+ 
+📦 Đã lưu Checkpoint định
+kỳ tại ./checkpoints/models/newlimavlm_epoch_165.pth
+ 
+Train Epoch 166: 100%|████████████████████|
+64/64 [07:28<00:00,  7.01s/it,
+Loss=23.315, NCE=5.269, Cir=62.518, CE=0.547]
+Val Epoch 166: 100%|███████████████████|
+4/4 [00:19<00:00,  4.86s/it,
+Val_Loss=22.588, NCE=2.064, Cir=61.494, CE=12.324]
+📊 Kết thúc Epoch 166 |
+Train Loss: 23.3816 | Val Loss: 24.3159
+ 
+Train Epoch 167: 100%|████████████████████|
+64/64 [07:26<00:00,  6.98s/it,
+Loss=23.222, NCE=5.213, Cir=62.238, CE=0.695]
+Val Epoch 167: 100%|███████████████████|
+4/4 [00:19<00:00,  4.83s/it,
+Val_Loss=22.459, NCE=2.046, Cir=60.799, CE=12.414]
+📊 Kết thúc Epoch 167 |
+Train Loss: 23.3796 | Val Loss: 24.3613
+ 
+Train Epoch 168: 100%|████████████████████|
+64/64 [07:29<00:00,  7.02s/it,
+Loss=23.159, NCE=5.196, Cir=62.323, CE=0.606]
+Val Epoch 168: 100%|███████████████████|
+4/4 [00:19<00:00,  4.86s/it,
+Val_Loss=22.715, NCE=2.036, Cir=62.560, CE=12.260]
+📊 Kết thúc Epoch 168 |
+Train Loss: 23.4058 | Val Loss: 24.4083
+ 
+Train Epoch 169: 100%|████████████████████|
+64/64 [07:28<00:00,  7.00s/it,
+Loss=23.555, NCE=5.258, Cir=63.206, CE=0.795]
+Val Epoch 169: 100%|███████████████████|
+4/4 [00:19<00:00,  4.83s/it,
+Val_Loss=22.623, NCE=2.057, Cir=62.276, CE=12.107]
+📊 Kết thúc Epoch 169 |
+Train Loss: 23.4026 | Val Loss: 24.3084
+ 
+Train Epoch 170: 100%|████████████████████|
+64/64 [07:28<00:00,  7.00s/it,
+Loss=23.049, NCE=5.283, Cir=60.962, CE=0.581]
+Val Epoch 170: 100%|███████████████████|
+4/4 [00:19<00:00,  4.83s/it,
+Val_Loss=22.748, NCE=2.047, Cir=62.687, CE=12.232]
+📊 Kết thúc Epoch 170 |
+Train Loss: 23.3963 | Val Loss: 24.3489
+ 
+📦 Đã lưu Checkpoint định
+kỳ tại ./checkpoints/models/newlimavlm_epoch_170.pth
+ 
+Train Epoch 171: 100%|████████████████████|
+64/64 [07:32<00:00,  7.07s/it,
+Loss=23.538, NCE=5.218, Cir=64.186, CE=0.530]
+Val Epoch 171: 100%|███████████████████|
+4/4 [00:19<00:00,  4.96s/it,
+Val_Loss=22.708, NCE=2.156, Cir=61.918, CE=12.026]
+📊 Kết thúc Epoch 171 |
+Train Loss: 23.3329 | Val Loss: 24.4205
+ 
+Train Epoch 172: 100%|████████████████████|
+64/64 [07:29<00:00,  7.02s/it,
+Loss=23.095, NCE=5.193, Cir=61.843, CE=0.682]
+Val Epoch 172: 100%|███████████████████|
+4/4 [00:19<00:00,  4.96s/it,
+Val_Loss=22.352, NCE=2.065, Cir=61.182, CE=11.970]
+📊 Kết thúc Epoch 172 |
+Train Loss: 23.2777 | Val Loss: 24.1342
+ 
+Train Epoch 173: 100%|████████████████████|
+64/64 [07:29<00:00,  7.02s/it,
+Loss=23.426, NCE=5.236, Cir=63.218, CE=0.621]
+Val Epoch 173: 100%|███████████████████|
+4/4 [00:19<00:00,  4.83s/it,
+Val_Loss=22.544, NCE=2.072, Cir=61.803, CE=12.079]
+📊 Kết thúc Epoch 173 |
+Train Loss: 23.2150 | Val Loss: 24.3123
+ 
+Train Epoch 174: 100%|████████████████████|
+64/64 [07:30<00:00,  7.04s/it,
+Loss=23.385, NCE=5.232, Cir=63.279, CE=0.532]
+Val Epoch 174: 100%|███████████████████|
+4/4 [00:19<00:00,  4.85s/it,
+Val_Loss=22.603, NCE=2.048, Cir=62.130, CE=12.160]
+📊 Kết thúc Epoch 174 |
+Train Loss: 23.2427 | Val Loss: 24.2686
+ 
+Train Epoch 175: 100%|████████████████████|
+64/64 [07:31<00:00,  7.05s/it,
+Loss=23.243, NCE=5.210, Cir=62.597, CE=0.608]
+Val Epoch 175: 100%|███████████████████|
+4/4 [00:19<00:00,  4.90s/it,
+Val_Loss=22.371, NCE=2.056, Cir=60.949, CE=12.139]
+📊 Kết thúc Epoch 175 |
+Train Loss: 23.1975 | Val Loss: 24.1813
+ 
+📦 Đã lưu Checkpoint định
+kỳ tại ./checkpoints/models/newlimavlm_epoch_175.pth
+ 
+Train Epoch 176: 100%|████████████████████|
+64/64 [07:27<00:00,  7.00s/it,
+Loss=23.008, NCE=5.139, Cir=62.352, CE=0.520]
+Val Epoch 176: 100%|███████████████████|
+4/4 [00:19<00:00,  4.90s/it,
+Val_Loss=22.697, NCE=2.079, Cir=62.543, CE=12.062]
+📊 Kết thúc Epoch 176 |
+Train Loss: 23.1560 | Val Loss: 24.3481
+ 
+Train Epoch 177: 100%|████████████████████|
+64/64 [07:30<00:00,  7.04s/it,
+Loss=22.877, NCE=5.112, Cir=61.985, CE=0.510]
+Val Epoch 177: 100%|███████████████████|
+4/4 [00:19<00:00,  4.87s/it,
+Val_Loss=22.326, NCE=2.031, Cir=61.129, CE=12.078]
+📊 Kết thúc Epoch 177 |
+Train Loss: 23.1453 | Val Loss: 24.1641
+ 
+Train Epoch 178: 100%|████████████████████|
+64/64 [07:27<00:00,  6.99s/it,
+Loss=23.332, NCE=5.182, Cir=63.353, CE=0.596]
+Val Epoch 178: 100%|███████████████████|
+4/4 [00:19<00:00,  4.87s/it,
+Val_Loss=22.716, NCE=2.071, Cir=62.187, CE=12.271]
+📊 Kết thúc Epoch 178 |
+Train Loss: 23.1780 | Val Loss: 24.3087
+ 
+Train Epoch 179: 100%|████████████████████|
+64/64 [07:28<00:00,  7.02s/it,
+Loss=23.142, NCE=5.186, Cir=62.551, CE=0.519]
+Val Epoch 179: 100%|███████████████████|
+4/4 [00:20<00:00,  5.01s/it,
+Val_Loss=22.701, NCE=2.097, Cir=61.369, CE=12.465]
+📊 Kết thúc Epoch 179 |
+Train Loss: 23.1776 | Val Loss: 24.3477
+ 
+Train Epoch 180: 100%|████████████████████|
+64/64 [07:31<00:00,  7.05s/it,
+Loss=23.172, NCE=5.157, Cir=62.847, CE=0.576]
+Val Epoch 180: 100%|███████████████████|
+4/4 [00:19<00:00,  4.82s/it,
+Val_Loss=22.741, NCE=2.071, Cir=61.929, CE=12.427]
+📊 Kết thúc Epoch 180 |
+Train Loss: 23.1602 | Val Loss: 24.3254
+ 
+📦 Đã lưu Checkpoint định
+kỳ tại ./checkpoints/models/newlimavlm_epoch_180.pth
+ 
+Train Epoch 181: 100%|████████████████████|
+64/64 [07:25<00:00,  6.96s/it,
+Loss=23.245, NCE=5.218, Cir=62.872, CE=0.468]
+Val Epoch 181: 100%|███████████████████|
+4/4 [00:19<00:00,  4.83s/it,
+Val_Loss=22.899, NCE=2.095, Cir=63.025, CE=12.208]
+📊 Kết thúc Epoch 181 |
+Train Loss: 23.1893 | Val Loss: 24.4882
+ 
+Train Epoch 182: 100%|████████████████████|
+64/64 [07:30<00:00,  7.04s/it,
+Loss=23.383, NCE=5.193, Cir=63.816, CE=0.465]
+Val Epoch 182: 100%|███████████████████|
+4/4 [00:19<00:00,  4.80s/it,
+Val_Loss=22.570, NCE=2.018, Cir=62.283, CE=12.157]
+📊 Kết thúc Epoch 182 |
+Train Loss: 23.2110 | Val Loss: 24.3856
+ 
+Train Epoch 183: 100%|████████████████████|
+64/64 [07:29<00:00,  7.02s/it,
+Loss=22.890, NCE=5.149, Cir=61.791, CE=0.466]
+Val Epoch 183: 100%|███████████████████|
+4/4 [00:19<00:00,  4.83s/it,
+Val_Loss=22.562, NCE=2.049, Cir=61.697, CE=12.249]
+📊 Kết thúc Epoch 183 |
+Train Loss: 23.1483 | Val Loss: 24.3348
+ 
+Train Epoch 184: 100%|████████████████████|
+64/64 [07:31<00:00,  7.06s/it,
+Loss=22.920, NCE=5.091, Cir=62.243, CE=0.581]
+Val Epoch 184: 100%|███████████████████|
+4/4 [00:19<00:00,  4.84s/it,
+Val_Loss=22.592, NCE=2.073, Cir=61.597, CE=12.255]
+📊 Kết thúc Epoch 184 |
+Train Loss: 23.2074 | Val Loss: 24.3576
+ 
+Train Epoch 185: 100%|████████████████████|
+64/64 [07:27<00:00,  6.99s/it,
+Loss=23.398, NCE=5.205, Cir=63.676, CE=0.505]
+Val Epoch 185: 100%|███████████████████|
+4/4 [00:19<00:00,  4.97s/it,
+Val_Loss=22.865, NCE=2.060, Cir=62.827, CE=12.357]
+📊 Kết thúc Epoch 185 |
+Train Loss: 23.1497 | Val Loss: 24.3662
+ 
+📦 Đã lưu Checkpoint định
+kỳ tại ./checkpoints/models/newlimavlm_epoch_185.pth
+ 
+Train Epoch 186: 100%|████████████████████|
+64/64 [07:43<00:00,  7.25s/it,
+Loss=23.177, NCE=5.201, Cir=62.607, CE=0.509]
+Val Epoch 186: 100%|███████████████████|
+4/4 [00:23<00:00,  5.78s/it,
+Val_Loss=22.794, NCE=2.045, Cir=62.557, CE=12.384]
+📊 Kết thúc Epoch 186 |
+Train Loss: 23.1095 | Val Loss: 24.3156
+ 
+Train Epoch 187: 100%|████████████████████|
+64/64 [07:54<00:00,  7.42s/it,
+Loss=22.953, NCE=5.142, Cir=62.292, CE=0.421]
+Val Epoch 187: 100%|███████████████████|
+4/4 [00:20<00:00,  5.24s/it,
+Val_Loss=22.577, NCE=2.065, Cir=61.169, CE=12.426]
+📊 Kết thúc Epoch 187 |
+Train Loss: 23.0426 | Val Loss: 24.3592
+ 
+Train Epoch 188: 100%|████████████████████|
+64/64 [07:42<00:00,  7.23s/it,
+Loss=23.103, NCE=5.162, Cir=62.856, CE=0.416]
+Val Epoch 188: 100%|███████████████████|
+4/4 [00:31<00:00,  7.75s/it,
+Val_Loss=22.696, NCE=2.033, Cir=62.216, CE=12.372]
+📊 Kết thúc Epoch 188 |
+Train Loss: 22.9723 | Val Loss: 24.3754
+ 
+Train Epoch 189: 100%|████████████████████|
+64/64 [08:14<00:00,  7.72s/it,
+Loss=23.117, NCE=5.155, Cir=62.996, CE=0.415]
+Val Epoch 189: 100%|███████████████████|
+4/4 [00:24<00:00,  6.10s/it,
+Val_Loss=22.372, NCE=1.993, Cir=61.261, CE=12.268]
+📊 Kết thúc Epoch 189 |
+Train Loss: 23.0085 | Val Loss: 24.2890
+ 
+Train Epoch 190: 100%|████████████████████|
+64/64 [08:00<00:00,  7.50s/it,
+Loss=23.199, NCE=5.229, Cir=62.559, CE=0.458]
+Val Epoch 190: 100%|███████████████████|
+4/4 [00:20<00:00,  5.22s/it,
+Val_Loss=22.823, NCE=2.024, Cir=62.356, CE=12.605]
+📊 Kết thúc Epoch 190 |
+Train Loss: 23.0300 | Val Loss: 24.4460
+ 
+📦 Đã lưu Checkpoint định
+kỳ tại ./checkpoints/models/newlimavlm_epoch_190.pth
+ 
+Train Epoch 191: 100%|████████████████████|
+64/64 [07:33<00:00,  7.09s/it,
+Loss=23.100, NCE=5.238, Cir=61.905, CE=0.486]
+Val Epoch 191: 100%|███████████████████|
+4/4 [00:19<00:00,  4.99s/it,
+Val_Loss=22.459, NCE=2.040, Cir=61.561, CE=12.131]
+📊 Kết thúc Epoch 191 |
+Train Loss: 22.9902 | Val Loss: 24.2687
+ 
+Train Epoch 192: 100%|████████████████████|
+64/64 [07:35<00:00,  7.12s/it,
+Loss=23.107, NCE=5.098, Cir=63.455, CE=0.439]
+Val Epoch 192: 100%|███████████████████|
+4/4 [00:19<00:00,  4.92s/it,
+Val_Loss=22.281, NCE=1.928, Cir=61.840, CE=12.115]
+📊 Kết thúc Epoch 192 |
+Train Loss: 22.9963 | Val Loss: 24.2472
+ 
+Train Epoch 193: 100%|████████████████████|
+64/64 [07:30<00:00,  7.03s/it,
+Loss=23.254, NCE=5.228, Cir=62.926, CE=0.425]
+Val Epoch 193: 100%|███████████████████|
+4/4 [00:19<00:00,  4.87s/it,
+Val_Loss=22.789, NCE=2.059, Cir=63.216, CE=12.055]
+📊 Kết thúc Epoch 193 |
+Train Loss: 22.9541 | Val Loss: 24.3913
+ 
+Train Epoch 194: 100%|████████████████████|
+64/64 [07:33<00:00,  7.08s/it,
+Loss=22.623, NCE=5.123, Cir=60.872, CE=0.405]
+Val Epoch 194: 100%|███████████████████|
+4/4 [00:19<00:00,  4.95s/it,
+Val_Loss=22.924, NCE=2.032, Cir=63.313, CE=12.393]
+📊 Kết thúc Epoch 194 |
+Train Loss: 22.9732 | Val Loss: 24.4307
+ 
+Train Epoch 195: 100%|████████████████████|
+64/64 [07:31<00:00,  7.05s/it,
+Loss=23.285, NCE=5.104, Cir=64.414, CE=0.386]
+Val Epoch 195: 100%|███████████████████|
+4/4 [00:19<00:00,  4.99s/it,
+Val_Loss=22.408, NCE=1.993, Cir=61.329, CE=12.311]
+📊 Kết thúc Epoch 195 |
+Train Loss: 22.9939 | Val Loss: 24.2640
+ 
+📦 Đã lưu Checkpoint định
+kỳ tại ./checkpoints/models/newlimavlm_epoch_195.pth
+ 
+Train Epoch 196: 100%|████████████████████|
+64/64 [07:31<00:00,  7.05s/it,
+Loss=23.023, NCE=5.167, Cir=62.534, CE=0.366]
+Val Epoch 196: 100%|███████████████████|
+4/4 [00:19<00:00,  4.87s/it,
+Val_Loss=22.474, NCE=2.048, Cir=60.961, CE=12.371]
+📊 Kết thúc Epoch 196 |
+Train Loss: 23.0310 | Val Loss: 24.3369
+ 
+Train Epoch 197: 100%|████████████████████|
+64/64 [07:33<00:00,  7.08s/it,
+Loss=22.834, NCE=5.143, Cir=61.753, CE=0.396]
+Val Epoch 197: 100%|███████████████████|
+4/4 [00:19<00:00,  4.87s/it,
+Val_Loss=22.747, NCE=2.094, Cir=62.012, CE=12.315]
+📊 Kết thúc Epoch 197 |
+Train Loss: 23.0411 | Val Loss: 24.4752
+ 
+Train Epoch 198: 100%|████████████████████|
+64/64 [07:34<00:00,  7.10s/it,
+Loss=22.830, NCE=5.093, Cir=62.325, CE=0.359]
+Val Epoch 198: 100%|███████████████████|
+4/4 [00:19<00:00,  4.85s/it,
+Val_Loss=22.744, NCE=2.083, Cir=61.561, CE=12.529]
+📊 Kết thúc Epoch 198 |
+Train Loss: 22.9815 | Val Loss: 24.2959
+ 
+Train Epoch 199: 100%|████████████████████|
+64/64 [07:29<00:00,  7.02s/it,
+Loss=22.891, NCE=5.158, Cir=61.975, CE=0.358]
+Val Epoch 199: 100%|███████████████████|
+4/4 [00:19<00:00,  4.89s/it,
+Val_Loss=22.431, NCE=2.017, Cir=61.036, CE=12.382]
+📊 Kết thúc Epoch 199 |
+Train Loss: 22.9674 | Val Loss: 24.3032
+ 
+Train Epoch 200: 100%|████████████████████|
+64/64 [07:31<00:00,  7.05s/it,
+Loss=22.918, NCE=5.153, Cir=62.213, CE=0.338]
+Val Epoch 200: 100%|███████████████████|
+4/4 [00:19<00:00,  4.82s/it,
+Val_Loss=22.389, NCE=1.993, Cir=60.778, CE=12.493]
+📊 Kết thúc Epoch 200 |
+Train Loss: 22.9208 | Val Loss: 24.3024
+ 
+📦 Đã lưu Checkpoint định
+kỳ tại ./checkpoints/models/newlimavlm_epoch_200.pth
+ 
+Train Epoch 201: 100%|████████████████████|
+64/64 [07:33<00:00,  7.09s/it,
+Loss=22.744, NCE=5.074, Cir=62.147, CE=0.332]
+Val Epoch 201: 100%|███████████████████|
+4/4 [00:19<00:00,  4.81s/it,
+Val_Loss=22.328, NCE=2.027, Cir=60.173, CE=12.476]
+📊 Kết thúc Epoch 201 |
+Train Loss: 22.9092 | Val Loss: 24.2826
+ 
+Train Epoch 202: 100%|████████████████████|
+64/64 [07:31<00:00,  7.05s/it,
+Loss=22.830, NCE=5.082, Cir=62.425, CE=0.360]
+Val Epoch 202: 100%|███████████████████|
+4/4 [00:19<00:00,  4.86s/it,
+Val_Loss=22.868, NCE=2.074, Cir=62.179, CE=12.568]
+📊 Kết thúc Epoch 202 |
+Train Loss: 22.8455 | Val Loss: 24.3253
+ 
+Train Epoch 203: 100%|████████████████████|
+64/64 [07:30<00:00,  7.04s/it,
+Loss=22.364, NCE=5.052, Cir=60.560, CE=0.294]
+Val Epoch 203: 100%|███████████████████|
+4/4 [00:19<00:00,  4.87s/it,
+Val_Loss=22.775, NCE=2.142, Cir=61.811, CE=12.256]
+📊 Kết thúc Epoch 203 |
+Train Loss: 22.8132 | Val Loss: 24.2786
+ 
+Train Epoch 204: 100%|████████████████████|
+64/64 [07:31<00:00,  7.06s/it,
+Loss=22.668, NCE=5.095, Cir=61.486, CE=0.362]
+Val Epoch 204: 100%|███████████████████|
+4/4 [00:19<00:00,  4.89s/it,
+Val_Loss=22.478, NCE=2.024, Cir=61.649, CE=12.201]
+📊 Kết thúc Epoch 204 |
+Train Loss: 22.8151 | Val Loss: 24.2088
+ 
+Train Epoch 205: 100%|████████████████████|
+64/64 [07:32<00:00,  7.07s/it,
+Loss=22.560, NCE=4.972, Cir=62.363, CE=0.289]
+Val Epoch 205: 100%|███████████████████|
+4/4 [00:20<00:00,  5.10s/it,
+Val_Loss=22.695, NCE=2.042, Cir=61.413, CE=12.658]
+📊 Kết thúc Epoch 205 |
+Train Loss: 22.7851 | Val Loss: 24.3326
+ 
+📦 Đã lưu Checkpoint định
+kỳ tại ./checkpoints/models/newlimavlm_epoch_205.pth
+ 
+Train Epoch 206: 100%|████████████████████|
+64/64 [07:31<00:00,  7.05s/it,
+Loss=23.026, NCE=5.096, Cir=63.209, CE=0.382]
+Val Epoch 206: 100%|███████████████████|
+4/4 [00:19<00:00,  4.89s/it,
+Val_Loss=22.446, NCE=2.034, Cir=60.884, CE=12.401]
+📊 Kết thúc Epoch 206 |
+Train Loss: 22.8387 | Val Loss: 24.2698
+ 
+Train Epoch 207: 100%|████████████████████|
+64/64 [07:31<00:00,  7.05s/it,
+Loss=23.125, NCE=5.158, Cir=63.248, CE=0.319]
+Val Epoch 207: 100%|███████████████████|
+4/4 [00:19<00:00,  4.91s/it,
+Val_Loss=22.456, NCE=2.013, Cir=62.062, CE=12.036]
+📊 Kết thúc Epoch 207 |
+Train Loss: 22.8599 | Val Loss: 24.2954
+ 
+Train Epoch 208: 100%|████████████████████|
+64/64 [07:30<00:00,  7.03s/it,
+Loss=23.137, NCE=5.165, Cir=63.310, CE=0.289]
+Val Epoch 208: 100%|███████████████████|
+4/4 [00:20<00:00,  5.10s/it,
+Val_Loss=22.587, NCE=2.032, Cir=62.341, CE=12.109]
+📊 Kết thúc Epoch 208 |
+Train Loss: 22.8551 | Val Loss: 24.3582
+ 
+Train Epoch 209: 100%|████████████████████|
+64/64 [07:29<00:00,  7.02s/it,
+Loss=22.860, NCE=5.063, Cir=62.933, CE=0.296]
+Val Epoch 209: 100%|███████████████████|
+4/4 [00:19<00:00,  4.86s/it,
+Val_Loss=22.466, NCE=2.054, Cir=60.212, CE=12.632]
+📊 Kết thúc Epoch 209 |
+Train Loss: 22.8959 | Val Loss: 24.3039
+ 
+Train Epoch 210: 100%|████████████████████|
+64/64 [07:31<00:00,  7.06s/it,
+Loss=23.119, NCE=5.132, Cir=63.463, CE=0.326]
+Val Epoch 210: 100%|███████████████████|
+4/4 [00:19<00:00,  4.87s/it,
+Val_Loss=22.417, NCE=2.020, Cir=61.106, CE=12.313]
+📊 Kết thúc Epoch 210 |
+Train Loss: 22.9461 | Val Loss: 24.2987
+ 
+📦 Đã lưu Checkpoint định
+kỳ tại ./checkpoints/models/newlimavlm_epoch_210.pth
+ 
+Train Epoch 211: 100%|████████████████████|
+64/64 [07:28<00:00,  7.01s/it,
+Loss=22.760, NCE=5.059, Cir=62.561, CE=0.259]
+Val Epoch 211: 100%|███████████████████|
+4/4 [00:19<00:00,  4.84s/it,
+Val_Loss=22.441, NCE=1.985, Cir=61.030, CE=12.531]
+📊 Kết thúc Epoch 211 |
+Train Loss: 22.9259 | Val Loss: 24.3834
+ 
+Train Epoch 212: 100%|████████████████████|
+64/64 [07:29<00:00,  7.03s/it,
+Loss=22.953, NCE=5.186, Cir=62.098, CE=0.324]
+Val Epoch 212: 100%|███████████████████|
+4/4 [00:19<00:00,  4.97s/it,
+Val_Loss=22.659, NCE=2.006, Cir=61.904, CE=12.533]
+📊 Kết thúc Epoch 212 |
+Train Loss: 22.8736 | Val Loss: 24.4270
+ 
+Train Epoch 213: 100%|████████████████████|
+64/64 [07:29<00:00,  7.02s/it,
+Loss=22.792, NCE=5.128, Cir=61.819, CE=0.344]
+Val Epoch 213: 100%|███████████████████|
+4/4 [00:19<00:00,  4.87s/it,
+Val_Loss=22.162, NCE=1.973, Cir=60.175, CE=12.363]
+📊 Kết thúc Epoch 213 |
+Train Loss: 22.7977 | Val Loss: 24.1378
+ 
+Train Epoch 214: 100%|████████████████████|
+64/64 [07:29<00:00,  7.02s/it,
+Loss=23.012, NCE=5.085, Cir=63.426, CE=0.314]
+Val Epoch 214: 100%|███████████████████|
+4/4 [00:19<00:00,  4.84s/it,
+Val_Loss=22.560, NCE=2.043, Cir=61.688, CE=12.273]
+📊 Kết thúc Epoch 214 |
+Train Loss: 22.8042 | Val Loss: 24.2590
+ 
+Train Epoch 215: 100%|████████████████████|
+64/64 [07:29<00:00,  7.02s/it,
+Loss=22.589, NCE=5.090, Cir=61.396, CE=0.260]
+Val Epoch 215: 100%|███████████████████|
+4/4 [00:20<00:00,  5.10s/it,
+Val_Loss=22.581, NCE=2.038, Cir=61.281, CE=12.497]
+📊 Kết thúc Epoch 215 |
+Train Loss: 22.7074 | Val Loss: 24.3843
+ 
+📦 Đã lưu Checkpoint định
+kỳ tại ./checkpoints/models/newlimavlm_epoch_215.pth
+ 
+Train Epoch 216: 100%|████████████████████|
+64/64 [07:30<00:00,  7.03s/it,
+Loss=22.746, NCE=5.063, Cir=62.575, CE=0.211]
+Val Epoch 216: 100%|███████████████████|
+4/4 [00:19<00:00,  4.82s/it,
+Val_Loss=22.245, NCE=2.009, Cir=60.120, CE=12.405]
+📊 Kết thúc Epoch 216 |
+Train Loss: 22.6719 | Val Loss: 24.2442
+ 
+Train Epoch 217: 100%|████████████████████|
+64/64 [07:29<00:00,  7.02s/it,
+Loss=22.619, NCE=5.071, Cir=61.773, CE=0.246]
+Val Epoch 217: 100%|███████████████████|
+4/4 [00:19<00:00,  4.89s/it,
+Val_Loss=22.935, NCE=2.157, Cir=62.419, CE=12.277]
+📊 Kết thúc Epoch 217 |
+Train Loss: 22.6525 | Val Loss: 24.3422
+ 
+Train Epoch 218: 100%|████████████████████|
+64/64 [07:31<00:00,  7.05s/it,
+Loss=22.710, NCE=4.996, Cir=62.929, CE=0.265]
+Val Epoch 218: 100%|███████████████████|
+4/4 [00:21<00:00,  5.29s/it,
+Val_Loss=22.401, NCE=1.997, Cir=60.925, CE=12.445]
+📊 Kết thúc Epoch 218 |
+Train Loss: 22.6177 | Val Loss: 24.3110
+ 
+Train Epoch 219: 100%|████████████████████|
+64/64 [07:33<00:00,  7.08s/it,
+Loss=22.999, NCE=5.172, Cir=62.348, CE=0.372]
+Val Epoch 219: 100%|███████████████████|
+4/4 [00:19<00:00,  4.91s/it,
+Val_Loss=22.324, NCE=2.004, Cir=61.340, CE=12.094]
+📊 Kết thúc Epoch 219 |
+Train Loss: 22.6640 | Val Loss: 24.1197
+ 
+Train Epoch 220: 100%|████████████████████|
+64/64 [07:31<00:00,  7.05s/it,
+Loss=22.637, NCE=5.115, Cir=61.416, CE=0.247]
+Val Epoch 220: 100%|███████████████████|
+4/4 [00:19<00:00,  4.88s/it,
+Val_Loss=22.540, NCE=1.979, Cir=61.865, CE=12.416]
+📊 Kết thúc Epoch 220 |
+Train Loss: 22.7152 | Val Loss: 24.2705
+ 
+📦 Đã lưu Checkpoint định
+kỳ tại ./checkpoints/models/newlimavlm_epoch_220.pth
+ 
+Train Epoch 221: 100%|████████████████████|
+64/64 [07:31<00:00,  7.05s/it,
+Loss=22.338, NCE=5.039, Cir=60.616, CE=0.273]
+Val Epoch 221: 100%|███████████████████|
+4/4 [00:20<00:00,  5.05s/it,
+Val_Loss=22.359, NCE=1.995, Cir=61.052, CE=12.318]
+📊 Kết thúc Epoch 221 |
+Train Loss: 22.6920 | Val Loss: 24.1871
+ 
+Train Epoch 222: 100%|████████████████████|
+64/64 [07:28<00:00,  7.01s/it,
+Loss=23.014, NCE=5.139, Cir=62.729, CE=0.381]
+Val Epoch 222: 100%|███████████████████|
+4/4 [00:19<00:00,  4.87s/it,
+Val_Loss=22.887, NCE=2.092, Cir=62.418, CE=12.439]
+📊 Kết thúc Epoch 222 |
+Train Loss: 22.7320 | Val Loss: 24.3972
+ 
+Train Epoch 223: 100%|████████████████████|
+64/64 [07:31<00:00,  7.05s/it,
+Loss=23.014, NCE=5.085, Cir=63.578, CE=0.257]
+Val Epoch 223: 100%|███████████████████|
+4/4 [00:19<00:00,  4.86s/it,
+Val_Loss=22.686, NCE=2.027, Cir=62.148, CE=12.406]
+📊 Kết thúc Epoch 223 |
+Train Loss: 22.7282 | Val Loss: 24.4423
+ 
+Train Epoch 224: 100%|████████████████████|
+64/64 [07:31<00:00,  7.05s/it,
+Loss=22.818, NCE=5.054, Cir=62.969, CE=0.230]
+Val Epoch 224: 100%|███████████████████|
+4/4 [00:19<00:00,  4.90s/it,
+Val_Loss=22.498, NCE=1.977, Cir=62.186, CE=12.212]
+📊 Kết thúc Epoch 224 |
+Train Loss: 22.6597 | Val Loss: 24.3689
+ 
+Train Epoch 225: 100%|████████████████████|
+64/64 [07:30<00:00,  7.04s/it,
+Loss=22.792, NCE=5.088, Cir=62.295, CE=0.316]
+Val Epoch 225: 100%|███████████████████|
+4/4 [00:19<00:00,  4.89s/it,
+Val_Loss=22.721, NCE=2.013, Cir=61.495, CE=12.793]
+📊 Kết thúc Epoch 225 |
+Train Loss: 22.7164 | Val Loss: 24.4239
+ 
+📦 Đã lưu Checkpoint định
+kỳ tại ./checkpoints/models/newlimavlm_epoch_225.pth
+ 
+Train Epoch 226: 100%|████████████████████|
+64/64 [07:31<00:00,  7.06s/it,
+Loss=22.714, NCE=5.126, Cir=61.629, CE=0.272]
+Val Epoch 226: 100%|███████████████████|
+4/4 [00:19<00:00,  4.88s/it,
+Val_Loss=22.383, NCE=2.025, Cir=59.692, CE=12.788]
+📊 Kết thúc Epoch 226 |
+Train Loss: 22.6471 | Val Loss: 24.2599
+ 
+Train Epoch 227: 100%|████████████████████|
+64/64 [07:31<00:00,  7.05s/it,
+Loss=22.467, NCE=5.063, Cir=61.083, CE=0.250]
+Val Epoch 227: 100%|███████████████████|
+4/4 [00:19<00:00,  4.85s/it,
+Val_Loss=22.396, NCE=1.988, Cir=61.129, CE=12.390]
+📊 Kết thúc Epoch 227 |
+Train Loss: 22.6039 | Val Loss: 24.2569
+ 
+Train Epoch 228: 100%|████████████████████|
+64/64 [07:30<00:00,  7.04s/it,
+Loss=22.293, NCE=5.036, Cir=60.347, CE=0.304]
+Val Epoch 228: 100%|███████████████████|
+4/4 [00:19<00:00,  4.83s/it,
+Val_Loss=22.835, NCE=2.053, Cir=62.147, CE=12.601]
+📊 Kết thúc Epoch 228 |
+Train Loss: 22.5634 | Val Loss: 24.4667
+ 
+Train Epoch 229: 100%|████████████████████|
+64/64 [07:30<00:00,  7.04s/it,
+Loss=22.393, NCE=5.002, Cir=61.305, CE=0.254]
+Val Epoch 229: 100%|███████████████████|
+4/4 [00:19<00:00,  4.93s/it,
+Val_Loss=22.451, NCE=2.028, Cir=61.098, CE=12.352]
+📊 Kết thúc Epoch 229 |
+Train Loss: 22.5724 | Val Loss: 24.4056
+ 
+Train Epoch 230: 100%|████████████████████|
+64/64 [07:31<00:00,  7.06s/it,
+Loss=22.507, NCE=5.032, Cir=61.731, CE=0.194]
+Val Epoch 230: 100%|███████████████████|
+4/4 [00:19<00:00,  4.84s/it,
+Val_Loss=22.753, NCE=2.036, Cir=62.182, CE=12.488]
+📊 Kết thúc Epoch 230 |
+Train Loss: 22.5365 | Val Loss: 24.3535
+ 
+📦 Đã lưu Checkpoint định
+kỳ tại ./checkpoints/models/newlimavlm_epoch_230.pth
+ 
+Train Epoch 231: 100%|████████████████████|
+64/64 [07:31<00:00,  7.06s/it,
+Loss=22.679, NCE=4.878, Cir=63.952, CE=0.263]
+Val Epoch 231: 100%|███████████████████|
+4/4 [00:20<00:00,  5.06s/it,
+Val_Loss=22.783, NCE=2.011, Cir=62.193, CE=12.644]
+📊 Kết thúc Epoch 231 |
+Train Loss: 22.5976 | Val Loss: 24.4632
+ 
+Train Epoch 232: 100%|████████████████████|
+64/64 [07:31<00:00,  7.05s/it,
+Loss=22.639, NCE=4.945, Cir=63.309, CE=0.175]
+Val Epoch 232: 100%|███████████████████|
+4/4 [00:19<00:00,  4.88s/it,
+Val_Loss=22.317, NCE=2.015, Cir=60.638, CE=12.320]
+📊 Kết thúc Epoch 232 |
+Train Loss: 22.6127 | Val Loss: 24.3663
+ 
+Train Epoch 233: 100%|████████████████████|
+64/64 [07:29<00:00,  7.02s/it,
+Loss=22.964, NCE=5.043, Cir=63.783, CE=0.243]
+Val Epoch 233: 100%|███████████████████|
+4/4 [00:19<00:00,  4.87s/it,
+Val_Loss=22.951, NCE=2.037, Cir=63.682, CE=12.281]
+📊 Kết thúc Epoch 233 |
+Train Loss: 22.6658 | Val Loss: 24.5335
+ 
+Train Epoch 234: 100%|████████████████████|
+64/64 [07:29<00:00,  7.02s/it,
+Loss=22.682, NCE=5.005, Cir=62.648, CE=0.284]
+Val Epoch 234: 100%|███████████████████|
+4/4 [00:19<00:00,  4.80s/it,
+Val_Loss=22.319, NCE=1.976, Cir=60.846, CE=12.395]
+📊 Kết thúc Epoch 234 |
+Train Loss: 22.6243 | Val Loss: 24.1850
+ 
+Train Epoch 235: 100%|████████████████████|
+64/64 [07:27<00:00,  7.00s/it,
+Loss=23.240, NCE=5.112, Cir=64.563, CE=0.207]
+Val Epoch 235: 100%|███████████████████|
+4/4 [00:19<00:00,  4.89s/it,
+Val_Loss=23.022, NCE=2.092, Cir=63.449, CE=12.296]
+📊 Kết thúc Epoch 235 |
+Train Loss: 22.6496 | Val Loss: 24.3965
+ 
+📦 Đã lưu Checkpoint định
+kỳ tại ./checkpoints/models/newlimavlm_epoch_235.pth
+ 
+Train Epoch 236: 100%|████████████████████|
+64/64 [07:29<00:00,  7.02s/it,
+Loss=22.570, NCE=5.028, Cir=61.912, CE=0.265]
+Val Epoch 236: 100%|███████████████████|
+4/4 [00:19<00:00,  4.91s/it,
+Val_Loss=22.622, NCE=2.065, Cir=61.574, CE=12.354]
+📊 Kết thúc Epoch 236 |
+Train Loss: 22.6194 | Val Loss: 24.2203
+ 
+Train Epoch 237: 100%|████████████████████|
+64/64 [07:28<00:00,  7.00s/it,
+Loss=22.476, NCE=5.093, Cir=60.901, CE=0.221]
+Val Epoch 237: 100%|███████████████████|
+4/4 [00:19<00:00,  4.94s/it,
+Val_Loss=22.369, NCE=2.004, Cir=60.856, CE=12.379]
+📊 Kết thúc Epoch 237 |
+Train Loss: 22.5721 | Val Loss: 24.2966
+ 
+Train Epoch 238: 100%|████████████████████|
+64/64 [07:28<00:00,  7.01s/it,
+Loss=22.516, NCE=4.917, Cir=62.788, CE=0.250]
+Val Epoch 238: 100%|███████████████████|
+4/4 [00:20<00:00,  5.14s/it,
+Val_Loss=23.078, NCE=2.120, Cir=62.797, CE=12.555]
+📊 Kết thúc Epoch 238 |
+Train Loss: 22.5625 | Val Loss: 24.4297
+ 
+Train Epoch 239: 100%|████████████████████|
+64/64 [07:52<00:00,  7.38s/it,
+Loss=22.255, NCE=4.988, Cir=60.659, CE=0.294]
+Val Epoch 239: 100%|███████████████████|
+4/4 [00:26<00:00,  6.62s/it,
+Val_Loss=22.586, NCE=1.997, Cir=61.694, CE=12.508]
+📊 Kết thúc Epoch 239 |
+Train Loss: 22.5149 | Val Loss: 24.3287
+ 
+Train Epoch 240: 100%|████████████████████|
+64/64 [07:46<00:00,  7.29s/it,
+Loss=22.514, NCE=5.047, Cir=61.444, CE=0.261]
+Val Epoch 240: 100%|███████████████████|
+4/4 [00:23<00:00,  5.90s/it,
+Val_Loss=22.585, NCE=1.987, Cir=61.670, CE=12.555]
+📊 Kết thúc Epoch 240 |
+Train Loss: 22.5220 | Val Loss: 24.3323
+ 
+📦 Đã lưu Checkpoint định
+kỳ tại ./checkpoints/models/newlimavlm_epoch_240.pth
+ 
+Train Epoch 241: 100%|████████████████████|
+64/64 [07:49<00:00,  7.34s/it,
+Loss=22.323, NCE=4.995, Cir=61.092, CE=0.231]
+Val Epoch 241: 100%|███████████████████|
+4/4 [00:21<00:00,  5.26s/it,
+Val_Loss=22.354, NCE=1.989, Cir=60.068, CE=12.724]
+📊 Kết thúc Epoch 241 |
+Train Loss: 22.5185 | Val Loss: 24.3969
+ 
+Train Epoch 242: 100%|████████████████████|
+64/64 [07:51<00:00,  7.36s/it,
+Loss=22.102, NCE=4.945, Cir=60.671, CE=0.156]
+Val Epoch 242: 100%|███████████████████|
+4/4 [00:21<00:00,  5.30s/it,
+Val_Loss=22.616, NCE=1.965, Cir=62.351, CE=12.430]
+📊 Kết thúc Epoch 242 |
+Train Loss: 22.4821 | Val Loss: 24.3426
+ 
+Train Epoch 243: 100%|████████████████████|
+64/64 [07:37<00:00,  7.15s/it,
+Loss=22.474, NCE=5.042, Cir=61.317, CE=0.254]
+Val Epoch 243: 100%|███████████████████|
+4/4 [00:19<00:00,  4.87s/it,
+Val_Loss=22.677, NCE=2.060, Cir=61.956, CE=12.331]
+📊 Kết thúc Epoch 243 |
+Train Loss: 22.5379 | Val Loss: 24.5559
+ 
+Train Epoch 244: 100%|████████████████████|
+64/64 [07:33<00:00,  7.08s/it,
+Loss=22.385, NCE=4.991, Cir=61.540, CE=0.191]
+Val Epoch 244: 100%|███████████████████|
+4/4 [00:19<00:00,  4.90s/it,
+Val_Loss=22.449, NCE=1.980, Cir=61.537, CE=12.365]
+📊 Kết thúc Epoch 244 |
+Train Loss: 22.5594 | Val Loss: 24.2831
+ 
+Train Epoch 245: 100%|████████████████████|
+64/64 [07:31<00:00,  7.06s/it,
+Loss=22.092, NCE=5.018, Cir=59.795, CE=0.195]
+Val Epoch 245: 100%|███████████████████|
+4/4 [00:19<00:00,  4.93s/it,
+Val_Loss=22.513, NCE=1.991, Cir=61.496, CE=12.464]
+📊 Kết thúc Epoch 245 |
+Train Loss: 22.5573 | Val Loss: 24.3156
+ 
+📦 Đã lưu Checkpoint định
+kỳ tại ./checkpoints/models/newlimavlm_epoch_245.pth
+ 
+Train Epoch 246: 100%|████████████████████|
+64/64 [07:32<00:00,  7.08s/it,
+Loss=22.616, NCE=4.986, Cir=62.692, CE=0.212]
+Val Epoch 246: 100%|███████████████████|
+4/4 [00:19<00:00,  4.92s/it,
+Val_Loss=22.326, NCE=1.956, Cir=61.033, CE=12.415]
+📊 Kết thúc Epoch 246 |
+Train Loss: 22.5068 | Val Loss: 24.3270
+ 
+Train Epoch 247: 100%|████████████████████|
+64/64 [07:29<00:00,  7.02s/it,
+Loss=22.634, NCE=5.103, Cir=61.693, CE=0.180]
+Val Epoch 247: 100%|███████████████████|
+4/4 [00:20<00:00,  5.03s/it,
+Val_Loss=22.531, NCE=1.980, Cir=60.902, CE=12.781]
+📊 Kết thúc Epoch 247 |
+Train Loss: 22.4972 | Val Loss: 24.4019
+ 
+Train Epoch 248: 100%|████████████████████|
+64/64 [07:30<00:00,  7.05s/it,
+Loss=22.573, NCE=5.006, Cir=62.386, CE=0.167]
+Val Epoch 248: 100%|███████████████████|
+4/4 [00:19<00:00,  4.85s/it,
+Val_Loss=22.758, NCE=2.001, Cir=62.875, CE=12.363]
+📊 Kết thúc Epoch 248 |
+Train Loss: 22.4828 | Val Loss: 24.3122
+ 
+Train Epoch 249: 100%|████████████████████|
+64/64 [07:30<00:00,  7.04s/it,
+Loss=22.494, NCE=4.981, Cir=62.121, CE=0.217]
+Val Epoch 249: 100%|███████████████████|
+4/4 [00:19<00:00,  4.90s/it,
+Val_Loss=22.741, NCE=2.133, Cir=60.816, CE=12.625]
+📊 Kết thúc Epoch 249 |
+Train Loss: 22.4500 | Val Loss: 24.3562
+ 
+Train Epoch 250: 100%|████████████████████|
+64/64 [07:29<00:00,  7.03s/it,
+Loss=22.272, NCE=4.982, Cir=60.948, CE=0.237]
+Val Epoch 250: 100%|███████████████████|
+4/4 [00:20<00:00,  5.06s/it,
+Val_Loss=22.273, NCE=1.973, Cir=61.596, CE=12.014]
+📊 Kết thúc Epoch 250 |
+Train Loss: 22.4509 | Val Loss: 24.1517
+ 
+📦 Đã lưu Checkpoint định
+kỳ tại ./checkpoints/models/newlimavlm_epoch_250.pth
+ 
+Train Epoch 251: 100%|████████████████████|
+64/64 [07:33<00:00,  7.08s/it,
+Loss=22.819, NCE=5.148, Cir=62.052, CE=0.223]
+Val Epoch 251: 100%|███████████████████|
+4/4 [00:19<00:00,  4.88s/it,
+Val_Loss=22.601, NCE=2.011, Cir=61.147, CE=12.701]
+📊 Kết thúc Epoch 251 |
+Train Loss: 22.4602 | Val Loss: 24.2311
+ 
+Train Epoch 252: 100%|████████████████████|
+64/64 [07:31<00:00,  7.06s/it,
+Loss=22.633, NCE=5.050, Cir=62.144, CE=0.209]
+Val Epoch 252: 100%|███████████████████|
+4/4 [00:19<00:00,  4.98s/it,
+Val_Loss=22.821, NCE=2.083, Cir=61.807, CE=12.587]
+📊 Kết thúc Epoch 252 |
+Train Loss: 22.4420 | Val Loss: 24.4676
+ 
+Train Epoch 253: 100%|████████████████████|
+64/64 [07:29<00:00,  7.03s/it,
+Loss=22.400, NCE=4.893, Cir=62.547, CE=0.211]
+Val Epoch 253: 100%|███████████████████|
+4/4 [00:19<00:00,  4.89s/it,
+Val_Loss=22.349, NCE=2.040, Cir=59.868, CE=12.592]
+📊 Kết thúc Epoch 253 |
+Train Loss: 22.4293 | Val Loss: 24.2517
+ 
+Train Epoch 254: 100%|████████████████████|
+64/64 [07:31<00:00,  7.05s/it,
+Loss=22.414, NCE=4.954, Cir=61.961, CE=0.225]
+Val Epoch 254: 100%|███████████████████|
+4/4 [00:19<00:00,  4.92s/it,
+Val_Loss=22.586, NCE=2.059, Cir=61.001, CE=12.536]
+📊 Kết thúc Epoch 254 |
+Train Loss: 22.3929 | Val Loss: 24.3074
+ 
+Train Epoch 255: 100%|████████████████████|
+64/64 [07:30<00:00,  7.04s/it,
+Loss=22.685, NCE=5.015, Cir=62.863, CE=0.166]
+Val Epoch 255: 100%|███████████████████|
+4/4 [00:19<00:00,  4.91s/it,
+Val_Loss=22.486, NCE=1.984, Cir=60.924, CE=12.667]
+📊 Kết thúc Epoch 255 |
+Train Loss: 22.4127 | Val Loss: 24.2161
+ 
+📦 Đã lưu Checkpoint định
+kỳ tại ./checkpoints/models/newlimavlm_epoch_255.pth
+ 
+Train Epoch 256: 100%|████████████████████|
+64/64 [07:30<00:00,  7.03s/it,
+Loss=22.501, NCE=5.025, Cir=61.819, CE=0.173]
+Val Epoch 256: 100%|███████████████████|
+4/4 [00:19<00:00,  4.91s/it,
+Val_Loss=22.373, NCE=2.061, Cir=60.341, CE=12.367]
+📊 Kết thúc Epoch 256 |
+Train Loss: 22.4062 | Val Loss: 24.1581
+ 
+Train Epoch 257: 100%|████████████████████|
+64/64 [07:30<00:00,  7.04s/it,
+Loss=22.677, NCE=5.006, Cir=62.729, CE=0.240]
+Val Epoch 257: 100%|███████████████████|
+4/4 [00:19<00:00,  4.89s/it,
+Val_Loss=22.297, NCE=2.046, Cir=59.846, CE=12.472]
+📊 Kết thúc Epoch 257 |
+Train Loss: 22.4321 | Val Loss: 24.2965
+ 
+Train Epoch 258: 100%|████████████████████|
+64/64 [07:31<00:00,  7.05s/it,
+Loss=21.950, NCE=4.844, Cir=60.929, CE=0.153]
+Val Epoch 258: 100%|███████████████████|
+4/4 [00:19<00:00,  4.99s/it,
+Val_Loss=22.581, NCE=2.008, Cir=61.724, CE=12.438]
+📊 Kết thúc Epoch 258 |
+Train Loss: 22.4344 | Val Loss: 24.3588
+ 
+Train Epoch 259: 100%|████████████████████|
+64/64 [07:31<00:00,  7.05s/it,
+Loss=22.545, NCE=4.994, Cir=62.214, CE=0.230]
+Val Epoch 259: 100%|███████████████████|
+4/4 [00:19<00:00,  4.86s/it,
+Val_Loss=22.429, NCE=1.954, Cir=61.199, CE=12.562]
+📊 Kết thúc Epoch 259 |
+Train Loss: 22.4184 | Val Loss: 24.3388
+ 
+Train Epoch 260: 100%|████████████████████|
+64/64 [07:31<00:00,  7.05s/it,
+Loss=22.228, NCE=5.023, Cir=60.549, CE=0.142]
+Val Epoch 260: 100%|███████████████████|
+4/4 [00:20<00:00,  5.01s/it,
+Val_Loss=22.694, NCE=2.028, Cir=61.783, CE=12.562]
+📊 Kết thúc Epoch 260 |
+Train Loss: 22.3099 | Val Loss: 24.3249
+ 
+📦 Đã lưu Checkpoint định
+kỳ tại ./checkpoints/models/newlimavlm_epoch_260.pth
+ 
+Train Epoch 261: 100%|████████████████████|
+64/64 [07:31<00:00,  7.05s/it,
+Loss=22.457, NCE=4.919, Cir=62.691, CE=0.161]
+Val Epoch 261: 100%|███████████████████|
+4/4 [00:19<00:00,  4.90s/it,
+Val_Loss=22.369, NCE=1.947, Cir=60.431, CE=12.778]
+📊 Kết thúc Epoch 261 |
+Train Loss: 22.3234 | Val Loss: 24.1726
+ 
+Train Epoch 262: 100%|████████████████████|
+64/64 [07:30<00:00,  7.04s/it,
+Loss=22.390, NCE=4.934, Cir=62.095, CE=0.205]
+Val Epoch 262: 100%|███████████████████|
+4/4 [00:19<00:00,  4.91s/it,
+Val_Loss=22.576, NCE=1.948, Cir=61.408, CE=12.796]
+📊 Kết thúc Epoch 262 |
+Train Loss: 22.3478 | Val Loss: 24.3522
+ 
+Train Epoch 263: 100%|████████████████████|
+64/64 [07:28<00:00,  7.02s/it,
+Loss=21.853, NCE=4.940, Cir=59.460, CE=0.162]
+Val Epoch 263: 100%|███████████████████|
+4/4 [00:19<00:00,  4.86s/it,
+Val_Loss=22.405, NCE=1.961, Cir=60.889, CE=12.609]
+📊 Kết thúc Epoch 263 |
+Train Loss: 22.2757 | Val Loss: 24.2159
+ 
+Train Epoch 264: 100%|████████████████████|
+64/64 [07:28<00:00,  7.01s/it,
+Loss=22.375, NCE=4.866, Cir=62.718, CE=0.200]
+Val Epoch 264: 100%|███████████████████|
+4/4 [00:19<00:00,  4.83s/it,
+Val_Loss=22.809, NCE=2.099, Cir=61.554, CE=12.602]
+📊 Kết thúc Epoch 264 |
+Train Loss: 22.3115 | Val Loss: 24.4877
+ 
+Train Epoch 265: 100%|████████████████████|
+64/64 [07:29<00:00,  7.03s/it,
+Loss=22.301, NCE=4.880, Cir=62.370, CE=0.134]
+Val Epoch 265: 100%|███████████████████|
+4/4 [00:19<00:00,  4.84s/it,
+Val_Loss=22.387, NCE=1.995, Cir=60.664, CE=12.527]
+📊 Kết thúc Epoch 265 |
+Train Loss: 22.3373 | Val Loss: 24.3456
+ 
+📦 Đã lưu Checkpoint định
+kỳ tại ./checkpoints/models/newlimavlm_epoch_265.pth
+ 
+Train Epoch 266: 100%|████████████████████|
+64/64 [07:29<00:00,  7.03s/it,
+Loss=22.256, NCE=4.910, Cir=61.789, CE=0.156]
+Val Epoch 266: 100%|███████████████████|
+4/4 [00:19<00:00,  4.96s/it,
+Val_Loss=22.840, NCE=2.014, Cir=62.912, CE=12.461]
+📊 Kết thúc Epoch 266 |
+Train Loss: 22.3441 | Val Loss: 24.4583
+ 
+Train Epoch 267: 100%|████████████████████|
+64/64 [07:30<00:00,  7.05s/it,
+Loss=22.472, NCE=5.012, Cir=61.782, CE=0.186]
+Val Epoch 267: 100%|███████████████████|
+4/4 [00:19<00:00,  4.98s/it,
+Val_Loss=22.486, NCE=2.072, Cir=61.260, CE=12.180]
+📊 Kết thúc Epoch 267 |
+Train Loss: 22.3432 | Val Loss: 24.2002
+ 
+Train Epoch 268: 100%|████████████████████|
+64/64 [07:31<00:00,  7.06s/it,
+Loss=22.003, NCE=4.913, Cir=60.471, CE=0.166]
+Val Epoch 268: 100%|███████████████████|
+4/4 [00:19<00:00,  4.90s/it,
+Val_Loss=22.783, NCE=2.025, Cir=62.268, CE=12.560]
+📊 Kết thúc Epoch 268 |
+Train Loss: 22.3101 | Val Loss: 24.3327
+ 
+Train Epoch 269: 100%|████████████████████|
+64/64 [07:33<00:00,  7.08s/it,
+Loss=22.194, NCE=4.940, Cir=61.116, CE=0.183]
+Val Epoch 269: 100%|███████████████████|
+4/4 [00:19<00:00,  4.87s/it,
+Val_Loss=22.664, NCE=2.006, Cir=62.732, CE=12.210]
+📊 Kết thúc Epoch 269 |
+Train Loss: 22.3000 | Val Loss: 24.3148
+ 
+Train Epoch 270: 100%|████████████████████|
+64/64 [07:34<00:00,  7.11s/it,
+Loss=21.903, NCE=4.936, Cir=59.801, CE=0.142]
+Val Epoch 270: 100%|███████████████████|
+4/4 [00:19<00:00,  4.87s/it,
+Val_Loss=22.374, NCE=2.026, Cir=60.843, CE=12.307]
+📊 Kết thúc Epoch 270 |
+Train Loss: 22.3100 | Val Loss: 24.3646
+ 
+📦 Đã lưu Checkpoint định
+kỳ tại ./checkpoints/models/newlimavlm_epoch_270.pth
+ 
+Train Epoch 271: 100%|████████████████████|
+64/64 [07:29<00:00,  7.03s/it,
+Loss=22.238, NCE=4.983, Cir=60.919, CE=0.174]
+Val Epoch 271: 100%|███████████████████|
+4/4 [00:19<00:00,  4.88s/it,
+Val_Loss=22.571, NCE=2.022, Cir=60.961, CE=12.669]
+📊 Kết thúc Epoch 271 |
+Train Loss: 22.3033 | Val Loss: 24.2279
+ 
+Train Epoch 272: 100%|████████████████████|
+64/64 [07:31<00:00,  7.06s/it,
+Loss=22.377, NCE=4.957, Cir=61.885, CE=0.172]
+Val Epoch 272: 100%|███████████████████|
+4/4 [00:20<00:00,  5.05s/it,
+Val_Loss=22.381, NCE=2.030, Cir=60.115, CE=12.596]
+📊 Kết thúc Epoch 272 |
+Train Loss: 22.3268 | Val Loss: 24.3038
+ 
+Train Epoch 273: 100%|████████████████████|
+64/64 [07:33<00:00,  7.08s/it,
+Loss=21.960, NCE=4.926, Cir=60.206, CE=0.135]
+Val Epoch 273: 100%|███████████████████|
+4/4 [00:19<00:00,  4.89s/it,
+Val_Loss=22.544, NCE=2.000, Cir=60.710, CE=12.806]
+📊 Kết thúc Epoch 273 |
+Train Loss: 22.2935 | Val Loss: 24.4115
+ 
+Train Epoch 274: 100%|████████████████████|
+64/64 [07:29<00:00,  7.02s/it,
+Loss=22.181, NCE=4.944, Cir=61.061, CE=0.160]
+Val Epoch 274: 100%|███████████████████|
+4/4 [00:19<00:00,  4.87s/it,
+Val_Loss=22.257, NCE=1.996, Cir=59.648, CE=12.673]
+📊 Kết thúc Epoch 274 |
+Train Loss: 22.2300 | Val Loss: 24.3241
+ 
+Train Epoch 275: 100%|████████████████████|
+64/64 [07:28<00:00,  7.01s/it,
+Loss=22.359, NCE=4.907, Cir=62.350, CE=0.148]
+Val Epoch 275: 100%|███████████████████|
+4/4 [00:19<00:00,  4.91s/it,
+Val_Loss=22.462, NCE=2.036, Cir=60.872, CE=12.432]
+📊 Kết thúc Epoch 275 |
+Train Loss: 22.2206 | Val Loss: 24.2296
+ 
+📦 Đã lưu Checkpoint định
+kỳ tại ./checkpoints/models/newlimavlm_epoch_275.pth
+ 
+Train Epoch 276: 100%|████████████████████|
+64/64 [07:31<00:00,  7.05s/it,
+Loss=22.201, NCE=4.988, Cir=60.815, CE=0.125]
+Val Epoch 276: 100%|███████████████████|
+4/4 [00:19<00:00,  4.88s/it,
+Val_Loss=22.233, NCE=2.040, Cir=59.081, CE=12.675]
+📊 Kết thúc Epoch 276 |
+Train Loss: 22.2692 | Val Loss: 24.1943
+ 
+Train Epoch 277: 100%|████████████████████|
+64/64 [07:30<00:00,  7.04s/it,
+Loss=22.411, NCE=4.960, Cir=61.950, CE=0.204]
+Val Epoch 277: 100%|███████████████████|
+4/4 [00:19<00:00,  4.85s/it,
+Val_Loss=22.144, NCE=1.905, Cir=60.242, CE=12.572]
+📊 Kết thúc Epoch 277 |
+Train Loss: 22.2661 | Val Loss: 24.1627
+ 
+Train Epoch 278: 100%|████████████████████|
+64/64 [07:29<00:00,  7.03s/it,
+Loss=22.203, NCE=4.885, Cir=61.765, CE=0.158]
+Val Epoch 278: 100%|███████████████████|
+4/4 [00:19<00:00,  4.96s/it,
+Val_Loss=22.602, NCE=2.096, Cir=60.597, CE=12.582]
+📊 Kết thúc Epoch 278 |
+Train Loss: 22.2891 | Val Loss: 24.5049
+ 
+Train Epoch 279: 100%|████████████████████|
+64/64 [07:30<00:00,  7.04s/it,
+Loss=21.953, NCE=4.950, Cir=59.787, CE=0.190]
+Val Epoch 279: 100%|███████████████████|
+4/4 [00:19<00:00,  4.86s/it,
+Val_Loss=22.591, NCE=2.029, Cir=61.309, CE=12.543]
+📊 Kết thúc Epoch 279 |
+Train Loss: 22.2485 | Val Loss: 24.3186
+ 
+Train Epoch 280: 100%|████████████████████|
+64/64 [07:31<00:00,  7.05s/it,
+Loss=22.472, NCE=4.978, Cir=62.211, CE=0.147]
+Val Epoch 280: 100%|███████████████████|
+4/4 [00:19<00:00,  4.84s/it,
+Val_Loss=22.297, NCE=1.941, Cir=60.388, CE=12.676]
+📊 Kết thúc Epoch 280 |
+Train Loss: 22.2977 | Val Loss: 24.3257
+ 
+📦 Đã lưu Checkpoint định
+kỳ tại ./checkpoints/models/newlimavlm_epoch_280.pth
+ 
+Train Epoch 281: 100%|████████████████████|
+64/64 [07:28<00:00,  7.00s/it,
+Loss=22.007, NCE=4.896, Cir=60.581, CE=0.199]
+Val Epoch 281: 100%|███████████████████|
+4/4 [00:19<00:00,  4.86s/it,
+Val_Loss=23.161, NCE=2.103, Cir=62.473, CE=12.923]
+📊 Kết thúc Epoch 281 |
+Train Loss: 22.2452 | Val Loss: 24.5456
+ 
+Train Epoch 282: 100%|████████████████████|
+64/64 [07:31<00:00,  7.06s/it,
+Loss=22.326, NCE=4.910, Cir=62.221, CE=0.124]
+Val Epoch 282: 100%|███████████████████|
+4/4 [00:19<00:00,  4.85s/it,
+Val_Loss=22.584, NCE=2.057, Cir=60.932, CE=12.565]
+📊 Kết thúc Epoch 282 |
+Train Loss: 22.1928 | Val Loss: 24.2774
+ 
+Train Epoch 283: 100%|████████████████████|
+64/64 [07:30<00:00,  7.05s/it,
+Loss=22.063, NCE=4.815, Cir=61.874, CE=0.116]
+Val Epoch 283: 100%|███████████████████|
+4/4 [00:19<00:00,  4.83s/it,
+Val_Loss=22.764, NCE=2.027, Cir=61.986, CE=12.627]
+📊 Kết thúc Epoch 283 |
+Train Loss: 22.2097 | Val Loss: 24.2910
+ 
+Train Epoch 284: 100%|████████████████████|
+64/64 [07:29<00:00,  7.03s/it,
+Loss=22.182, NCE=4.952, Cir=61.009, CE=0.152]
+Val Epoch 284: 100%|███████████████████|
+4/4 [00:19<00:00,  4.91s/it,
+Val_Loss=22.596, NCE=2.069, Cir=61.378, CE=12.367]
+📊 Kết thúc Epoch 284 |
+Train Loss: 22.2039 | Val Loss: 24.2249
+ 
+Train Epoch 285: 100%|████████████████████|
+64/64 [07:29<00:00,  7.02s/it,
+Loss=22.319, NCE=4.926, Cir=61.954, CE=0.154]
+Val Epoch 285: 100%|███████████████████|
+4/4 [00:19<00:00,  4.91s/it,
+Val_Loss=22.873, NCE=2.060, Cir=61.716, CE=12.820]
+📊 Kết thúc Epoch 285 |
+Train Loss: 22.1624 | Val Loss: 24.4885
+ 
+📦 Đã lưu Checkpoint định
+kỳ tại ./checkpoints/models/newlimavlm_epoch_285.pth
+ 
+Train Epoch 286: 100%|████████████████████|
+64/64 [07:27<00:00,  6.99s/it,
+Loss=21.859, NCE=4.866, Cir=60.234, CE=0.161]
+Val Epoch 286: 100%|███████████████████|
+4/4 [00:19<00:00,  4.87s/it,
+Val_Loss=22.626, NCE=2.025, Cir=60.263, CE=13.047]
+📊 Kết thúc Epoch 286 |
+Train Loss: 22.1708 | Val Loss: 24.3900
+ 
+Train Epoch 287: 100%|████████████████████|
+64/64 [07:29<00:00,  7.02s/it,
+Loss=22.116, NCE=4.866, Cir=61.547, CE=0.151]
+Val Epoch 287: 100%|███████████████████|
+4/4 [00:19<00:00,  4.89s/it,
+Val_Loss=22.518, NCE=1.962, Cir=60.962, CE=12.802]
+📊 Kết thúc Epoch 287 |
+Train Loss: 22.1851 | Val Loss: 24.4201
+ 
+Train Epoch 288: 100%|████████████████████|
+64/64 [07:30<00:00,  7.03s/it,
+Loss=22.649, NCE=4.920, Cir=63.614, CE=0.172]
+Val Epoch 288: 100%|███████████████████|
+4/4 [00:19<00:00,  4.86s/it,
+Val_Loss=22.632, NCE=2.029, Cir=61.663, CE=12.484]
+📊 Kết thúc Epoch 288 |
+Train Loss: 22.1870 | Val Loss: 24.2903
+ 
+Train Epoch 289: 100%|████████████████████|
+64/64 [07:29<00:00,  7.02s/it,
+Loss=22.111, NCE=4.876, Cir=61.501, CE=0.117]
+Val Epoch 289: 100%|███████████████████|
+4/4 [00:19<00:00,  4.83s/it,
+Val_Loss=22.687, NCE=2.066, Cir=61.603, CE=12.471]
+📊 Kết thúc Epoch 289 |
+Train Loss: 22.1367 | Val Loss: 24.2875
+ 
+Train Epoch 290: 100%|████████████████████|
+64/64 [07:28<00:00,  7.00s/it,
+Loss=21.892, NCE=4.842, Cir=60.750, CE=0.117]
+Val Epoch 290: 100%|███████████████████|
+4/4 [00:19<00:00,  4.86s/it,
+Val_Loss=22.333, NCE=1.971, Cir=60.532, CE=12.570]
+📊 Kết thúc Epoch 290 |
+Train Loss: 22.1432 | Val Loss: 24.3260
+ 
+📦 Đã lưu Checkpoint định
+kỳ tại ./checkpoints/models/newlimavlm_epoch_290.pth
+ 
+Train Epoch 291: 100%|████████████████████|
+64/64 [07:29<00:00,  7.03s/it,
+Loss=22.012, NCE=4.923, Cir=60.514, CE=0.124]
+Val Epoch 291: 100%|███████████████████|
+4/4 [00:19<00:00,  4.86s/it,
+Val_Loss=22.613, NCE=2.022, Cir=60.875, CE=12.790]
+📊 Kết thúc Epoch 291 |
+Train Loss: 22.1458 | Val Loss: 24.3150
+ 
+Train Epoch 292: 100%|████████████████████|
+64/64 [07:27<00:00,  7.00s/it,
+Loss=22.443, NCE=5.025, Cir=61.600, CE=0.147]
+Val Epoch 292: 100%|███████████████████|
+4/4 [00:19<00:00,  4.92s/it,
+Val_Loss=22.438, NCE=1.985, Cir=60.659, CE=12.671]
+📊 Kết thúc Epoch 292 |
+Train Loss: 22.1897 | Val Loss: 24.1698
+ 
+Train Epoch 293: 100%|████████████████████|
+64/64 [07:33<00:00,  7.09s/it,
+Loss=22.086, NCE=4.918, Cir=60.865, CE=0.152]
+Val Epoch 293: 100%|███████████████████|
+4/4 [00:19<00:00,  4.87s/it,
+Val_Loss=22.558, NCE=1.947, Cir=61.948, CE=12.547]
+📊 Kết thúc Epoch 293 |
+Train Loss: 22.1846 | Val Loss: 24.4800
+ 
+Train Epoch 294: 100%|████████████████████|
+64/64 [07:30<00:00,  7.04s/it,
+Loss=21.997, NCE=4.877, Cir=60.788, CE=0.170]
+Val Epoch 294: 100%|███████████████████|
+4/4 [00:19<00:00,  4.84s/it,
+Val_Loss=22.323, NCE=2.071, Cir=59.502, CE=12.559]
+📊 Kết thúc Epoch 294 |
+Train Loss: 22.1328 | Val Loss: 24.2269
+ 
+Train Epoch 295: 100%|████████████████████|
+64/64 [07:31<00:00,  7.06s/it,
+Loss=21.902, NCE=4.898, Cir=60.126, CE=0.161]
+Val Epoch 295: 100%|███████████████████|
+4/4 [00:20<00:00,  5.01s/it,
+Val_Loss=22.027, NCE=1.975, Cir=59.106, CE=12.509]
+📊 Kết thúc Epoch 295 |
+Train Loss: 22.1074 | Val Loss: 24.1841
+ 
+📦 Đã lưu Checkpoint định
+kỳ tại ./checkpoints/models/newlimavlm_epoch_295.pth
+ 
+Train Epoch 296: 100%|████████████████████|
+64/64 [07:30<00:00,  7.03s/it,
+Loss=22.264, NCE=4.934, Cir=61.629, CE=0.139]
+Val Epoch 296: 100%|███████████████████|
+4/4 [00:19<00:00,  4.84s/it,
+Val_Loss=22.231, NCE=2.051, Cir=58.636, CE=12.805]
+📊 Kết thúc Epoch 296 |
+Train Loss: 22.1195 | Val Loss: 24.2737
+ 
+Train Epoch 297: 100%|████████████████████|
+64/64 [07:29<00:00,  7.03s/it,
+Loss=22.136, NCE=4.945, Cir=60.905, CE=0.131]
+Val Epoch 297: 100%|███████████████████|
+4/4 [00:19<00:00,  4.85s/it,
+Val_Loss=22.345, NCE=2.013, Cir=59.846, CE=12.701]
+📊 Kết thúc Epoch 297 |
+Train Loss: 22.0634 | Val Loss: 24.1921
+ 
+Train Epoch 298: 100%|████████████████████|
+64/64 [07:30<00:00,  7.03s/it,
+Loss=21.837, NCE=4.801, Cir=60.912, CE=0.105]
+Val Epoch 298: 100%|███████████████████|
+4/4 [00:19<00:00,  4.92s/it,
+Val_Loss=22.325, NCE=1.985, Cir=60.894, CE=12.351]
+📊 Kết thúc Epoch 298 |
+Train Loss: 22.1333 | Val Loss: 24.3524
+ 
+Train Epoch 299: 100%|████████████████████|
+64/64 [07:33<00:00,  7.09s/it,
+Loss=22.337, NCE=4.859, Cir=62.648, CE=0.178]
+Val Epoch 299: 100%|███████████████████|
+4/4 [00:19<00:00,  4.85s/it,
+Val_Loss=22.217, NCE=1.909, Cir=61.067, CE=12.371]
+📊 Kết thúc Epoch 299 |
+Train Loss: 22.1616 | Val Loss: 24.3300
+ 
+Train Epoch 300: 100%|████████████████████|
+64/64 [07:39<00:00,  7.18s/it,
+Loss=21.888, NCE=4.860, Cir=60.530, CE=0.127]
+Val Epoch 300: 100%|███████████████████|
+4/4 [00:19<00:00,  4.89s/it,
+Val_Loss=22.414, NCE=1.928, Cir=60.376, CE=12.966]
+📊 Kết thúc Epoch 300 |
+Train Loss: 22.1099 | Val Loss: 24.3586
+ 
+📦 Đã lưu Checkpoint định
+kỳ tại ./checkpoints/models/newlimavlm_epoch_300.pth
+ 
+vẽ biểu đồ train và val loss

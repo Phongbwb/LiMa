@@ -7,9 +7,9 @@ import torchvision.ops as ops
 def visualize_parts(model_path, dataset, device, output_dir="./vis_results", num_samples=5):
     os.makedirs(output_dir, exist_ok=True)
     
-    # --- CÁC THAM SỐ PHẢI GIỐNG HỆT LÚC TRAIN ---
+    # Configurations
     FEAT_STRIDE = 16
-    IMAGE_CROP_SIZE = 336  # Kích thước cắt xe đưa vào Backbone (giống train_epoch)
+    IMAGE_CROP_SIZE = 336  # Kích thước cắt xe đưa vào Backbone 
     FEATURE_ROI_SIZE = 7   # Kích thước grid_sample bên trong model
     # ---------------------------------------------
 
@@ -39,7 +39,7 @@ def visualize_parts(model_path, dataset, device, output_dir="./vis_results", num
         box_tensor = bboxes[:, frame_idx, :]      # [1, 4] (cx, cy, w, h)
         
         # =====================================================================
-        # BƯỚC QUAN TRỌNG: XỬ LÝ BBOX VÀ CẮT ROI (GIỐNG HỆT TRAIN_EPOCH)
+        # BƯỚC QUAN TRỌNG: XỬ LÝ BBOX VÀ CẮT ROI 
         # =====================================================================
         # 1. Scale box ngược lại kích thước ảnh gốc (x16)
         box_scaled = box_tensor * FEAT_STRIDE
@@ -112,7 +112,7 @@ def visualize_parts(model_path, dataset, device, output_dir="./vis_results", num
         # 4. Lưu kết quả
         save_path = os.path.join(output_dir, f"vis_{track_id}.jpg")
         cv2.imwrite(save_path, img_vis)
-        print(f"✅ Đã lưu ảnh: {save_path}")
+        print(f" Đã lưu ảnh: {save_path}")
         
 if __name__ == "__main__":
     # Ví dụ sử dụng

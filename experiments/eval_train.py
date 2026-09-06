@@ -115,11 +115,11 @@ class TrainSetBenchmark:
         self.max_samples = max_samples
         os.makedirs(self.vis_dir, exist_ok=True)
         
-        print("📥 Đang tải dữ liệu JSON Train...")
+        print(" Đang tải dữ liệu JSON Train...")
         with open(train_tracks_path, 'r') as f:
             all_tracks = json.load(f)
             
-        print("📥 Đang tải Text Embeddings...")
+        print(" Đang tải Text Embeddings...")
         self.text_features_dict = torch.load(text_emb_path, map_location=self.device)
         
         # Tiền xử lý: Rút trích các cặp (Query, GT_Track) từ cấu trúc JSON lồng nhau
@@ -143,7 +143,7 @@ class TrainSetBenchmark:
         self.cached_videos = {}
 
     def preload_videos(self):
-        print(f"🔄 Đang tiền xử lý {len(self.tracks_data)} Video Tracks (Train Set)...")
+        print(f" Đang tiền xử lý {len(self.tracks_data)} Video Tracks (Train Set)...")
         for track_uuid, track_info in tqdm(self.tracks_data.items(), desc="Loading Videos"):
             total_frames = len(track_info['frames'])
             indices = np.linspace(0, total_frames - 1, self.num_sampled_frames, dtype=int)
@@ -214,7 +214,7 @@ class TrainSetBenchmark:
         self.pipeline.lima_model.eval()
         self.pipeline.micro_model.eval()
 
-        print(f"🚀 Bắt đầu Benchmark Tập TRAIN: Đánh giá {num_pairs} cặp...")
+        print(f" Bắt đầu Benchmark Tập TRAIN: Đánh giá {num_pairs} cặp...")
         
         with torch.no_grad():
             for i, pair in enumerate(tqdm(self.eval_pairs, desc="Đánh giá Queries")):
@@ -267,7 +267,7 @@ class TrainSetBenchmark:
 
         valid_pairs = num_pairs - missing_embeddings
         if valid_pairs == 0:
-            print("❌ LỖI: Không tìm thấy Text Embeddings nào khớp với tập Train. Bạn đã extract CLIP features cho tập Train chưa?")
+            print("LỖI: Không tìm thấy Text Embeddings nào khớp với tập Train. Bạn đã extract CLIP features cho tập Train chưa?")
             return
 
         r1 = np.sum(ranks == 1) / valid_pairs * 100

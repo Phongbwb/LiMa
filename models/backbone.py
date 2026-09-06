@@ -53,7 +53,7 @@ def visualize_feature_map(feature_tensor, orig_image=None, save_path="feature_ma
     plt.tight_layout()
     plt.savefig(save_path, bbox_inches='tight', dpi=150)
     plt.close(fig)
-    print(f"✅ Đã lưu ảnh Feature Map tại: {save_path}")
+    print(f"Đã lưu ảnh Feature Map tại: {save_path}")
 
 # ==========================================
 # 2. CÁC LỚP PHỤ TRỢ (Đã tối ưu)
@@ -68,11 +68,11 @@ class DeformablePatchEmbedding(nn.Module):
 
         self.post_norm = nn.GroupNorm(1, embed_dim)
         
-        # 🔥 KHỞI TẠO ZERO (Zero-Initialization)
+        # KHỞI TẠO ZERO (Zero-Initialization)
         # Giúp ở những epoch đầu, mạng hoàn toàn tin tưởng vào ResNet Shortcut
         nn.init.zeros_(self.post_norm.weight) 
 
-        # 🔥 Thu hẹp vùng nhìn của mạng đoán Offset (kernel_size=1)
+        # Thu hẹp vùng nhìn của mạng đoán Offset (kernel_size=1)
         self.offset_mask_net = nn.Conv2d(
             in_channels, 
             3 * self.kernel_size ** 2, 
@@ -83,7 +83,7 @@ class DeformablePatchEmbedding(nn.Module):
         nn.init.zeros_(self.offset_mask_net.weight)
         nn.init.zeros_(self.offset_mask_net.bias)
         
-        # 🔥 Khởi tạo scale offset nhỏ để ban đầu giống CNN thuần
+        #  Khởi tạo scale offset nhỏ để ban đầu giống CNN thuần
         self.offset_scale = nn.Parameter(torch.tensor(0.5))
 
         self.weight = nn.Parameter(torch.Tensor(embed_dim, in_channels, self.kernel_size, self.kernel_size))
@@ -94,7 +94,6 @@ class DeformablePatchEmbedding(nn.Module):
         out_offset_mask = self.offset_mask_net(x)
         o1, o2, mask = torch.chunk(out_offset_mask, 3, dim=1)
         
-        # 🔥 Kẹp chặt Offset để tránh loang lổ ra mặt đường
         offsets = torch.clamp(torch.cat((o1, o2), dim=1), -1.5, 1.5) * self.offset_scale
         
         out = deform_conv2d(
@@ -135,12 +134,12 @@ class SpatialGating(nn.Module):
             nn.GELU(),
             nn.Conv2d(d_model // 4, d_model, kernel_size=1)
         )
-        # 🔥 Thêm Temperature để cắt gắt phần mask nền (giảm nhiễu)
+        # Thêm Temperature để cắt gắt phần mask nền (giảm nhiễu)
         self.temperature = nn.Parameter(torch.tensor(2.0))
         
     def forward(self, x): 
         mask = torch.sigmoid(self.gate(x) * self.temperature)
-        return x * mask
+        return x*mask 
 
 # ==========================================
 # 3. BACKBONE TỔNG THỂ VỚI SHORTCUT
@@ -163,7 +162,7 @@ class CustomVideoBackbone(nn.Module):
         for param in self.early_extractor.parameters():
             param.requires_grad = False
 
-        # 🔥 Lớp Shortcut để đẩy trực tiếp Feature ResNet lên sau Deformable
+        # Lớp Shortcut để đẩy trực tiếp Feature ResNet lên sau Deformable
         self.resnet_shortcut = nn.Sequential(
             nn.AvgPool2d(kernel_size=2, stride=2), # Giảm H, W xuống 1 nửa khớp với Deformable
             nn.Conv2d(128, d_model, kernel_size=1, bias=False), # Nâng số kênh 128 -> 256
@@ -184,7 +183,7 @@ class CustomVideoBackbone(nn.Module):
         self.norm = nn.LayerNorm(d_model)
 
     def train(self, mode=True):
-        """🔥 Ghi đè hàm train để đảm bảo Batch Norm của ResNet luôn bị khóa cứng"""
+        """ Ghi đè hàm train để đảm bảo Batch Norm của ResNet luôn bị khóa cứng"""
         super().train(mode)
         self.early_extractor.eval() 
         return self
@@ -209,8 +208,8 @@ class CustomVideoBackbone(nn.Module):
         # 3. Đường tắt (Shortcut) cho ResNet [B*T, 256, H/16, W/16]
         shortcut = self.resnet_shortcut(feat_resnet)
         
-        # 🔥 4. CỘNG GỘP: Giữ trọn ResNet, bổ sung Deformable
-        feat_2d = shortcut + feat_deform
+        # 4. CỘNG GỘP: Giữ trọn ResNet, bổ sung Deformable
+        feat_2d = shortcut
         
         # Lấy bản sao để vẽ heatmap kiểm tra
         feature_to_visualize = feat_2d.clone()
@@ -238,5 +237,5 @@ class CustomVideoBackbone(nn.Module):
         out = feat_3d.permute(0, 1, 3, 4, 2) + (temp_pe + spatial_pe) * self.pe_scale
         out = self.norm(out)
         
-        # 🔥 Trả về chuẩn bị cho Mamba và Loss
+        #  Trả về chuẩn bị cho Mamba và Loss
         return out.contiguous(), feature_to_visualize, spatial_pe, offsets

@@ -253,7 +253,7 @@ class CityFlowDirectBenchmark:
         self.cached_videos = {}
 
     def preload_videos(self, track_keys):
-        print(f"🔄 Đang tiền xử lý {len(track_keys)} Video Tracks...")
+        print(f"Đang tiền xử lý {len(track_keys)} Video Tracks...")
         for track_uuid in tqdm(track_keys, desc="Loading Videos"):
             track_info = self.tracks_data[track_uuid]
             total_frames = len(track_info['frames'])
@@ -345,7 +345,7 @@ class CityFlowDirectBenchmark:
         ranks = np.zeros(num_pairs)
         all_ious = []
 
-        print(f"🚀 Bắt đầu Benchmark: Đánh giá {num_pairs} cặp...")
+        print(f"Bắt đầu Benchmark: Đánh giá {num_pairs} cặp...")
         
         # Ngưỡng (Threshold) cấu hình ở đây - bạn có thể tinh chỉnh 
         confidence_threshold = 0.3 
@@ -405,7 +405,7 @@ class CityFlowDirectBenchmark:
                 ranks[i] = np.where(sorted_indices == i)[0][0] + 1 
 
         print("\n" + "="*50)
-        print("🏆 KẾT QUẢ CITYFLOW-NL (LIMA + LNN + MICRO) 🏆")
+        print(" KẾT QUẢ CITYFLOW-NL (LIMA + LNN + MICRO) 🏆")
         print("="*50)
         print(f"🔹 Mean Reciprocal Rank (MRR) : {np.sum(1.0 / ranks) / num_pairs:.4f}")
         print(f"🔹 Retrieval Recall@1         : {np.sum(ranks == 1) / num_pairs * 100:.2f}%")

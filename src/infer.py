@@ -1,17 +1,21 @@
 import os
 import json
 import torch
+import numpy as np
 from torch.utils.data import Dataset, DataLoader
 from torchvision import transforms
 from PIL import Image
 from collections import Counter
+from tqdm import tqdm
 
-# Import ModelConfig và kiến trúc mô hình từ file train của bạn
-from experiments.train_classifier import ModelConfig
-from models.recognition_models import ResNet50_SingleTask
+# Import chuẩn cho tính năng Mixed Precision (AMP)
+from torch.cuda.amp import autocast
+
+# Import Mô hình Đơn nhiệm Tối ưu
+from models.classifier_mamba import PureColorMambaClassifier
 
 # ==========================================
-# 1. BỘ DỮ LIỆU INFERENCE (ĐỌC TẤT CẢ FRAMES CỦA UUID)
+# 1. BỘ DỮ LIỆU INFERENCE (ĐỒNG BỘ 100% VỚI TRAIN)
 # ==========================================
 class VehicleTrackDataset(Dataset):
     def __init__(self, json_path, base_dir, transform=None):
@@ -27,10 +31,8 @@ class VehicleTrackDataset(Dataset):
                 frames = item["frames"]
                 boxes = item["boxes"]
                 
-                # Đảm bảo số lượng frame và box bằng nhau
                 assert len(frames) == len(boxes), f"Lỗi ở UUID {uuid_key}: Số lượng frames khác boxes"
                 
-                # Trải phẳng dữ liệu: Mỗi frame bây giờ là 1 sample, nhưng giữ lại thông tin UUID
                 for frame_path, box in zip(frames, boxes):
                     img_path = os.path.join(self.base_dir, frame_path)
                     self.data.append({
@@ -47,101 +49,104 @@ class VehicleTrackDataset(Dataset):
     def __getitem__(self, idx):
         item = self.data[idx]
         uuid_key = item["uuid"]
+        x, y, w, h = item["box"]
         
         try:
+            # ---------------------------------------------------------
+            # ĐỒNG BỘ CHUẨN: SỬ DỤNG PIL VÀ CROP 5% PADDING
+            # ---------------------------------------------------------
             full_image = Image.open(item["full_path"]).convert("RGB")
-            # Cắt ảnh theo box của frame đó
-            x, y, w, h = item["box"]
-            crop_image = full_image.crop((x, y, x + w, y + h)) 
+            
+            # Thêm padding nhẹ 5% để lấy thêm bối cảnh viền xe (GIỐNG HỆT TRAIN)
+            padding_x, padding_y = int(w * 0.05), int(h * 0.05)
+            crop_image = full_image.crop((
+                max(0, x - padding_x), 
+                max(0, y - padding_y), 
+                min(full_image.width, x + w + padding_x), 
+                min(full_image.height, y + h + padding_y)
+            )) 
+
+            if self.transform:
+                crop_tensor = self.transform(crop_image)
+            else:
+                crop_tensor = transforms.ToTensor()(crop_image)
+                
         except Exception as e:
-            # Nếu lỗi, tạo ảnh đen
-            crop_image = Image.new('RGB', (224, 224), (0, 0, 0))
-
-        # Áp dụng Transform
-        if self.transform:
-            crop_tensor = self.transform(crop_image)
-        else:
-            crop_tensor = transforms.ToTensor()(crop_image)
-
+            # Fallback nếu đường dẫn ảnh lỗi (trả về tensor đen)
+            print(f"Lỗi đọc ảnh {item['full_path']}: {e}")
+            crop_tensor = torch.zeros((3, 336, 336))
+            
         return crop_tensor, uuid_key
 
 # ==========================================
 # 2. HÀM INFERENCE CÓ CƠ CHẾ VOTING
 # ==========================================
 def infer_and_vote():
-    # ---------------------------------------------------------
-    # CẤU HÌNH ĐƯỜNG DẪN 
-    # ---------------------------------------------------------
-    TARGET_TASK = 'direction' # 'color', 'type', hoặc 'direction'
     BASE_DIR = 'data/cityflownl/data' 
-   
-    # File JSON chứa dữ liệu test (Cấu trúc giống file train)     
     TEST_JSON_PATH = './data/json/test-tracks.json' 
-
-    # File weights (.pth) bạn đã train xong
-    WEIGHTS_PATH = f'./checkpoints/recognition/single_{TARGET_TASK}_resnet50_ep4.pth' 
-
-    # File JSON kết quả đầu ra
-    OUTPUT_JSON_PATH = f'./data/json/test_queries_{TARGET_TASK}.json'
-    # ---------------------------------------------------------
+    WEIGHTS_PATH = './checkpoints/recognition/mamba_color_epoch3.pth' # Trỏ tới model tốt nhất của bạn
+    OUTPUT_JSON_PATH = './data/json/test_tracks_color.json'
+    
+    NUM_CLASSES = 8 # Phải khớp với config lúc train
+    EMBED_DIM = 256
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    print(f"\n====> BẮT ĐẦU INFERENCE TASK: {TARGET_TASK.upper()} TRÊN {device}")
+    print(f"\n====> BẮT ĐẦU INFERENCE MÀU SẮC TRÊN {device}")
 
-    # 1. Pipeline tiền xử lý (Không có Augmentation)
+    # =========================================================
+    # ĐỒNG BỘ TRANSFORMS 
+    # =========================================================
     test_transforms = transforms.Compose([
-        transforms.Resize((224, 224)),
+        transforms.Resize((380, 380)),
+        transforms.CenterCrop((336, 336)),
         transforms.ToTensor(),
-        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]) 
+        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
     ])
 
-    # 2. Tải Dataset và DataLoader
     dataset = VehicleTrackDataset(TEST_JSON_PATH, base_dir=BASE_DIR, transform=test_transforms)
     dataloader = DataLoader(dataset, batch_size=64, shuffle=False, num_workers=4, pin_memory=True)
 
-    # 3. Khởi tạo Model
-    cfg = ModelConfig(task=TARGET_TASK)
-    model = ResNet50_SingleTask(cfg).to(device)
+    # Khởi tạo mô hình
+    model = PureColorMambaClassifier(
+        num_colors=NUM_CLASSES, 
+        d_model=EMBED_DIM
+    ).to(device)
     
     print(f"====> Đang tải weights từ: {WEIGHTS_PATH}")
-    model.load_state_dict(torch.load(WEIGHTS_PATH, map_location=device))
+    # Load model an toàn
+    model.load_state_dict(torch.load(WEIGHTS_PATH, map_location=device, weights_only=True))
     model.eval()
 
-    # Dictionary để lưu danh sách tất cả các dự đoán của từng UUID
-    # Ví dụ: uuid_predictions = {"uuid1": [0, 0, 0, 1, 0], "uuid2": [2, 2, 2]}
     uuid_predictions = {}
 
-    print("====> Đang chạy mô hình dự đoán từng frame...")
+    print("\n====> Đang chạy mô hình dự đoán từng frame...")
     with torch.no_grad():
-        for i, (crops, uuid_keys) in enumerate(dataloader):
-            crops = crops.to(device)
-            logits = model(crops)
+        # Dùng tqdm để hiển thị thanh tiến trình
+        for inputs, uuid_keys in tqdm(dataloader, desc="Dự đoán Batch"):
+            inputs = inputs.to(device)
+            
+            # Sử dụng autocast để tăng tốc và đồng bộ dtype với lúc train
+            with autocast():
+                logits = model(inputs)
             
             _, preds = torch.max(logits, dim=1)
             preds = preds.cpu().numpy().tolist()
             
-            # Ghi nhận kết quả dự đoán vào danh sách của UUID tương ứng
+            # Gom nhóm dự đoán theo UUID
             for uuid, pred_id in zip(uuid_keys, preds):
                 if uuid not in uuid_predictions:
                     uuid_predictions[uuid] = []
                 uuid_predictions[uuid].append(pred_id)
-                
-            if (i + 1) % 10 == 0:
-                print(f"  + Đã xử lý Batch [{i+1}/{len(dataloader)}]")
 
     # ==========================================
-    # 4. MAJORITY VOTING (TÌM KẾT QUẢ XUẤT HIỆN NHIỀU NHẤT)
+    # 4. MAJORITY VOTING 
     # ==========================================
     print("\n====> Tiến hành Majority Voting cho từng UUID...")
     final_results = {}
     
     for uuid, list_preds in uuid_predictions.items():
-        # Dùng thư viện Counter để đếm tần suất xuất hiện của các ID
         vote_counts = Counter(list_preds)
-        
-        # Lấy ID có số phiếu cao nhất (phần tử đầu tiên của most_common)
-        best_id = vote_counts.most_common(1)[0][0]
-        
+        best_id = vote_counts.most_common(1)[0][0] # Lấy nhãn xuất hiện nhiều nhất
         final_results[uuid] = {"id": best_id}
 
     # ==========================================
@@ -152,7 +157,11 @@ def infer_and_vote():
         json.dump(final_results, f, indent=4)
 
     print(f"====> HOÀN TẤT! Đã lưu kết quả tại: {OUTPUT_JSON_PATH}")
-    print(f"Tổng số UUID đã dự đoán: {len(final_results)}")
+    print(f"Tổng số UUID đã dự đoán: {len(final_results)}\n")
 
 if __name__ == '__main__':
+    # Tối ưu hóa backend cho quá trình Inference
+    if torch.cuda.is_available():
+        torch.backends.cudnn.benchmark = True 
+        
     infer_and_vote()
